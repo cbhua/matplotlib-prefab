@@ -6,16 +6,17 @@ Matplotlib Prefab is a repository based on matplotlib package, which provides se
 
 Of course we want to have **pretty figures** in our publications. I always try to find beautiful matplotlib templates everywhere to refer. After a long time I gradually find my plotting style, so I clean up my matplotlib plotting files to create this repository contains several prefabs. Hope they can give you ideas or tricks to make a beautiful matplotlib figure. For visualizaiton examples, please refer to the [example section](#visualization-example). 
 
-Btw this repository is not a python package so it doesn't have APIs. To use this repository you may have to copy from source code. We do have plan to make it to be a light python package in the future updating but we know that would be a big project and there are already many similar packages ([seaborn](https://github.com/mwaskom/seaborn), [proplot](https://github.com/proplot-dev/proplot), etc.). If you are interested at contributing to this repository, please refer to the [contribution section](#contribution).
+Btw this repository is not a python package so it doesn't have APIs. To use this repository you may have to copy from source code. We do have plan to make it to be a light python package in the future updating but we know that would be a big project and there are already many similar packages ([seaborn](https://github.com/mwaskom/seaborn), [proplot](https://github.com/proplot-dev/proplot), etc.). If you are interested at contributing to this repository, welcome to [contact](#contact) us!
 
 ### ⚙️ Environment
 
 ```
 Python Version: 3.6 (tested), 3.9 (tested)
 Python Package: matplotlib (support Latex text), numpy, torch
+Other: to use the Latex illustration style, the Latex is required to be installed
 ```
 
- ###  🔧 Structure
+### 🔧 Structure
 
 ```
 .
@@ -29,7 +30,9 @@ Python Package: matplotlib (support Latex text), numpy, torch
 - `prefeb`: prefab files organized by figure type;
 - `src`: [TODO] callable plotting functions source code;
 
-### 🔦 How to use
+### 🔦 How to start
+
+Before you start, you may have to check if you installed the Latex, when you want to use the Latex illustration style. If you don't want to use it, set the `plt.rcParams.update({'text.usetex': True})` to `False`.
 
 Now this repository doesn't contain APIs to call, so you may have to directly refer to the prefab source code in the `prefeb` folder. The visulization examples are shown in the [example section](#visualization-example). For example, when we refer to the prefab file `prefeb/single1d.py`:
 
@@ -62,6 +65,7 @@ fig.legend(handles, labels, loc='lower center', ncol=int(len(labels)/1), bbox_to
 
 Most prefabs contain 4 parts: *packages and fontfamily setup*, *data init*, *plot* and *save*. We comment each part reflect to the figure items for your customization. This may require some basic knowledge about the `matplotlib`. 
 
+<a id="visualization-example"></a>
 ### 🖼 Visualization Example
 
 1. **Single Line Figure** `prefab/single1d.py` [Link to prefab](https://github.com/cbhua/matplotlib-prefab/blob/main/prefab/single1d.py)
@@ -105,6 +109,7 @@ Most prefabs contain 4 parts: *packages and fontfamily setup*, *data init*, *plo
    - Value circle 
    <img src="fig/scatter_2.png" width="100%"> 
 
+<a id="contact"></a>
 ### 📬 Contact
 
 If you have any question or find any bug, feel free to raise an issue. If you have ideas to contribute to this repo, welcome to pull request or contact cbhua@kaist.ac.kr. Thanks for interested to our work!
