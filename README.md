@@ -113,3 +113,16 @@ Most prefabs contain 4 parts: *packages and fontfamily setup*, *data init*, *plo
 ### 📬 Contact
 
 If you have any question or find any bug, feel free to raise an issue. If you have ideas to contribute to this repo, welcome to pull request or contact cbhua@kaist.ac.kr. Thanks for interested to our work!
+
+## What we need:
+
+1. Single line plot
+2. Multi line plot
+- Single scatter plot
+- Multi scatter plot
+- Single hist plot
+- Multi hist plot
+3. Single matshow plot
+4. Multi matshow plot
+5. Single 3D plot
+6. Multi 3D plot
