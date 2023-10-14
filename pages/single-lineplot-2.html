@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Matplotlib Prefabs</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Theme CSS -->
+    <link href="../css/freelancer.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="../vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="../https://fonts.googleapis.com/css?family=Roboto:400,700" rel="stylesheet" type="text/css">
+    <link href="../https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- Codemirror -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/addon/runmode/runmode-standalone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/python/python.min.js"></script>
+
+</head>
+
+<body id="page-top" class="index">
+<div id="skipnav"><a href="#maincontent">Skip to main content</a></div>
+
+    <!-- Navigation -->
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top navbar-custom">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> <b>Menu</b>
+                </button>
+				<div class="navbar-brand">Matplotlib Prefabs</div>  
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right navbar-static-top">
+                    <li class="header">
+                        <a href="../index.html">HOME</a>
+                    </li>
+                    <li class="header">
+                        <a href="../posts.html">POSTS</a>
+                    </li>
+                     <li class="header">
+                        <a href="../about.html">ABOUT</a>
+                    </li>
+ 
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <section class="success">
+       	<div class="container">
+            <div class="row">
+            <div class="col-lg-12">
+                <img width=100% style="padding-left: 25%; padding-right: 25%;" src="../fig/single-linear-2.jpg" alt=""/>
+                <br/><br/>
+                <pre><code id="python_code">
+# Packages
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import cm
+
+# Use LaTeX font
+plt.rcParams.update({'text.usetex': True})
+
+# Figure font config
+label_font = {'fontfamily': 'Arial Black', 'fontsize': 14}
+title_font = {'fontfamily': 'Arial Black', 'fontsize': 16}
+legend_font = {'family': 'Palatino Linotype', 'size': 12}
+text_font = {'family': 'Palatino Linotype', 'size': 12}
+
+# Generate data
+x = np.linspace(0, 10, 100) + 1
+
+# Line plot
+y1_mean = 1/x
+y1_std = 0.3/x
+y2_mean = 0.6/x
+y2_std = 0.1/x
+
+fig, ax = plt.subplots(1, figsize=(4, 4))
+
+ax.plot(x, y1_mean, label='Model 1 Loss', color=cm.Set2(0), linestyle='-', linewidth=2)
+ax.plot(x, y2_mean, label='Model 2 Loss', color=cm.Set2(1), linestyle='-', linewidth=2)
+ax.fill_between(x, y1_mean - y1_std, y1_mean + y1_std, color=cm.Set2(0), alpha=0.2)
+ax.fill_between(x, y2_mean - y2_std, y2_mean + y2_std, color=cm.Set2(1), alpha=0.2)
+
+# Label and title
+ax.set_xlabel('X Lable', fontdict=label_font)
+ax.set_ylabel('Y Lable', fontdict=label_font)
+ax.set_title('Single Line Plot 2', fontdict=title_font)
+
+# Legend
+ax.legend(loc='upper right', prop=legend_font)
+
+# Ticks fontsize and font family
+ax.tick_params(axis='both', which='major', labelsize=14)
+labels = ax.get_xticklabels() + ax.get_yticklabels()
+[label.set_fontname('serif') for label in labels]
+
+# Axis range
+ax.set_xlim(1, 11)
+ax.set_ylim(0, 1)
+
+# Grid
+ax.grid(axis='both', color='black', alpha=0.1)
+
+plt.tight_layout()
+plt.savefig('../fig/single-linear-2.jpg', dpi=300)
+                </code></pre>
+                <script type="text/javascript">
+                    window.onload = function(){
+                        var codeElement = document.getElementById('python_code');
+                        // Add code mirror class for coloring (default is the theme)
+                        codeElement.classList.add( 'cm-s-default' );
+                        var code = codeElement.innerText;
+            
+                        codeElement.innerHTML = "";
+            
+                        CodeMirror.runMode(
+                            code,
+                            'python',
+                            codeElement
+                        );
+                    };
+                </script>
+            </div>
+            </div>
+        </div>
+    </section>
+
+<script type="text/javascript">
+var sc_project=3420544; 
+var sc_invisible=1; 
+var sc_security="e19c8980"; 
+</script>
+<script type="text/javascript" src="https://www.statcounter.com/counter/counter.js" async></script>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        2023 Chuanbo Hua | Paper Visual Lab
+					</div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="../vendor/jquery/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+    <!-- Contact Form JavaScript -->
+    <script src="../js/jqBootstrapValidation.js"></script>
+    <script src="../js/contact_me.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="../js/freelancer.min.js"></script>
+
+</body>
+
+</html>
