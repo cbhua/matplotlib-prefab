@@ -29,6 +29,11 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
+    <!-- Codemirror -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/lib/codemirror.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/addon/runmode/runmode-standalone.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/codemirror@5.61.0/mode/python/python.min.js"></script>
+
 </head>
 
 <body id="page-top" class="index">
@@ -67,9 +72,45 @@
 
     <section class="success">
 	<div class="container">
-            <h3>About</h3>
+            <div class="sec">About the Matplotlib Prefab</div><br/>
             <p>
-                [TBD] Introduction to this site.
+                Matplotlib Prefab is a repository based on matplotlib package, which provides several matplotlib ploting templates for <i>line plot</i>, 
+                <i>hist plot</i>, <i>scatter plot</i>, and some complex plottings. You can see the GitHub repository at <a href="https://github.com/cbhua/matplotlib-prefab">https://github.com/cbhua/matplotlib-prefab</a>. 
+            </p>
+            <br/>
+            <h4>Introduction</h4>
+            <p>
+                I have a passion for creating visually appealing figures in publications. During my time writing papers, I often dedicated significant effort to crafting plots. 
+                In this repository, I've compiled some of my previous `matplotlib` plotting source code and have designed several templates for convenient reuse. 
+                I've chosen not to package this content due to the myriad of customizable parameters. Instead, I believe a template approach is more straightforward to modify and repurpose. 
+                I hope these templates inspire you and provide techniques to craft beautiful `matplotlib` figures.
+            </p>
+            <br/>
+            <h4>Environment</h4>
+            <p>
+                I've aimed to keep dependencies to a minimum; thus, a basic combination of <code>matplotlib</code> and <code>numpy</code> should suffice. However, it's important to note that I've incorporated LaTeX font families and formatting. 
+                Therefore, you'll need to have <a href="https://www.latex-project.org/get/">LaTeX</a> installed on your operating system.
+            </p>
+            <pre><code id="python_code">
+Python Version: 3.10 (develop)
+Python Package: matplotlib 3.8 (support Latex text), numpy
+Other: to use the Latex illustration style, the Latex is required to be installed
+            </code></pre>
+            <br/>
+            <h4>How to use</h4>
+            <p>
+                You can easily go to the home page: <a href="https://cbhua.github.io/matplotlib-prefab/">cbhua.github.io/matplotlib-prefab</a> and see the example figures of each prefabs:
+            </p>
+            <img width=100% style="padding-left: 0%; padding-right: 5%;" src="fig/readme/homepage.png" alt=""/>
+            <p>
+                You can click on the figure to view the associated template code. Most of the code for these figures is self-contained and can be run independently. However, a few require external data. For those instances, please refer to the accompanying notebook.
+            </p>
+            <img width=100% style="padding-left: 0%; padding-right: 5%;" src="fig/readme/single-linear-1-page.png" alt=""/>
+            <p>
+                You can also refer to the GitHub <code>notebook</code> directory to access Jupyter notebooks for those example figures and tailor them to your needs.
+            </p>
+            <p>
+                Have fun!
             </p>
 		</div>
     </section>
