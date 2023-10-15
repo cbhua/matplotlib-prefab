@@ -1,4 +1,4 @@
-## 📈 Matplotlib Prefab
+<img src="fig/readme/title-image.png" width="100%">
 
 Matplotlib Prefab is a repository based on matplotlib package, which provides several matplotlib ploting templates for *line plot*, *hist plot*, *scatter plot*, and some complex plottings. You can check the website at [cbhua.github.io/matplotlib-prefab](https://cbhua.github.io/matplotlib-prefab/).
 
