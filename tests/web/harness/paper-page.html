@@ -1,0 +1,83 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Paper page calibration harness</title>
+<style>
+  /* Nothing but the sheet. The comparison screenshots this document at a fixed
+     device pixel ratio and lines it up with a raster of the PDF, so any chrome
+     — a margin, a background, a scrollbar — would be a systematic offset. */
+  html, body { margin: 0; padding: 0; background: #ffffff; }
+  #stage { position: absolute; left: 0; top: 0; }
+</style>
+<div id="stage"></div>
+<script type="module">
+import { renderPaperPage, fontFaceCss } from '/web/src/paper-page.js';
+
+const params = new URLSearchParams(location.search);
+const venue = params.get('venue');
+const layout = params.get('layout');
+const base = '/web/public/generated/';
+
+const [page, fonts, css] = await Promise.all([
+  fetch(`${base}conferences/${venue}/${layout}/page.json`).then((r) => r.json()),
+  fetch(`${base}fonts/fonts.json`).then((r) => r.json()),
+  fetch('/web/src/paper-page.css').then((r) => r.text()),
+]);
+
+const style = document.createElement('style');
+style.textContent = `${fontFaceCss(fonts, base)}\n${css}`;
+document.head.appendChild(style);
+
+const { paper, widthPx, heightPx } = renderPaperPage(page, { showSlotOutline: true });
+document.getElementById('stage').appendChild(paper);
+document.body.style.width = `${widthPx}px`;
+document.body.style.height = `${heightPx}px`;
+
+// Wait for the real faces before reporting ready: a screenshot taken while the
+// browser is still using a fallback would be a picture of the wrong font.
+await document.fonts.ready;
+await new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+// Hand the measurement side the browser's own idea of where each run ended up,
+// so the geometry comparison is against the DOM and not against a guess read
+// out of the pixels.
+window.__measured = {
+  paper: { widthPx, heightPx, width_pt: page.paper.width_pt, height_pt: page.paper.height_pt },
+  fontsLoaded: [...document.fonts].map((f) => ({ family: f.family, weight: f.weight,
+                                                 style: f.style, status: f.status })),
+  // Pen positions, not ink boxes. getBBox() would report where the *marks*
+  // start, which is inset by the first glyph's left side bearing and so is not
+  // comparable with the PDF's text origin. getStartPositionOfChar and
+  // getEndPositionOfChar are the pen, which is exactly what the PDF records.
+  runs: [...document.querySelectorAll('text.mpf-run')].map((node) => {
+    const length = node.getNumberOfChars();
+    const start = length ? node.getStartPositionOfChar(0) : { x: Number(node.getAttribute('x')),
+                                                              y: Number(node.getAttribute('y')) };
+    const end = length ? node.getEndPositionOfChar(length - 1) : start;
+    const ink = node.getBBox();
+    return {
+      index: Number(node.dataset.index),
+      x_pt: start.x,
+      end_x_pt: end.x,
+      width_pt: node.getComputedTextLength(),
+      advance_pt: end.x - start.x,
+      baseline_pt: page.paper.height_pt - start.y,
+      ink_x_pt: ink.x,
+      ink_width_pt: ink.width,
+      chars: length,
+    };
+  }),
+  slot: (() => {
+    const node = document.querySelector('.mpf-slot');
+    const box = node.getBoundingClientRect();
+    const stage = document.getElementById('stage').getBoundingClientRect();
+    const toPt = 72 / 96;
+    return {
+      x_pt: (box.left - stage.left) * toPt,
+      top_pt: (box.top - stage.top) * toPt,
+      width_pt: box.width * toPt,
+      height_pt: box.height * toPt,
+    };
+  })(),
+};
+window.__ready = true;
+</script>

@@ -1,0 +1,207 @@
+{
+  "manifest_version": "1",
+  "note": "Conference style files copied verbatim from the archives the repository owner supplied. Nothing in these files was edited: no margin, no text width, no column separation, no body or caption size was touched to suit a figure. All test-specific content lives in tests/conference_context/wrappers/. Each venue's own copyright and licence notice stays in its .sty/.bst header.",
+  "recorded": "2026-09-08",
+  "sources": [
+    {
+      "archive": ".tmp/conference_template/iclr2026.zip",
+      "sha256": "b6d63b29992e153f804bb6d170c57db156c011b5bedf96a9f31d58813b909acf",
+      "bytes": 241296,
+      "venue": "iclr2026"
+    },
+    {
+      "archive": ".tmp/conference_template/neurips2026.zip",
+      "sha256": "82473931e3ef710fcd3f4a8cd4119b9de32e56825f90f9e5a6d55f2d01b817d9",
+      "bytes": 20259,
+      "venue": "neurips2026"
+    },
+    {
+      "archive": ".tmp/conference_template/icml2026.zip",
+      "sha256": "8b29290f5828e176debb57ea9cc00252502973d55ea561a2f18a7f0a326bfc6c",
+      "bytes": 228368,
+      "venue": "icml2026"
+    },
+    {
+      "archive": ".tmp/conference_template/attn_is_all_u_need.tar.gz",
+      "sha256": "2e7a7d9ee2520d22eb23dae0cb148e167be02a30d6cb3f11b1c67723194339c6",
+      "bytes": 1150988,
+      "venue": null,
+      "used_for": "tests/fixtures/article-context/ — see its provenance.md"
+    }
+  ],
+  "excluded": [
+    "__MACOSX/ and ._* AppleDouble entries",
+    "the templates' own compiled PDFs and .log files",
+    "iclr2026_conference.tex, neurips_2026.tex, example_paper.tex, checklist.tex (the venues' instruction documents; the wrappers replace them)",
+    "iclr2026_conference.bib and example_paper.bib (the venues' example bibliographies; tests/fixtures/article-context/references.bib replaces them)",
+    "math_commands.tex (ICLR's optional macro set; the body fixture uses plain LaTeX maths only)",
+    "the article's Figures/ and vis/ graphics and nips_2017.sty"
+  ],
+  "venues": [
+    {
+      "id": "iclr2026",
+      "name": "ICLR 2026",
+      "year": 2026,
+      "columns": 1,
+      "mode": "finalcopy",
+      "mode_syntax": "\\usepackage{iclr2026_conference,times} then \\iclrfinalcopy",
+      "mode_source": "iclr2026_conference.sty defines \\iclrfinalcopy to set \\iclrfinaltrue; iclr2026_conference.tex documents it as the camera-ready switch.",
+      "target_width_rule": "0.5 * textwidth",
+      "target_width_factor": 0.5,
+      "target_width_basis": "linewidth_at_insertion_point",
+      "declared_textwidth": "5.5 true in (iclr2026_conference.sty line 49)",
+      "bibliography_style": "iclr2026_conference",
+      "files": [
+        {
+          "path": "iclr2026_conference.sty",
+          "sha256": "a4852f68e080d6c5245057ca2039100b409e31727898aa93c03d78ddb84374a3",
+          "role": "venue style"
+        },
+        {
+          "path": "iclr2026_conference.bst",
+          "sha256": "2d67552db7ed38ccfccb5957b52f95656e25c249724761d3cf5f7922ad1844c5",
+          "role": "venue bibliography style"
+        },
+        {
+          "path": "fancyhdr.sty",
+          "sha256": "b56ec4434b9f4607529a4b23dc68ad8d4b94f1f631c8cddaf7da78140d53a5ea",
+          "role": "local dependency shipped in the archive; \\RequirePackage'd by the venue style"
+        },
+        {
+          "path": "natbib.sty",
+          "sha256": "88bc70c0e48461934cab5b2accef06b74a8b3ac45ad03ccd3f2a6b7e0d6d530d",
+          "role": "local dependency shipped in the archive; \\RequirePackage'd by the venue style"
+        }
+      ],
+      "default_layout": "narrow",
+      "layouts": [
+        {
+          "id": "narrow",
+          "label": "half the text width",
+          "float_environment": "figure",
+          "target_width_rule": "0.5 * linewidth_at_insertion_point",
+          "target_width_factor": 0.5,
+          "target_width_basis": "linewidth_at_insertion_point",
+          "note": "The default. ICLR 2026 is a one-column template, so half the line width is half the text width and two of these sit side by side."
+        },
+        {
+          "id": "wide",
+          "label": "the full text width",
+          "float_environment": "figure",
+          "target_width_rule": "1.0 * linewidth_at_insertion_point",
+          "target_width_factor": 1.0,
+          "target_width_basis": "linewidth_at_insertion_point",
+          "note": "A figure spanning the whole one-column text block. Not a second column: this template has one."
+        }
+      ]
+    },
+    {
+      "id": "neurips2026",
+      "name": "NeurIPS 2026",
+      "year": 2026,
+      "columns": 1,
+      "mode": "final",
+      "mode_syntax": "\\usepackage[main, final]{neurips_2026}",
+      "mode_source": "neurips_2026.sty declares the 'final' option ('creates camera-ready copy'); neurips_2026.tex documents '\\usepackage[main, final]{neurips_2026}' as the camera-ready form of the Main Track.",
+      "target_width_rule": "0.5 * textwidth",
+      "target_width_factor": 0.5,
+      "target_width_basis": "linewidth_at_insertion_point",
+      "declared_textwidth": "textwidth=5.5in, set via \\newgeometry inside \\AtBeginDocument (neurips_2026.sty)",
+      "bibliography_style": "plainnat",
+      "bibliography_note": "The venue ships no .bst and its template writes the reference list by hand, stating that any consistent citation style is acceptable. The wrapper uses natbib's plainnat so the same references.bib works across all three venues.",
+      "files": [
+        {
+          "path": "neurips_2026.sty",
+          "sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a",
+          "role": "venue style"
+        }
+      ],
+      "default_layout": "narrow",
+      "layouts": [
+        {
+          "id": "narrow",
+          "label": "half the text width",
+          "float_environment": "figure",
+          "target_width_rule": "0.5 * linewidth_at_insertion_point",
+          "target_width_factor": 0.5,
+          "target_width_basis": "linewidth_at_insertion_point",
+          "note": "The default. NeurIPS 2026 is a one-column template, so half the line width is half the text width."
+        },
+        {
+          "id": "wide",
+          "label": "the full text width",
+          "float_environment": "figure",
+          "target_width_rule": "1.0 * linewidth_at_insertion_point",
+          "target_width_factor": 1.0,
+          "target_width_basis": "linewidth_at_insertion_point",
+          "note": "A figure spanning the whole one-column text block. Not a second column: this template has one."
+        }
+      ]
+    },
+    {
+      "id": "icml2026",
+      "name": "ICML 2026",
+      "year": 2026,
+      "columns": 2,
+      "mode": "accepted",
+      "mode_syntax": "\\usepackage[accepted]{icml2026}",
+      "mode_source": "icml2026.sty declares the 'accepted' option, which switches the page notice from 'Under review' to 'Appearing in' and reveals the author block.",
+      "target_width_rule": "1.0 * columnwidth",
+      "target_width_factor": 1.0,
+      "target_width_basis": "linewidth_at_insertion_point",
+      "declared_textwidth": "\\textwidth 6.75in with \\columnsep 0.25in, \\twocolumn (icml2026.sty lines 262-263, 333)",
+      "bibliography_style": "icml2026",
+      "files": [
+        {
+          "path": "icml2026.sty",
+          "sha256": "7cdcf90f6a59c5219e7f15c88f7ed09fcaf598dad91e6cdddc4dc3cb0e397a95",
+          "role": "venue style"
+        },
+        {
+          "path": "icml2026.bst",
+          "sha256": "0ec3d5eb9b02efb7e0b44a32f3775882f42a743d0bdc618f34e6936309b98764",
+          "role": "venue bibliography style"
+        },
+        {
+          "path": "fancyhdr.sty",
+          "sha256": "9130c52f91087abc6d223164ffa587e207e3257fcbcd069ef09ecb5391043f14",
+          "role": "local dependency shipped in the archive; \\RequirePackage'd by the venue style"
+        },
+        {
+          "path": "algorithm.sty",
+          "sha256": "93fd0eb31c112eb405833db8f1d7f5d238c7e691b1c05680d7276e68f36d564a",
+          "role": "local dependency shipped in the archive; \\RequirePackage'd by the venue style"
+        },
+        {
+          "path": "algorithmic.sty",
+          "sha256": "48d18794a5d97c0479a588cc2eac0917992feb9da83acc4631b8f55757d80f9b",
+          "role": "local dependency shipped in the archive; \\RequirePackage'd by the venue style"
+        }
+      ],
+      "default_layout": "narrow",
+      "layouts": [
+        {
+          "id": "narrow",
+          "label": "one column",
+          "float_environment": "figure",
+          "target_width_rule": "1.0 * linewidth_at_insertion_point",
+          "target_width_factor": 1.0,
+          "target_width_basis": "linewidth_at_insertion_point",
+          "note": "The default. Inside an ordinary figure in this two-column template, \\linewidth is \\columnwidth, so the figure gets a whole column."
+        },
+        {
+          "id": "wide",
+          "label": "both columns",
+          "float_environment": "figure*",
+          "target_width_rule": "1.0 * linewidth_at_insertion_point",
+          "target_width_factor": 1.0,
+          "target_width_basis": "linewidth_at_insertion_point",
+          "note": "A figure* float, which is the template's own mechanism for spanning both columns; inside it \\linewidth is \\textwidth. LaTeX defers a double-column float to the top of a later page, so the page this lands on is chosen by the template, not by the evaluator."
+        }
+      ]
+    }
+  ],
+  "declared_widths_are_diagnostic_only": "The numbers under declared_textwidth are what the style files say, recorded so a drift in the templates is visible. The evaluator never uses them: it measures \\textwidth, \\columnwidth and the \\linewidth at the actual insertion point by compiling the wrapper, and reports those.",
+  "target_width_basis_note": "target_width_factor is applied to \\linewidth measured inside the figure float, which is \\textwidth in a one-column document and \\columnwidth in a two-column one. Using \\linewidth uniformly is why ICML gets a full column and not 0.5 x textwidth: the column separation is already taken out of \\columnwidth by the template.",
+  "layouts_note": "Each venue offers two width modes. The factor is applied to the \\linewidth measured inside the float that mode uses, so the number is the template's own arithmetic in both cases: an ordinary figure sees \\columnwidth in a two-column document, a figure* sees \\textwidth. The venue-level target_width_rule/target_width_factor above are the narrow mode's, kept where they were so that anything reading the old shape still gets the default behaviour."
+}

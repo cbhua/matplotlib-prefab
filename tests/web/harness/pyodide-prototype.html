@@ -1,0 +1,93 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Pyodide render prototype</title>
+<body>
+<pre id="log">starting…</pre>
+<div id="figure"></div>
+<script type="module">
+/*
+ * The Phase A prototype: does *this repository's* matplotlib code run in a
+ * browser worker, and does the SVG it produces match the one the command line
+ * produces from the same spec and profile?
+ *
+ * It is driven by scripts/prototype_pyodide.py, which reads window.__result.
+ * Nothing here is part of the shipped tool; it exists to answer the question
+ * before the UI is built on top of the answer.
+ */
+const log = (line) => { document.getElementById('log').textContent += '\n' + line; };
+const base = '/web/';
+const generatedDir = base + 'public/generated/';
+
+const result = { events: [], renders: [], ok: false };
+window.__result = result;
+
+const manifest = await (await fetch(generatedDir + 'assets-manifest.json')).json();
+const profile = await (await fetch(generatedDir + 'profiles/single-column.json')).json();
+const spec = await (await fetch(generatedDir + 'specs/line-multi.json')).json();
+
+// The ICML narrow case from the plan: one column of a two-column body page.
+// The number is not invented here — it is the width the LaTeX probe measured,
+// passed in by the driver.
+const targetWidthMm = Number(new URLSearchParams(location.search).get('width_mm') || profile.canvas.width_mm);
+profile.canvas.width_mm = targetWidthMm;
+
+const worker = new Worker(base + 'src/render-worker.js', { type: 'module' });
+
+let nextId = 1;
+const waiters = new Map();
+let readyResolve;
+const ready = new Promise((r) => { readyResolve = r; });
+
+worker.onmessage = (event) => {
+  const m = event.data;
+  result.events.push({ type: m.type, stage: m.stage, detail: m.detail });
+  if (m.type === 'boot-progress') log('boot: ' + m.detail);
+  else if (m.type === 'ready') { result.boot = m.stats; log('ready in ' + m.stats.total_ms + ' ms'); readyResolve(); }
+  else if (m.type === 'render-result') { const w = waiters.get(m.id); waiters.delete(m.id); w && w(m); }
+  else if (m.type === 'fatal') { result.fatal = m.error; log('FATAL ' + m.error); readyResolve(); }
+};
+
+function render(spec, profile) {
+  const id = nextId++;
+  return new Promise((resolve) => {
+    waiters.set(id, resolve);
+    worker.postMessage({ type: 'render', id, spec, profile });
+  });
+}
+
+const t0 = performance.now();
+worker.postMessage({ type: 'boot', config: { pyodideDir: generatedDir + 'pyodide/', generatedDir, manifest } });
+await ready;
+result.cold_start_ms = Math.round(performance.now() - t0);
+
+if (result.fatal) { result.ok = false; window.__done = true; }
+else {
+  // First render (includes matplotlib's own font-cache warm-up).
+  const first = await render(spec, profile);
+  result.first_render = { wall_ms: first.wall_ms, ok: first.result.ok, error: first.result.error };
+  if (first.result.ok) {
+    result.svg = first.result.svg;
+    result.width_mm = first.result.width_mm;
+    result.height_mm = first.result.height_mm;
+    result.environment = result.boot.environment;
+    document.getElementById('figure').innerHTML = first.result.svg;
+  }
+
+  // Hot renders: the same shape of change a slider makes — one font size moving.
+  const samples = Number(new URLSearchParams(location.search).get('samples') || 30);
+  for (let i = 0; i < samples; i++) {
+    const p = JSON.parse(JSON.stringify(profile));
+    p.fonts.size_axis_label_pt = 7 + (i % 5) * 0.5;
+    const r = await render(spec, p);
+    result.renders.push({ wall_ms: r.wall_ms, render_ms: r.result.render_ms, ok: r.result.ok });
+  }
+
+  // A deliberately invalid spec must come back as a message, not a crash.
+  const bad = await render({ ...spec, series: [{ name: 'a', y: [1, 2] }] }, profile);
+  result.invalid_spec = { ok: bad.result.ok, error: bad.result.error, kind: bad.result.error_kind };
+
+  result.ok = Boolean(first.result.ok) && !bad.result.ok;
+  window.__done = true;
+}
+log('done');
+</script>

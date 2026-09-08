@@ -1,0 +1,341 @@
+{
+  "report_version": "1",
+  "kind": "conference-context",
+  "status": "warn",
+  "counts": {
+    "pass": 11,
+    "warn": 2,
+    "fail": 0,
+    "not_checked": 2
+  },
+  "case": "line-multi-at-85mm",
+  "venue": {
+    "id": "iclr2026",
+    "name": "ICLR 2026",
+    "year": 2026,
+    "mode": "finalcopy",
+    "mode_syntax": "\\usepackage{iclr2026_conference,times} then \\iclrfinalcopy",
+    "columns": 1,
+    "target_width_rule": "0.5 * linewidth_at_insertion_point",
+    "target_width_factor": 0.5,
+    "bibliography_style": "iclr2026_conference"
+  },
+  "layout": {
+    "id": "narrow",
+    "label": "half the text width",
+    "float_environment": "figure",
+    "target_width_rule": "0.5 * linewidth_at_insertion_point",
+    "target_width_factor": 0.5,
+    "target_width_basis": "linewidth_at_insertion_point",
+    "note": "The width mode this page was produced in. The factor is applied to the \\linewidth measured inside this float, so a figure* getting \\textwidth and an ordinary figure getting \\columnwidth is the template's arithmetic, not a constant written here.",
+    "measured_float_environment": "figure"
+  },
+  "fixtures": {
+    "manifest": "/home/cbhua/github/matplotlib-prefab/tests/fixtures/conferences/manifest.json",
+    "manifest_sha256": "7dc42b0f57d2addfd24c650699ed3366449345b53a06dbde093d4a6d5f10e802",
+    "wrapper": "/home/cbhua/github/matplotlib-prefab/tests/conference_context/wrappers/iclr2026.tex",
+    "wrapper_sha256": "18e17ee34b99a0927f999ae796347ee06fb46b3270f5b176603ff452c0538322",
+    "measure": "/home/cbhua/github/matplotlib-prefab/tests/conference_context/wrappers/measure.tex",
+    "measure_sha256": "28fe8b515bf6f17693c9c06d547f9f30121299cc9e32afcd7dd64a9ce944a1ae",
+    "body": "/home/cbhua/github/matplotlib-prefab/tests/fixtures/article-context/body.tex",
+    "body_sha256": "c13dce33a8c97032a7ad399faf708123bd8224e6b1234177f9dc77a341d73e7b",
+    "references": "/home/cbhua/github/matplotlib-prefab/tests/fixtures/article-context/references.bib",
+    "references_sha256": "3a2d083fea5413aad1d7e960876e332ba180e580df7404918cbc93b34c7a5015",
+    "venue_files": [
+      {
+        "path": "iclr2026_conference.sty",
+        "sha256": "a4852f68e080d6c5245057ca2039100b409e31727898aa93c03d78ddb84374a3"
+      },
+      {
+        "path": "iclr2026_conference.bst",
+        "sha256": "2d67552db7ed38ccfccb5957b52f95656e25c249724761d3cf5f7922ad1844c5"
+      },
+      {
+        "path": "fancyhdr.sty",
+        "sha256": "b56ec4434b9f4607529a4b23dc68ad8d4b94f1f631c8cddaf7da78140d53a5ea"
+      },
+      {
+        "path": "natbib.sty",
+        "sha256": "88bc70c0e48461934cab5b2accef06b74a8b3ac45ad03ccd3f2a6b7e0d6d530d"
+      }
+    ]
+  },
+  "template": {
+    "columns": 1,
+    "paperwidth_mm": 215.9,
+    "paperheight_mm": 279.4,
+    "textwidth_tex_pt": 397.48499,
+    "textwidth_mm": 139.7,
+    "columnwidth_tex_pt": 397.48499,
+    "columnwidth_mm": 139.7,
+    "columnsep_tex_pt": 10.0,
+    "float_linewidth_tex_pt": 397.48499,
+    "float_linewidth_mm": 139.7,
+    "body_font_size_pt": 10.0,
+    "body_baselineskip_tex_pt": 11.0,
+    "caption_font_size_pt": 10.0,
+    "measured_by": "TeX, inside the compiled document at the figure's insertion point",
+    "units": "lengths named _tex_pt are TeX points (72.27/in); font sizes are the printed pt of the typeface"
+  },
+  "figure_source": {
+    "mode": "existing-figure-placed-as-is",
+    "figure_dir": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi",
+    "figure_pdf_sha256": "f251d368a02f3fea3e9b270ea0c93ce67011082437afafd558437c8cd5cc70b9",
+    "spec": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi/spec.json",
+    "spec_sha256": "cab12b49c63c33c8a02a23c5f8afbd91f3f46edcd8216982bce2eefc967b6332",
+    "profile_found": true,
+    "derived_profile": null
+  },
+  "geometry": {
+    "units": "PDF points are 72/in; TeX points are 72.27/in; mm is the physical size",
+    "target_width_tex_pt": 198.7425,
+    "target_width_pdf_pt": 198.0,
+    "target_width_mm": 69.85,
+    "source_pdf_width_pdf_pt": 240.9449,
+    "source_pdf_width_mm": 85.0,
+    "source_pdf_height_mm": 52.53,
+    "placed_width_pdf_pt": 198.0037,
+    "placed_width_mm": 69.851,
+    "placed_height_mm": 43.168,
+    "placed_origin_pdf_pt": [
+      207.0,
+      587.773
+    ],
+    "drawing_matrix": [
+      0.82178,
+      0.0,
+      0.0,
+      0.82178,
+      207.0,
+      587.773
+    ],
+    "scale": 0.82178,
+    "scale_definition": "placed_width / source_pdf_width, both in PDF points, read from the page's drawing transform",
+    "measured_from": "the compiled page's content stream, not the \\includegraphics argument"
+  },
+  "type_sizes": {
+    "body_font_size_pt": 10.0,
+    "caption_font_size_pt": 10.0,
+    "figure_source_pt": {
+      "axis_label_pt": 9.0,
+      "tick_pt": 8.0,
+      "legend_pt": 8.0,
+      "title_pt": 10.0,
+      "data_linewidth_pt": 1.2
+    },
+    "figure_effective_pt": {
+      "axis_label_pt": 7.396,
+      "tick_pt": 6.574,
+      "legend_pt": 6.574,
+      "title_pt": 8.218,
+      "data_linewidth_pt": 0.986
+    },
+    "effective_definition": "source size x scale; None when the figure arrived without a profile",
+    "note": "Reported, not adjudicated. There is no rule here that figure text must match body text."
+  },
+  "page": {
+    "pdf_page_index_zero_based": 2,
+    "printed_page_number": 3,
+    "total_pages_in_full_document": 4,
+    "pages_in_output": 1,
+    "mediabox_pdf_pt": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ],
+    "width_pdf_pt": 612.0,
+    "height_pdf_pt": 792.0,
+    "width_mm": 215.9,
+    "height_mm": 279.4
+  },
+  "outputs": {
+    "page_pdf": "/home/cbhua/github/matplotlib-prefab/tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+    "page_png": "/home/cbhua/github/matplotlib-prefab/tests/output/conference-context/iclr2026/line-multi-at-85mm/page.png",
+    "png_dpi": 200
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Linux-7.0.0-14-generic-x86_64-with-glibc2.43",
+    "tools": {
+      "bibtex": "BibTeX 0.99d (TeX Live 2025/Debian)",
+      "latexmk": "Latexmk, John Collins, 15 June 2025. Version 4.87",
+      "pdflatex": "pdfTeX 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian)",
+      "pdftoppm": "I/O Error: Couldn't open file '--version': No such file or directory."
+    }
+  },
+  "reproduce": {
+    "render": "reused as-is from /home/cbhua/github/matplotlib-prefab/tests/output/line-multi",
+    "context": "python tests/render_conference_context.py --venue iclr2026 --case line-multi-at-85mm",
+    "context_layout": "python skills/scientific-figures/scripts/evaluate_context.py --venue iclr2026 --layout narrow --case line-multi-at-85mm ..."
+  },
+  "checks": [
+    {
+      "id": "dependencies",
+      "status": "pass",
+      "message": "latexmk, pdflatex, bibtex and pdftoppm are all available.",
+      "detail": {
+        "resolved": {
+          "bibtex": "/usr/bin/bibtex",
+          "latexmk": "/usr/bin/latexmk",
+          "pdflatex": "/usr/bin/pdflatex",
+          "pdftoppm": "/usr/bin/pdftoppm"
+        }
+      }
+    },
+    {
+      "id": "compile",
+      "status": "pass",
+      "message": "latexmk built the ICLR 2026 wrapper to convergence.",
+      "detail": {
+        "venue": "iclr2026",
+        "mode": "finalcopy"
+      }
+    },
+    {
+      "id": "latex_references_resolve",
+      "status": "pass",
+      "message": "Every citation and cross-reference resolved; bibtex ran and converged."
+    },
+    {
+      "id": "latex_boxes",
+      "status": "warn",
+      "message": "1 overfull/underfull box warning(s). Normal in running prose; worth a look only if one names the figure.",
+      "detail": {
+        "warnings": [
+          "Underfull \\hbox (badness 1776) in paragraph at lines 90--94"
+        ]
+      }
+    },
+    {
+      "id": "figure_page_located",
+      "status": "pass",
+      "message": "The figure is drawn exactly once, on PDF page index 2 of 4.",
+      "detail": {
+        "pdf_page_index_zero_based": 2,
+        "total_pages": 4
+      }
+    },
+    {
+      "id": "page_index_consistent",
+      "status": "pass",
+      "message": "TeX shipped the float on printed page 3, which is PDF index 2 — the two locators agree.",
+      "detail": {
+        "printed_page": 3,
+        "pdf_page_index_zero_based": 2
+      }
+    },
+    {
+      "id": "page_is_body_page",
+      "status": "pass",
+      "message": "Page index 2 carries 2674 non-space characters of body text alongside the figure.",
+      "detail": {
+        "pdf_page_index_zero_based": 2,
+        "text_characters": 2674
+      }
+    },
+    {
+      "id": "caption_present",
+      "status": "pass",
+      "message": "The caption is on the extracted page, set in the venue's own caption style."
+    },
+    {
+      "id": "placed_width_matches_target",
+      "status": "pass",
+      "message": "Drawn at 69.85 mm against a 69.85 mm target (0.002% off), measured from the page's own drawing transform.",
+      "detail": {
+        "placed_width_mm": 69.851,
+        "target_width_mm": 69.85,
+        "relative_error": 1.9e-05
+      }
+    },
+    {
+      "id": "figure_render_checks",
+      "status": "not_checked",
+      "message": "The figure was placed as it came, so render.py's own checks were not re-run at this width."
+    },
+    {
+      "id": "effective_type_size",
+      "status": "warn",
+      "message": "Placed at scale 0.8218: 9.0 pt axis labels print at 7.40 pt, 8.0 pt ticks at 6.57 pt, 1.20 pt data lines at 0.986 pt. Whether that is legible is a judgement, not a rule — this check reports the numbers and does not set a threshold.",
+      "detail": {
+        "scale": 0.82178,
+        "source": {
+          "axis_label_pt": 9.0,
+          "tick_pt": 8.0,
+          "legend_pt": 8.0,
+          "title_pt": 10.0,
+          "data_linewidth_pt": 1.2
+        },
+        "effective": {
+          "axis_label_pt": 7.396,
+          "tick_pt": 6.574,
+          "legend_pt": 6.574,
+          "title_pt": 8.218,
+          "data_linewidth_pt": 0.986
+        }
+      }
+    },
+    {
+      "id": "single_page_output",
+      "status": "pass",
+      "message": "page.pdf is exactly one page, 215.9 x 279.4 mm — the full body page, uncropped.",
+      "detail": {
+        "mediabox_pdf_pt": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "width_pdf_pt": 612.0,
+        "height_pdf_pt": 792.0,
+        "width_mm": 215.9,
+        "height_mm": 279.4
+      }
+    },
+    {
+      "id": "page_size_preserved",
+      "status": "pass",
+      "message": "The extracted page keeps the compiled document's media box exactly."
+    },
+    {
+      "id": "preview_written",
+      "status": "pass",
+      "message": "page.png rasterised from page.pdf at 200 DPI with pdftoppm.",
+      "detail": {
+        "dpi": 200
+      }
+    },
+    {
+      "id": "visual_review",
+      "status": "not_checked",
+      "message": "Open page.png and read the figure against the prose beside it: labels, legend, line weights, white space. No script closes this one, and a clean compile is not a visual pass."
+    }
+  ],
+  "build_artifacts": "The full multi-page PDF, .aux, .log, .bbl and the derived profile live only in a temporary build directory, which is removed on success. Nothing but page.pdf, page.png and this report reaches the output directory.",
+  "preview_caveat": "page.png is a 200 DPI raster and a browser will scale it to fit. That is not the printed size. The physical size is the one in geometry/, measured from the PDF.",
+  "repository": {
+    "note": "Digests of everything that would change this page. If any of them no longer match the files on disk, the committed page is stale; run `python tests/render_conference_context.py --all` to regenerate.",
+    "inputs": {
+      "skills/scientific-figures/assets/templates/bar.py": "138a2c568298a18adaf07bb09308f86827a67b61da5de1b1673ed67c456dbaee",
+      "skills/scientific-figures/assets/templates/line.py": "c74755ec3bd90759e7d22a91403905d9981855f9d471fe8b227bb340fbbfebf0",
+      "skills/scientific-figures/scripts/evaluate_context.py": "bf2169a3e9c8b4e2070ebc11de8f6739d067793fa045e6657e2665928e117ee9",
+      "skills/scientific-figures/scripts/figure_core.py": "69bef7f41e0b9d8d7cb8f50d8c03c348946de3f8422d80b16d89a2b156e87f36",
+      "skills/scientific-figures/scripts/inspect_figure.py": "b75d07d9fc373cbadde488a40f8cfff0b3adadeb5e9634c490c4406ba1e36146",
+      "skills/scientific-figures/scripts/render.py": "9b148209fb2988b5475b06289d8d73a098f234001d43616c272c91a378d6e856",
+      "tests/conference_context/wrappers/iclr2026.tex": "18e17ee34b99a0927f999ae796347ee06fb46b3270f5b176603ff452c0538322",
+      "tests/conference_context/wrappers/measure.tex": "28fe8b515bf6f17693c9c06d547f9f30121299cc9e32afcd7dd64a9ce944a1ae",
+      "tests/fixtures/article-context/body.tex": "c13dce33a8c97032a7ad399faf708123bd8224e6b1234177f9dc77a341d73e7b",
+      "tests/fixtures/article-context/references.bib": "3a2d083fea5413aad1d7e960876e332ba180e580df7404918cbc93b34c7a5015",
+      "tests/fixtures/conferences/iclr2026/fancyhdr.sty": "b56ec4434b9f4607529a4b23dc68ad8d4b94f1f631c8cddaf7da78140d53a5ea",
+      "tests/fixtures/conferences/iclr2026/iclr2026_conference.bst": "2d67552db7ed38ccfccb5957b52f95656e25c249724761d3cf5f7922ad1844c5",
+      "tests/fixtures/conferences/iclr2026/iclr2026_conference.sty": "a4852f68e080d6c5245057ca2039100b409e31727898aa93c03d78ddb84374a3",
+      "tests/fixtures/conferences/iclr2026/natbib.sty": "88bc70c0e48461934cab5b2accef06b74a8b3ac45ad03ccd3f2a6b7e0d6d530d",
+      "tests/fixtures/conferences/manifest.json": "7dc42b0f57d2addfd24c650699ed3366449345b53a06dbde093d4a6d5f10e802",
+      "tests/output/line-multi/figure.pdf": "f251d368a02f3fea3e9b270ea0c93ce67011082437afafd558437c8cd5cc70b9",
+      "tests/output/line-multi/profile.resolved.json": "ee5aec2713d0022cb91686d67c694f56d9470686cdc80659cca74c85181672c1",
+      "tests/output/line-multi/spec.json": "cab12b49c63c33c8a02a23c5f8afbd91f3f46edcd8216982bce2eefc967b6332"
+    }
+  },
+  "case_note": "Regression case: the committed 85 mm figure placed into ICLR's half-width slot with no re-render. Expected to warn — it exists to show the scale factor and the reduced effective type sizes are really measured, not assumed."
+}

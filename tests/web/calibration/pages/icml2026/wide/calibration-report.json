@@ -1,0 +1,315 @@
+{
+  "report_version": "1",
+  "venue": "icml2026",
+  "layout": "wide",
+  "status": "pass",
+  "thresholds_mm": {
+    "paper_size_mm": 0.2,
+    "slot_edge_mm": 0.2,
+    "run_baseline_mm": 0.2,
+    "run_left_edge_mm": 0.2,
+    "run_width_mm": 0.35,
+    "line_count_exact": true
+  },
+  "browser": {
+    "version": "151.0.7922.34",
+    "device_scale_factor": 3.125,
+    "comparison_dpi": 300,
+    "fonts_loaded": [
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "normal",
+        "style": "normal",
+        "status": "loaded"
+      },
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "bold",
+        "style": "normal",
+        "status": "loaded"
+      },
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "normal",
+        "style": "italic",
+        "status": "loaded"
+      },
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "bold",
+        "style": "italic",
+        "status": "unloaded"
+      },
+      {
+        "family": "MPF Nimbus Mono",
+        "weight": "normal",
+        "style": "normal",
+        "status": "unloaded"
+      }
+    ]
+  },
+  "paper_error_mm": {
+    "width": 0.0,
+    "height": 0.0
+  },
+  "slot_error_mm": {
+    "left_error_mm": -0.00364,
+    "top_error_mm": -0.00152,
+    "width_error_mm": -0.00343,
+    "height_error_mm": -0.00086,
+    "expected_mm": [
+      171.4534,
+      105.9582
+    ]
+  },
+  "runs": {
+    "runs_compared": 279,
+    "runs_missing_from_dom": [],
+    "runs_in_dom_but_not_measured": [],
+    "baseline": {
+      "n": 279,
+      "max_mm": 1e-05,
+      "mean_mm": 0.0,
+      "p95_mm": 1e-05,
+      "worst_run": {
+        "index": 182,
+        "text": "Machere",
+        "error_mm": -1e-05
+      }
+    },
+    "left_edge": {
+      "n": 279,
+      "max_mm": 1e-05,
+      "mean_mm": 0.0,
+      "p95_mm": 0.0,
+      "worst_run": {
+        "index": 73,
+        "text": "a",
+        "error_mm": 1e-05
+      }
+    },
+    "width": {
+      "n": 279,
+      "max_mm": 0.02156,
+      "mean_mm": 0.00425,
+      "p95_mm": 0.0131,
+      "worst_run": {
+        "index": 164,
+        "text": "arXiv:1409.3215",
+        "error_mm": -0.02156
+      }
+    },
+    "worst_20_by_width": [
+      {
+        "index": 164,
+        "text": "arXiv:1409.3215",
+        "width_error_mm": -0.02156,
+        "expected_width_mm": 23.9167
+      },
+      {
+        "index": 112,
+        "text": "arXiv:1701.06538",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 134,
+        "text": "arXiv:1503.08895",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 275,
+        "text": "arXiv:1609.08144",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 2,
+        "text": "ypesetting",
+        "width_error_mm": -0.01924,
+        "expected_width_mm": 13.7059
+      },
+      {
+        "index": 58,
+        "text": "surrounding",
+        "width_error_mm": -0.01882,
+        "expected_width_mm": 15.2875
+      },
+      {
+        "index": 78,
+        "text": "submission.",
+        "width_error_mm": -0.01852,
+        "expected_width_mm": 15.0281
+      },
+      {
+        "index": 66,
+        "text": "typographic",
+        "width_error_mm": -0.01808,
+        "expected_width_mm": 15.1104
+      },
+      {
+        "index": 64,
+        "text": "reproduced",
+        "width_error_mm": -0.0175,
+        "expected_width_mm": 14.2278
+      },
+      {
+        "index": 16,
+        "text": "Synthetic",
+        "width_error_mm": -0.01656,
+        "expected_width_mm": 11.9504
+      },
+      {
+        "index": 115,
+        "text": "Sukhbaatar",
+        "width_error_mm": -0.01428,
+        "expected_width_mm": 15.8121
+      },
+      {
+        "index": 127,
+        "text": "End-to-end",
+        "width_error_mm": -0.01428,
+        "expected_width_mm": 15.8121
+      },
+      {
+        "index": 105,
+        "text": "mixture-of-e",
+        "width_error_mm": -0.01357,
+        "expected_width_mm": 17.7627
+      },
+      {
+        "index": 96,
+        "text": "Outrageously",
+        "width_error_mm": -0.01336,
+        "expected_width_mm": 18.9366
+      },
+      {
+        "index": 271,
+        "text": "translation.",
+        "width_error_mm": -0.0131,
+        "expected_width_mm": 15.7172
+      },
+      {
+        "index": 36,
+        "text": "template",
+        "width_error_mm": -0.01289,
+        "expected_width_mm": 10.8939
+      },
+      {
+        "index": 152,
+        "text": "Sequence",
+        "width_error_mm": -0.01272,
+        "expected_width_mm": 13.4679
+      },
+      {
+        "index": 63,
+        "text": "xcerpt",
+        "width_error_mm": -0.0113,
+        "expected_width_mm": 7.9047
+      },
+      {
+        "index": 11,
+        "text": "aluation",
+        "width_error_mm": -0.01129,
+        "expected_width_mm": 11.0742
+      },
+      {
+        "index": 3,
+        "text": "Fixtur",
+        "width_error_mm": -0.01113,
+        "expected_width_mm": 8.6101
+      }
+    ]
+  },
+  "image_difference": {
+    "pixels": 8415000,
+    "mean_absolute_difference": 1.8064,
+    "pixels_over": {
+      "16": 160459,
+      "32": 122986,
+      "64": 84565,
+      "128": 42444
+    },
+    "fraction_over": {
+      "16": 0.01906821,
+      "32": 0.01461509,
+      "64": 0.01004932,
+      "128": 0.00504385
+    },
+    "max_difference": 255,
+    "ink_coverage": {
+      "baseline": 0.017122,
+      "browser": 0.016868,
+      "ratio": 0.98517
+    },
+    "alignment": {
+      "best_offset_px": [
+        0,
+        0
+      ],
+      "best_mean_difference": 1.80641,
+      "zero_offset_mean_difference": 1.80641,
+      "zero_offset_is_best": true,
+      "pixel_mm": 0.08467
+    },
+    "masked": "the inside of the figure slot only, inset 1 pt; the slot's edges, the caption and all surrounding text are compared",
+    "note": "Anti-aliasing makes a small non-zero difference unavoidable even for a perfect match, which is why the geometry numbers above — measured from the DOM against the PDF, not from the pixels — are what the thresholds apply to. A whole-page similarity score is deliberately not used: these pages are mostly white, and white agrees with white."
+  },
+  "outputs": {
+    "baseline_png": "tests/web/calibration/pages/icml2026/wide/baseline.png",
+    "browser_png": "tests/web/calibration/pages/icml2026/wide/browser.png",
+    "overlay_png": "tests/web/calibration/pages/icml2026/wide/overlay.png",
+    "difference_png": "tests/web/calibration/pages/icml2026/wide/difference.png",
+    "overlay_legend": "baseline in red, browser in blue; anything that lines up is black",
+    "image_dpi": 150,
+    "image_note": "These are written at 150 DPI for review. Every measurement above was made at 300 DPI, before any downsampling."
+  },
+  "checks": [
+    {
+      "id": "paper_size",
+      "passed": true,
+      "detail": "sheet is 215.900 x 279.400 mm"
+    },
+    {
+      "id": "raster_sizes_agree",
+      "passed": true,
+      "detail": "browser (2550, 3300) vs pdf (2550, 3300) pixels"
+    },
+    {
+      "id": "every_run_present",
+      "passed": true,
+      "detail": "0 run(s) missing from the DOM"
+    },
+    {
+      "id": "run_baselines",
+      "passed": true,
+      "detail": "worst baseline error 1e-05 mm"
+    },
+    {
+      "id": "run_left_edges",
+      "passed": true,
+      "detail": "worst left-edge error 1e-05 mm"
+    },
+    {
+      "id": "run_widths",
+      "passed": true,
+      "detail": "worst width error 0.02156 mm"
+    },
+    {
+      "id": "slot_rectangle",
+      "passed": true,
+      "detail": "worst slot edge error 0.0036 mm"
+    },
+    {
+      "id": "no_page_errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "no_raster_drift",
+      "passed": true,
+      "detail": "the best whole-image alignment is [0, 0] px = 0.0000 mm"
+    }
+  ]
+}

@@ -1,0 +1,315 @@
+{
+  "report_version": "1",
+  "venue": "icml2026",
+  "layout": "narrow",
+  "status": "pass",
+  "thresholds_mm": {
+    "paper_size_mm": 0.2,
+    "slot_edge_mm": 0.2,
+    "run_baseline_mm": 0.2,
+    "run_left_edge_mm": 0.2,
+    "run_width_mm": 0.35,
+    "line_count_exact": true
+  },
+  "browser": {
+    "version": "151.0.7922.34",
+    "device_scale_factor": 3.125,
+    "comparison_dpi": 300,
+    "fonts_loaded": [
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "normal",
+        "style": "normal",
+        "status": "loaded"
+      },
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "bold",
+        "style": "normal",
+        "status": "loaded"
+      },
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "normal",
+        "style": "italic",
+        "status": "loaded"
+      },
+      {
+        "family": "MPF Nimbus Roman",
+        "weight": "bold",
+        "style": "italic",
+        "status": "unloaded"
+      },
+      {
+        "family": "MPF Nimbus Mono",
+        "weight": "normal",
+        "style": "normal",
+        "status": "unloaded"
+      }
+    ]
+  },
+  "paper_error_mm": {
+    "width": 0.0,
+    "height": 0.0
+  },
+  "slot_error_mm": {
+    "left_error_mm": -0.00364,
+    "top_error_mm": -0.00187,
+    "width_error_mm": 0.0,
+    "height_error_mm": -0.00093,
+    "expected_mm": [
+      82.55,
+      51.0159
+    ]
+  },
+  "runs": {
+    "runs_compared": 802,
+    "runs_missing_from_dom": [],
+    "runs_in_dom_but_not_measured": [],
+    "baseline": {
+      "n": 802,
+      "max_mm": 1e-05,
+      "mean_mm": 0.0,
+      "p95_mm": 1e-05,
+      "worst_run": {
+        "index": 767,
+        "text": "Oord,",
+        "error_mm": 1e-05
+      }
+    },
+    "left_edge": {
+      "n": 802,
+      "max_mm": 1e-05,
+      "mean_mm": 0.0,
+      "p95_mm": 1e-05,
+      "worst_run": {
+        "index": 636,
+        "text": ",",
+        "error_mm": 1e-05
+      }
+    },
+    "width": {
+      "n": 802,
+      "max_mm": 0.02156,
+      "mean_mm": 0.00457,
+      "p95_mm": 0.01337,
+      "worst_run": {
+        "index": 486,
+        "text": "arXiv:1409.0473",
+        "error_mm": -0.02156
+      }
+    },
+    "worst_20_by_width": [
+      {
+        "index": 486,
+        "text": "arXiv:1409.0473",
+        "width_error_mm": -0.02156,
+        "expected_width_mm": 23.9167
+      },
+      {
+        "index": 545,
+        "text": "arXiv:1406.1078",
+        "width_error_mm": -0.02156,
+        "expected_width_mm": 23.9167
+      },
+      {
+        "index": 576,
+        "text": "arXiv:1412.3555",
+        "width_error_mm": -0.02156,
+        "expected_width_mm": 23.9167
+      },
+      {
+        "index": 506,
+        "text": "arXiv:1601.06733",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 604,
+        "text": "arXiv:1705.03122",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 708,
+        "text": "arXiv:1602.02410",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 728,
+        "text": "arXiv:1610.08613",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 748,
+        "text": "arXiv:1511.08228",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 787,
+        "text": "arXiv:1610.10099",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 808,
+        "text": "arXiv:1702.00887",
+        "width_error_mm": -0.02048,
+        "expected_width_mm": 25.674
+      },
+      {
+        "index": 288,
+        "text": "Attention",
+        "width_error_mm": -0.01992,
+        "expected_width_mm": 17.1021
+      },
+      {
+        "index": 2,
+        "text": "ypesetting",
+        "width_error_mm": -0.01924,
+        "expected_width_mm": 13.7059
+      },
+      {
+        "index": 80,
+        "text": "submission.",
+        "width_error_mm": -0.01852,
+        "expected_width_mm": 15.0281
+      },
+      {
+        "index": 377,
+        "text": "simultaneously",
+        "width_error_mm": -0.01844,
+        "expected_width_mm": 21.2843
+      },
+      {
+        "index": 128,
+        "text": "summarization,",
+        "width_error_mm": -0.01838,
+        "expected_width_mm": 21.7693
+      },
+      {
+        "index": 68,
+        "text": "typographic",
+        "width_error_mm": -0.01808,
+        "expected_width_mm": 15.1104
+      },
+      {
+        "index": 170,
+        "text": "sequence-aligned",
+        "width_error_mm": -0.01799,
+        "expected_width_mm": 24.3982
+      },
+      {
+        "index": 235,
+        "text": "sequence-aligned",
+        "width_error_mm": -0.01799,
+        "expected_width_mm": 24.3982
+      },
+      {
+        "index": 651,
+        "text": "dependencies.",
+        "width_error_mm": -0.01757,
+        "expected_width_mm": 19.8117
+      },
+      {
+        "index": 123,
+        "text": "comprehension,",
+        "width_error_mm": -0.01751,
+        "expected_width_mm": 22.3528
+      }
+    ]
+  },
+  "image_difference": {
+    "pixels": 8415000,
+    "mean_absolute_difference": 5.5097,
+    "pixels_over": {
+      "16": 475976,
+      "32": 375891,
+      "64": 271756,
+      "128": 137565
+    },
+    "fraction_over": {
+      "16": 0.0565628,
+      "32": 0.04466916,
+      "64": 0.03229424,
+      "128": 0.01634759
+    },
+    "max_difference": 255,
+    "ink_coverage": {
+      "baseline": 0.053896,
+      "browser": 0.054081,
+      "ratio": 1.00343
+    },
+    "alignment": {
+      "best_offset_px": [
+        0,
+        -1
+      ],
+      "best_mean_difference": 5.32177,
+      "zero_offset_mean_difference": 5.50973,
+      "zero_offset_is_best": false,
+      "pixel_mm": 0.08467
+    },
+    "masked": "the inside of the figure slot only, inset 1 pt; the slot's edges, the caption and all surrounding text are compared",
+    "note": "Anti-aliasing makes a small non-zero difference unavoidable even for a perfect match, which is why the geometry numbers above — measured from the DOM against the PDF, not from the pixels — are what the thresholds apply to. A whole-page similarity score is deliberately not used: these pages are mostly white, and white agrees with white."
+  },
+  "outputs": {
+    "baseline_png": "tests/web/calibration/pages/icml2026/narrow/baseline.png",
+    "browser_png": "tests/web/calibration/pages/icml2026/narrow/browser.png",
+    "overlay_png": "tests/web/calibration/pages/icml2026/narrow/overlay.png",
+    "difference_png": "tests/web/calibration/pages/icml2026/narrow/difference.png",
+    "overlay_legend": "baseline in red, browser in blue; anything that lines up is black",
+    "image_dpi": 150,
+    "image_note": "These are written at 150 DPI for review. Every measurement above was made at 300 DPI, before any downsampling."
+  },
+  "checks": [
+    {
+      "id": "paper_size",
+      "passed": true,
+      "detail": "sheet is 215.900 x 279.400 mm"
+    },
+    {
+      "id": "raster_sizes_agree",
+      "passed": true,
+      "detail": "browser (2550, 3300) vs pdf (2550, 3300) pixels"
+    },
+    {
+      "id": "every_run_present",
+      "passed": true,
+      "detail": "0 run(s) missing from the DOM"
+    },
+    {
+      "id": "run_baselines",
+      "passed": true,
+      "detail": "worst baseline error 1e-05 mm"
+    },
+    {
+      "id": "run_left_edges",
+      "passed": true,
+      "detail": "worst left-edge error 1e-05 mm"
+    },
+    {
+      "id": "run_widths",
+      "passed": true,
+      "detail": "worst width error 0.02156 mm"
+    },
+    {
+      "id": "slot_rectangle",
+      "passed": true,
+      "detail": "worst slot edge error 0.0036 mm"
+    },
+    {
+      "id": "no_page_errors",
+      "passed": true,
+      "detail": ""
+    },
+    {
+      "id": "no_raster_drift",
+      "passed": true,
+      "detail": "the best whole-image alignment is [0, -1] px = 0.0847 mm"
+    }
+  ]
+}

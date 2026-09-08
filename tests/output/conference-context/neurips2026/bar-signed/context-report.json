@@ -1,0 +1,445 @@
+{
+  "report_version": "1",
+  "kind": "conference-context",
+  "status": "warn",
+  "counts": {
+    "pass": 12,
+    "warn": 2,
+    "fail": 0,
+    "not_checked": 1
+  },
+  "case": "bar-signed",
+  "venue": {
+    "id": "neurips2026",
+    "name": "NeurIPS 2026",
+    "year": 2026,
+    "mode": "final",
+    "mode_syntax": "\\usepackage[main, final]{neurips_2026}",
+    "columns": 1,
+    "target_width_rule": "0.5 * linewidth_at_insertion_point",
+    "target_width_factor": 0.5,
+    "bibliography_style": "plainnat"
+  },
+  "layout": {
+    "id": "narrow",
+    "label": "half the text width",
+    "float_environment": "figure",
+    "target_width_rule": "0.5 * linewidth_at_insertion_point",
+    "target_width_factor": 0.5,
+    "target_width_basis": "linewidth_at_insertion_point",
+    "note": "The width mode this page was produced in. The factor is applied to the \\linewidth measured inside this float, so a figure* getting \\textwidth and an ordinary figure getting \\columnwidth is the template's arithmetic, not a constant written here.",
+    "measured_float_environment": "figure"
+  },
+  "fixtures": {
+    "manifest": "/home/cbhua/github/matplotlib-prefab/tests/fixtures/conferences/manifest.json",
+    "manifest_sha256": "7dc42b0f57d2addfd24c650699ed3366449345b53a06dbde093d4a6d5f10e802",
+    "wrapper": "/home/cbhua/github/matplotlib-prefab/tests/conference_context/wrappers/neurips2026.tex",
+    "wrapper_sha256": "a6bd8672d5c9232eb01395eadfd7bf563e27a23d663d83125ac44453518383c6",
+    "measure": "/home/cbhua/github/matplotlib-prefab/tests/conference_context/wrappers/measure.tex",
+    "measure_sha256": "28fe8b515bf6f17693c9c06d547f9f30121299cc9e32afcd7dd64a9ce944a1ae",
+    "body": "/home/cbhua/github/matplotlib-prefab/tests/fixtures/article-context/body.tex",
+    "body_sha256": "c13dce33a8c97032a7ad399faf708123bd8224e6b1234177f9dc77a341d73e7b",
+    "references": "/home/cbhua/github/matplotlib-prefab/tests/fixtures/article-context/references.bib",
+    "references_sha256": "3a2d083fea5413aad1d7e960876e332ba180e580df7404918cbc93b34c7a5015",
+    "venue_files": [
+      {
+        "path": "neurips_2026.sty",
+        "sha256": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a"
+      }
+    ]
+  },
+  "template": {
+    "columns": 1,
+    "paperwidth_mm": 215.9,
+    "paperheight_mm": 279.4,
+    "textwidth_tex_pt": 397.48499,
+    "textwidth_mm": 139.7,
+    "columnwidth_tex_pt": 397.48499,
+    "columnwidth_mm": 139.7,
+    "columnsep_tex_pt": 10.0,
+    "float_linewidth_tex_pt": 397.48499,
+    "float_linewidth_mm": 139.7,
+    "body_font_size_pt": 10.0,
+    "body_baselineskip_tex_pt": 10.95,
+    "caption_font_size_pt": 10.0,
+    "measured_by": "TeX, inside the compiled document at the figure's insertion point",
+    "units": "lengths named _tex_pt are TeX points (72.27/in); font sizes are the printed pt of the typeface"
+  },
+  "figure_source": {
+    "mode": "rendered-to-template-width",
+    "spec": "/home/cbhua/github/matplotlib-prefab/tests/data/bar-signed.json",
+    "spec_sha256": "bd85cb51fb3986d1d93dfc14aa6e0c2981dcf8929e553bafbcb378e0390c3657",
+    "base_profile": "/home/cbhua/github/matplotlib-prefab/skills/scientific-figures/references/profiles/single-column.json",
+    "base_profile_name": "single-column",
+    "derived_profile": {
+      "profile_version": "0.1.0",
+      "name": "single-column-context",
+      "status": "provisional",
+      "note": "Derived by evaluate_context.py from 'single-column' for one context evaluation: canvas.width_mm was set to the width measured in the target template and nothing else was changed. Not a new default; the repository profile is untouched.",
+      "canvas": {
+        "width_mm": 69.85,
+        "aspect_ratio": 0.618,
+        "background": "#FFFFFF"
+      },
+      "fonts": {
+        "family": "DejaVu Sans",
+        "fallbacks": [],
+        "weight": "normal",
+        "mathtext_fontset": "dejavusans",
+        "size_axis_label_pt": 9.0,
+        "size_tick_pt": 8.0,
+        "size_legend_pt": 8.0,
+        "size_title_pt": 10.0
+      },
+      "colors": {
+        "categorical": [
+          "#4477AA",
+          "#EE6677",
+          "#228833",
+          "#CCBB44",
+          "#66CCEE",
+          "#AA3377"
+        ],
+        "text": "#000000",
+        "axes": "#000000",
+        "grid": "#B0B0B0"
+      },
+      "lines": {
+        "data_linewidth_pt": 1.2,
+        "axes_linewidth_pt": 0.6,
+        "tick_linewidth_pt": 0.6,
+        "tick_length_pt": 2.5,
+        "tick_pad_pt": 2.0,
+        "markers_enabled": true,
+        "marker_size_pt": 4.0,
+        "max_markers_per_series": 12,
+        "markers": [
+          "o",
+          "s",
+          "^",
+          "D",
+          "v",
+          "P"
+        ],
+        "dash_patterns": [
+          "solid",
+          "dashed",
+          "dotted",
+          "dashdot"
+        ]
+      },
+      "axes": {
+        "max_xticks": 6,
+        "max_yticks": 6,
+        "spine_top": false,
+        "spine_right": false,
+        "margin_x": 0.02,
+        "margin_y": 0.05,
+        "grid_enabled": true,
+        "grid_axis": "y",
+        "grid_alpha": 0.3,
+        "grid_linewidth_pt": 0.5,
+        "grid_linestyle": ":"
+      },
+      "bar": {
+        "width_fraction": 0.7,
+        "edge_linewidth_pt": 0.0,
+        "zero_line_linewidth_pt": 0.6,
+        "category_label_rotation_deg": 0.0
+      },
+      "legend": {
+        "show_for_single_series": false,
+        "location": "best",
+        "frame": false,
+        "columns": 1,
+        "handlelength": 1.8,
+        "border_pad": 0.3,
+        "label_spacing": 0.3
+      },
+      "layout": {
+        "engine": "constrained",
+        "pad_pt": 1.5
+      },
+      "output": {
+        "write_pdf": true,
+        "write_png": true,
+        "png_dpi": 300
+      }
+    },
+    "figure_status": "warn",
+    "figure_checks": [
+      {
+        "id": "text_within_canvas",
+        "status": "warn",
+        "message": "1 text element(s) extend past the canvas and will be clipped in the exported files. Shorten the label, rotate tick labels, or raise profile.canvas.width_mm."
+      },
+      {
+        "id": "tick_label_overlap",
+        "status": "warn",
+        "message": "2 neighbouring tick-label pair(s) overlap. This is a bounding-box heuristic: rotate the labels (profile.bar.category_label_rotation_deg), lower profile.axes.max_xticks, shorten the labels, or widen the canvas."
+      }
+    ]
+  },
+  "geometry": {
+    "units": "PDF points are 72/in; TeX points are 72.27/in; mm is the physical size",
+    "target_width_tex_pt": 198.7425,
+    "target_width_pdf_pt": 198.0,
+    "target_width_mm": 69.85,
+    "source_pdf_width_pdf_pt": 198.0,
+    "source_pdf_width_mm": 69.85,
+    "source_pdf_height_mm": 43.167,
+    "placed_width_pdf_pt": 198.0059,
+    "placed_width_mm": 69.852,
+    "placed_height_mm": 43.169,
+    "placed_origin_pdf_pt": [
+      207.0,
+      597.633
+    ],
+    "drawing_matrix": [
+      1.00003,
+      0.0,
+      0.0,
+      1.00003,
+      207.0,
+      597.633
+    ],
+    "scale": 1.00003,
+    "scale_definition": "placed_width / source_pdf_width, both in PDF points, read from the page's drawing transform",
+    "measured_from": "the compiled page's content stream, not the \\includegraphics argument"
+  },
+  "type_sizes": {
+    "body_font_size_pt": 10.0,
+    "caption_font_size_pt": 10.0,
+    "figure_source_pt": {
+      "axis_label_pt": 9.0,
+      "tick_pt": 8.0,
+      "legend_pt": 8.0,
+      "title_pt": 10.0,
+      "data_linewidth_pt": 1.2
+    },
+    "figure_effective_pt": {
+      "axis_label_pt": 9.0,
+      "tick_pt": 8.0,
+      "legend_pt": 8.0,
+      "title_pt": 10.0,
+      "data_linewidth_pt": 1.2
+    },
+    "effective_definition": "source size x scale; None when the figure arrived without a profile",
+    "note": "Reported, not adjudicated. There is no rule here that figure text must match body text."
+  },
+  "page": {
+    "pdf_page_index_zero_based": 2,
+    "printed_page_number": 3,
+    "total_pages_in_full_document": 4,
+    "pages_in_output": 1,
+    "mediabox_pdf_pt": [
+      0.0,
+      0.0,
+      612.0,
+      792.0
+    ],
+    "width_pdf_pt": 612.0,
+    "height_pdf_pt": 792.0,
+    "width_mm": 215.9,
+    "height_mm": 279.4
+  },
+  "outputs": {
+    "page_pdf": "/home/cbhua/github/matplotlib-prefab/tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+    "page_png": "/home/cbhua/github/matplotlib-prefab/tests/output/conference-context/neurips2026/bar-signed/page.png",
+    "png_dpi": 200
+  },
+  "environment": {
+    "python": "3.12.13",
+    "platform": "Linux-7.0.0-14-generic-x86_64-with-glibc2.43",
+    "tools": {
+      "bibtex": "BibTeX 0.99d (TeX Live 2025/Debian)",
+      "latexmk": "Latexmk, John Collins, 15 June 2025. Version 4.87",
+      "pdflatex": "pdfTeX 3.141592653-2.6-1.40.28 (TeX Live 2025/Debian)",
+      "pdftoppm": "I/O Error: Couldn't open file '--version': No such file or directory."
+    }
+  },
+  "reproduce": {
+    "render": "python skills/scientific-figures/scripts/render.py --spec /home/cbhua/github/matplotlib-prefab/tests/data/bar-signed.json --profile <derived: canvas.width_mm=69.850> --output-dir <dir>",
+    "context": "python tests/render_conference_context.py --venue neurips2026 --case bar-signed",
+    "context_layout": "python skills/scientific-figures/scripts/evaluate_context.py --venue neurips2026 --layout narrow --case bar-signed ..."
+  },
+  "checks": [
+    {
+      "id": "dependencies",
+      "status": "pass",
+      "message": "latexmk, pdflatex, bibtex and pdftoppm are all available.",
+      "detail": {
+        "resolved": {
+          "bibtex": "/usr/bin/bibtex",
+          "latexmk": "/usr/bin/latexmk",
+          "pdflatex": "/usr/bin/pdflatex",
+          "pdftoppm": "/usr/bin/pdftoppm"
+        }
+      }
+    },
+    {
+      "id": "compile",
+      "status": "pass",
+      "message": "latexmk built the NeurIPS 2026 wrapper to convergence.",
+      "detail": {
+        "venue": "neurips2026",
+        "mode": "final"
+      }
+    },
+    {
+      "id": "latex_references_resolve",
+      "status": "pass",
+      "message": "Every citation and cross-reference resolved; bibtex ran and converged."
+    },
+    {
+      "id": "latex_boxes",
+      "status": "warn",
+      "message": "1 overfull/underfull box warning(s). Normal in running prose; worth a look only if one names the figure.",
+      "detail": {
+        "warnings": [
+          "Underfull \\hbox (badness 1776) in paragraph at lines 88--92"
+        ]
+      }
+    },
+    {
+      "id": "figure_page_located",
+      "status": "pass",
+      "message": "The figure is drawn exactly once, on PDF page index 2 of 4.",
+      "detail": {
+        "pdf_page_index_zero_based": 2,
+        "total_pages": 4
+      }
+    },
+    {
+      "id": "page_index_consistent",
+      "status": "pass",
+      "message": "TeX shipped the float on printed page 3, which is PDF index 2 — the two locators agree.",
+      "detail": {
+        "printed_page": 3,
+        "pdf_page_index_zero_based": 2
+      }
+    },
+    {
+      "id": "page_is_body_page",
+      "status": "pass",
+      "message": "Page index 2 carries 2603 non-space characters of body text alongside the figure.",
+      "detail": {
+        "pdf_page_index_zero_based": 2,
+        "text_characters": 2603
+      }
+    },
+    {
+      "id": "caption_present",
+      "status": "pass",
+      "message": "The caption is on the extracted page, set in the venue's own caption style."
+    },
+    {
+      "id": "placed_width_matches_target",
+      "status": "pass",
+      "message": "Drawn at 69.85 mm against a 69.85 mm target (0.003% off), measured from the page's own drawing transform.",
+      "detail": {
+        "placed_width_mm": 69.852,
+        "target_width_mm": 69.85,
+        "relative_error": 3e-05
+      }
+    },
+    {
+      "id": "figure_render_checks",
+      "status": "warn",
+      "message": "Drawn at the template's 69.85 mm, the figure's own checks warn: text_within_canvas: 1 text element(s) extend past the canvas and will be clipped in the exported files. Shorten the label, rotate tick labels, or raise profile.canvas.width_mm.; tick_label_overlap: 2 neighbouring tick-label pair(s) overlap. This is a bounding-box heuristic: rotate the labels (profile.bar.category_label_rotation_deg), lower profile.axes.max_xticks, shorten the labels, or widen the canvas.",
+      "detail": {
+        "checks": [
+          {
+            "id": "text_within_canvas",
+            "status": "warn",
+            "message": "1 text element(s) extend past the canvas and will be clipped in the exported files. Shorten the label, rotate tick labels, or raise profile.canvas.width_mm."
+          },
+          {
+            "id": "tick_label_overlap",
+            "status": "warn",
+            "message": "2 neighbouring tick-label pair(s) overlap. This is a bounding-box heuristic: rotate the labels (profile.bar.category_label_rotation_deg), lower profile.axes.max_xticks, shorten the labels, or widen the canvas."
+          }
+        ]
+      }
+    },
+    {
+      "id": "effective_type_size",
+      "status": "pass",
+      "message": "Placed at scale 1.0000, so the figure's 9.0 pt axis labels and 8.0 pt ticks are those sizes on the page.",
+      "detail": {
+        "scale": 1.00003,
+        "source": {
+          "axis_label_pt": 9.0,
+          "tick_pt": 8.0,
+          "legend_pt": 8.0,
+          "title_pt": 10.0,
+          "data_linewidth_pt": 1.2
+        },
+        "effective": {
+          "axis_label_pt": 9.0,
+          "tick_pt": 8.0,
+          "legend_pt": 8.0,
+          "title_pt": 10.0,
+          "data_linewidth_pt": 1.2
+        }
+      }
+    },
+    {
+      "id": "single_page_output",
+      "status": "pass",
+      "message": "page.pdf is exactly one page, 215.9 x 279.4 mm — the full body page, uncropped.",
+      "detail": {
+        "mediabox_pdf_pt": [
+          0.0,
+          0.0,
+          612.0,
+          792.0
+        ],
+        "width_pdf_pt": 612.0,
+        "height_pdf_pt": 792.0,
+        "width_mm": 215.9,
+        "height_mm": 279.4
+      }
+    },
+    {
+      "id": "page_size_preserved",
+      "status": "pass",
+      "message": "The extracted page keeps the compiled document's media box exactly."
+    },
+    {
+      "id": "preview_written",
+      "status": "pass",
+      "message": "page.png rasterised from page.pdf at 200 DPI with pdftoppm.",
+      "detail": {
+        "dpi": 200
+      }
+    },
+    {
+      "id": "visual_review",
+      "status": "not_checked",
+      "message": "Open page.png and read the figure against the prose beside it: labels, legend, line weights, white space. No script closes this one, and a clean compile is not a visual pass."
+    }
+  ],
+  "build_artifacts": "The full multi-page PDF, .aux, .log, .bbl and the derived profile live only in a temporary build directory, which is removed on success. Nothing but page.pdf, page.png and this report reaches the output directory.",
+  "preview_caveat": "page.png is a 200 DPI raster and a browser will scale it to fit. That is not the printed size. The physical size is the one in geometry/, measured from the PDF.",
+  "repository": {
+    "note": "Digests of everything that would change this page. If any of them no longer match the files on disk, the committed page is stale; run `python tests/render_conference_context.py --all` to regenerate.",
+    "inputs": {
+      "skills/scientific-figures/assets/templates/bar.py": "138a2c568298a18adaf07bb09308f86827a67b61da5de1b1673ed67c456dbaee",
+      "skills/scientific-figures/assets/templates/line.py": "c74755ec3bd90759e7d22a91403905d9981855f9d471fe8b227bb340fbbfebf0",
+      "skills/scientific-figures/references/profiles/single-column.json": "f620de66b19f0ea6db00b82c177363bb5d24298877b5dbcae2d585982ce7fee6",
+      "skills/scientific-figures/scripts/evaluate_context.py": "bf2169a3e9c8b4e2070ebc11de8f6739d067793fa045e6657e2665928e117ee9",
+      "skills/scientific-figures/scripts/figure_core.py": "69bef7f41e0b9d8d7cb8f50d8c03c348946de3f8422d80b16d89a2b156e87f36",
+      "skills/scientific-figures/scripts/inspect_figure.py": "b75d07d9fc373cbadde488a40f8cfff0b3adadeb5e9634c490c4406ba1e36146",
+      "skills/scientific-figures/scripts/render.py": "9b148209fb2988b5475b06289d8d73a098f234001d43616c272c91a378d6e856",
+      "tests/conference_context/wrappers/measure.tex": "28fe8b515bf6f17693c9c06d547f9f30121299cc9e32afcd7dd64a9ce944a1ae",
+      "tests/conference_context/wrappers/neurips2026.tex": "a6bd8672d5c9232eb01395eadfd7bf563e27a23d663d83125ac44453518383c6",
+      "tests/data/bar-signed.json": "bd85cb51fb3986d1d93dfc14aa6e0c2981dcf8929e553bafbcb378e0390c3657",
+      "tests/fixtures/article-context/body.tex": "c13dce33a8c97032a7ad399faf708123bd8224e6b1234177f9dc77a341d73e7b",
+      "tests/fixtures/article-context/references.bib": "3a2d083fea5413aad1d7e960876e332ba180e580df7404918cbc93b34c7a5015",
+      "tests/fixtures/conferences/manifest.json": "7dc42b0f57d2addfd24c650699ed3366449345b53a06dbde093d4a6d5f10e802",
+      "tests/fixtures/conferences/neurips2026/neurips_2026.sty": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a"
+    }
+  },
+  "case_note": "Bars crossing zero with named categories — the case where the category labels run out of room first."
+}

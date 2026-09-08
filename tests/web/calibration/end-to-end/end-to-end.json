@@ -1,0 +1,2135 @@
+{
+  "report_version": "1",
+  "kind": "end-to-end-pages",
+  "status": "pass",
+  "claim": "A page previewed in the browser and the same page compiled by the venue's own LaTeX from the browser's export are the same page, figure included.",
+  "not_claimed": "This says nothing about *your* paper: your float may land elsewhere, your macros may differ, and your data will change the figure's own layout. It says the tool's page and the template's page agree.",
+  "thresholds": {
+    "alignment_mm": 0.2,
+    "placed_width_mm": 0.2,
+    "ink_ratio_range": [
+      0.9,
+      1.1
+    ]
+  },
+  "comparison_dpi": 300,
+  "browser_environment": {
+    "python": "3.13.2",
+    "matplotlib": "3.8.4",
+    "numpy": "2.2.5",
+    "backend": "svg",
+    "platform": "emscripten",
+    "renderer": "figure_core.render_to_svg",
+    "svg_hashsalt": "matplotlib-prefab"
+  },
+  "cases": [
+    {
+      "id": "default-line-multi",
+      "venue": "iclr2026",
+      "layout": "narrow",
+      "example": "line-multi",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 69.8520 mm; the browser drew 69.8500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0066"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 69.85,
+        "browser_height_mm": 43.1673,
+        "placed_width_mm": 69.852,
+        "scale": 1.00003,
+        "slot_width_mm": 69.8521
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 4.2552,
+        "pixels_over": {
+          "16": 375115,
+          "32": 294252,
+          "64": 212677,
+          "128": 103650
+        },
+        "fraction_over": {
+          "16": 0.04457695,
+          "32": 0.03496756,
+          "64": 0.02527356,
+          "128": 0.01231729
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.043286,
+          "browser": 0.04357,
+          "ratio": 1.00656
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 4.25517,
+          "zero_offset_mean_difference": 4.25517,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/iclr2026/narrow/default-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/iclr2026/narrow/default-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-bar-signed",
+      "venue": "iclr2026",
+      "layout": "narrow",
+      "example": "bar-signed",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 69.8520 mm; the browser drew 69.8500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0068"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 69.85,
+        "browser_height_mm": 43.1673,
+        "placed_width_mm": 69.852,
+        "scale": 1.00003,
+        "slot_width_mm": 69.8521
+      },
+      "render_status": "warn",
+      "render_warnings": [
+        {
+          "id": "text_within_canvas",
+          "status": "warn",
+          "message": "1 text element(s) extend past the canvas and will be clipped in the exported files. Shorten the label, rotate tick labels, or raise profile.canvas.width_mm."
+        },
+        {
+          "id": "tick_label_overlap",
+          "status": "warn",
+          "message": "2 neighbouring tick-label pair(s) overlap. This is a bounding-box heuristic: rotate the labels (profile.bar.category_label_rotation_deg), lower profile.axes.max_xticks, shorten the labels, or widen the canvas."
+        }
+      ],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 4.1359,
+        "pixels_over": {
+          "16": 363967,
+          "32": 285207,
+          "64": 205324,
+          "128": 100811
+        },
+        "fraction_over": {
+          "16": 0.04325217,
+          "32": 0.03389269,
+          "64": 0.02439976,
+          "128": 0.01197992
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.046272,
+          "browser": 0.046588,
+          "ratio": 1.00683
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 4.13585,
+          "zero_offset_mean_difference": 4.13585,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-bar-signed/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-bar-signed/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-bar-signed/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/iclr2026/narrow/default-bar-signed/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/iclr2026/narrow/default-bar-signed/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/iclr2026/narrow/default-bar-signed/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-line-multi",
+      "venue": "iclr2026",
+      "layout": "wide",
+      "example": "line-multi",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 139.7040 mm; the browser drew 139.7000 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0013"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 139.7,
+        "browser_height_mm": 86.3346,
+        "placed_width_mm": 139.704,
+        "scale": 1.00003,
+        "slot_width_mm": 139.7042
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 3.6222,
+        "pixels_over": {
+          "16": 309273,
+          "32": 243752,
+          "64": 180261,
+          "128": 90930
+        },
+        "fraction_over": {
+          "16": 0.03675258,
+          "32": 0.02896637,
+          "64": 0.02142139,
+          "128": 0.0108057
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.03419,
+          "browser": 0.034235,
+          "ratio": 1.00132
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 3.62219,
+          "zero_offset_mean_difference": 3.62219,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/iclr2026/wide/default-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/iclr2026/wide/default-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-bar-signed",
+      "venue": "iclr2026",
+      "layout": "wide",
+      "example": "bar-signed",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 139.7040 mm; the browser drew 139.7000 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0022"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 139.7,
+        "browser_height_mm": 86.3346,
+        "placed_width_mm": 139.704,
+        "scale": 1.00003,
+        "slot_width_mm": 139.7042
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 3.4104,
+        "pixels_over": {
+          "16": 287101,
+          "32": 228000,
+          "64": 166808,
+          "128": 86024
+        },
+        "fraction_over": {
+          "16": 0.03411777,
+          "32": 0.02709447,
+          "64": 0.0198227,
+          "128": 0.0102227
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.053914,
+          "browser": 0.054033,
+          "ratio": 1.00221
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 3.41045,
+          "zero_offset_mean_difference": 3.41045,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-bar-signed/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-bar-signed/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-bar-signed/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/iclr2026/wide/default-bar-signed/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/iclr2026/wide/default-bar-signed/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/iclr2026/wide/default-bar-signed/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "tuned-line-multi",
+      "venue": "iclr2026",
+      "layout": "narrow",
+      "example": "line-multi",
+      "controls": {
+        "fonts.size_xtick_pt": 6.5,
+        "fonts.weight_x_label": "bold",
+        "lines.data_linewidth_pt": 1.8
+      },
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 69.8520 mm; the browser drew 69.8500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0065"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 69.85,
+        "browser_height_mm": 43.1673,
+        "placed_width_mm": 69.852,
+        "scale": 1.00003,
+        "slot_width_mm": 69.8521
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 4.1782,
+        "pixels_over": {
+          "16": 372068,
+          "32": 291160,
+          "64": 209579,
+          "128": 101130
+        },
+        "fraction_over": {
+          "16": 0.04421485,
+          "32": 0.03460012,
+          "64": 0.02490541,
+          "128": 0.01201783
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.043763,
+          "browser": 0.044049,
+          "ratio": 1.00654
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 4.17821,
+          "zero_offset_mean_difference": 4.17821,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "bold"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 6.5,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/iclr2026/narrow/tuned-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/iclr2026/narrow/tuned-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/iclr2026/narrow/tuned-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/iclr2026/narrow/tuned-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/iclr2026/narrow/tuned-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/iclr2026/narrow/tuned-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-line-multi",
+      "venue": "neurips2026",
+      "layout": "narrow",
+      "example": "line-multi",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 69.8520 mm; the browser drew 69.8500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0157"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 69.85,
+        "browser_height_mm": 43.1673,
+        "placed_width_mm": 69.852,
+        "scale": 1.00003,
+        "slot_width_mm": 69.8521
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 4.2035,
+        "pixels_over": {
+          "16": 370388,
+          "32": 291423,
+          "64": 210755,
+          "128": 103484
+        },
+        "fraction_over": {
+          "16": 0.04401521,
+          "32": 0.03463137,
+          "64": 0.02504516,
+          "128": 0.01229756
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.042379,
+          "browser": 0.043045,
+          "ratio": 1.01572
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 4.20346,
+          "zero_offset_mean_difference": 4.20346,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/neurips2026/narrow/default-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/neurips2026/narrow/default-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-bar-signed",
+      "venue": "neurips2026",
+      "layout": "narrow",
+      "example": "bar-signed",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 69.8520 mm; the browser drew 69.8500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0153"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 69.85,
+        "browser_height_mm": 43.1673,
+        "placed_width_mm": 69.852,
+        "scale": 1.00003,
+        "slot_width_mm": 69.8521
+      },
+      "render_status": "warn",
+      "render_warnings": [
+        {
+          "id": "text_within_canvas",
+          "status": "warn",
+          "message": "1 text element(s) extend past the canvas and will be clipped in the exported files. Shorten the label, rotate tick labels, or raise profile.canvas.width_mm."
+        },
+        {
+          "id": "tick_label_overlap",
+          "status": "warn",
+          "message": "2 neighbouring tick-label pair(s) overlap. This is a bounding-box heuristic: rotate the labels (profile.bar.category_label_rotation_deg), lower profile.axes.max_xticks, shorten the labels, or widen the canvas."
+        }
+      ],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 4.1289,
+        "pixels_over": {
+          "16": 359904,
+          "32": 283314,
+          "64": 204503,
+          "128": 102164
+        },
+        "fraction_over": {
+          "16": 0.04276934,
+          "32": 0.03366774,
+          "64": 0.0243022,
+          "128": 0.0121407
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.045362,
+          "browser": 0.046057,
+          "ratio": 1.01532
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 4.12887,
+          "zero_offset_mean_difference": 4.12887,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-bar-signed/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-bar-signed/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-bar-signed/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/neurips2026/narrow/default-bar-signed/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/neurips2026/narrow/default-bar-signed/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/neurips2026/narrow/default-bar-signed/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-line-multi",
+      "venue": "neurips2026",
+      "layout": "wide",
+      "example": "line-multi",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 139.7040 mm; the browser drew 139.7000 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0140"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 139.7,
+        "browser_height_mm": 86.3346,
+        "placed_width_mm": 139.704,
+        "scale": 1.00003,
+        "slot_width_mm": 139.7042
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 3.5604,
+        "pixels_over": {
+          "16": 307656,
+          "32": 242617,
+          "64": 179112,
+          "128": 89379
+        },
+        "fraction_over": {
+          "16": 0.03656043,
+          "32": 0.02883149,
+          "64": 0.02128485,
+          "128": 0.01062139
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.03317,
+          "browser": 0.033633,
+          "ratio": 1.01396
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 3.56044,
+          "zero_offset_mean_difference": 3.56044,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/neurips2026/wide/default-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/neurips2026/wide/default-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-bar-signed",
+      "venue": "neurips2026",
+      "layout": "wide",
+      "example": "bar-signed",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 139.7040 mm; the browser drew 139.7000 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0105"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 139.7,
+        "browser_height_mm": 86.3346,
+        "placed_width_mm": 139.704,
+        "scale": 1.00003,
+        "slot_width_mm": 139.7042
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 3.3891,
+        "pixels_over": {
+          "16": 285700,
+          "32": 227418,
+          "64": 166616,
+          "128": 85658
+        },
+        "fraction_over": {
+          "16": 0.03395128,
+          "32": 0.02702531,
+          "64": 0.01979988,
+          "128": 0.0101792
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.05289,
+          "browser": 0.053445,
+          "ratio": 1.01049
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 3.38907,
+          "zero_offset_mean_difference": 3.38907,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-bar-signed/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-bar-signed/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-bar-signed/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/neurips2026/wide/default-bar-signed/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/neurips2026/wide/default-bar-signed/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/neurips2026/wide/default-bar-signed/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "tuned-line-multi",
+      "venue": "neurips2026",
+      "layout": "narrow",
+      "example": "line-multi",
+      "controls": {
+        "fonts.size_y_label_pt": 11.0,
+        "fonts.size_ytick_pt": 6.0,
+        "axes.grid_alpha": 0.8
+      },
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 69.8520 mm; the browser drew 69.8500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00003"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, 0] px = 0.0000 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0154"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 69.85,
+        "browser_height_mm": 43.1673,
+        "placed_width_mm": 69.852,
+        "scale": 1.00003,
+        "slot_width_mm": 69.8521
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 3,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 4.2389,
+        "pixels_over": {
+          "16": 374392,
+          "32": 295453,
+          "64": 212299,
+          "128": 103570
+        },
+        "fraction_over": {
+          "16": 0.04449103,
+          "32": 0.03511028,
+          "64": 0.02522864,
+          "128": 0.01230778
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.042474,
+          "browser": 0.043129,
+          "ratio": 1.01542
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            0
+          ],
+          "best_mean_difference": 4.23894,
+          "zero_offset_mean_difference": 4.23894,
+          "zero_offset_is_best": true,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 11,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 6,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/neurips2026/narrow/tuned-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/neurips2026/narrow/tuned-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/neurips2026/narrow/tuned-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/neurips2026/narrow/tuned-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/neurips2026/narrow/tuned-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/neurips2026/narrow/tuned-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-line-multi",
+      "venue": "icml2026",
+      "layout": "narrow",
+      "example": "line-multi",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 82.5500 mm; the browser drew 82.5500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00000"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, -1] px = 0.0847 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 0.9995"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 82.55,
+        "browser_height_mm": 51.0159,
+        "placed_width_mm": 82.55,
+        "scale": 1.0,
+        "slot_width_mm": 82.55
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 2,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 5.8493,
+        "pixels_over": {
+          "16": 495330,
+          "32": 392159,
+          "64": 287378,
+          "128": 148959
+        },
+        "fraction_over": {
+          "16": 0.05886275,
+          "32": 0.04660238,
+          "64": 0.03415068,
+          "128": 0.0177016
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.057055,
+          "browser": 0.057029,
+          "ratio": 0.99954
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            -1
+          ],
+          "best_mean_difference": 5.60156,
+          "zero_offset_mean_difference": 5.84927,
+          "zero_offset_is_best": false,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/icml2026/narrow/default-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/icml2026/narrow/default-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-bar-signed",
+      "venue": "icml2026",
+      "layout": "narrow",
+      "example": "bar-signed",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 82.5500 mm; the browser drew 82.5500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00000"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, -1] px = 0.0847 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0005"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 82.55,
+        "browser_height_mm": 51.0159,
+        "placed_width_mm": 82.55,
+        "scale": 1.0,
+        "slot_width_mm": 82.55
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 2,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 5.7101,
+        "pixels_over": {
+          "16": 484960,
+          "32": 384242,
+          "64": 281253,
+          "128": 144904
+        },
+        "fraction_over": {
+          "16": 0.05763042,
+          "32": 0.04566156,
+          "64": 0.03342282,
+          "128": 0.01721973
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.062074,
+          "browser": 0.062103,
+          "ratio": 1.00047
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            -1
+          ],
+          "best_mean_difference": 5.42062,
+          "zero_offset_mean_difference": 5.71006,
+          "zero_offset_is_best": false,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-bar-signed/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-bar-signed/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-bar-signed/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/icml2026/narrow/default-bar-signed/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/icml2026/narrow/default-bar-signed/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/icml2026/narrow/default-bar-signed/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-line-multi",
+      "venue": "icml2026",
+      "layout": "wide",
+      "example": "line-multi",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 171.4530 mm; the browser drew 171.4500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00002"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, -1] px = 0.0847 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 0.9661"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 171.45,
+        "browser_height_mm": 105.95609999999999,
+        "placed_width_mm": 171.453,
+        "scale": 1.00002,
+        "slot_width_mm": 171.4534
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": null,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 2.2759,
+        "pixels_over": {
+          "16": 188308,
+          "32": 146617,
+          "64": 107713,
+          "128": 58308
+        },
+        "fraction_over": {
+          "16": 0.02237766,
+          "32": 0.01742329,
+          "64": 0.01280012,
+          "128": 0.00692906
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.021975,
+          "browser": 0.021231,
+          "ratio": 0.96614
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            -1
+          ],
+          "best_mean_difference": 2.15632,
+          "zero_offset_mean_difference": 2.2759,
+          "zero_offset_is_best": false,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/icml2026/wide/default-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/icml2026/wide/default-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/icml2026/wide/default-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/icml2026/wide/default-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/icml2026/wide/default-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/icml2026/wide/default-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "default-bar-signed",
+      "venue": "icml2026",
+      "layout": "wide",
+      "example": "bar-signed",
+      "controls": {},
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 171.4530 mm; the browser drew 171.4500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00002"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, -1] px = 0.0847 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 0.9886"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 171.45,
+        "browser_height_mm": 105.95609999999999,
+        "placed_width_mm": 171.453,
+        "scale": 1.00002,
+        "slot_width_mm": 171.4534
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": null,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 2.092,
+        "pixels_over": {
+          "16": 171264,
+          "32": 133823,
+          "64": 100015,
+          "128": 54356
+        },
+        "fraction_over": {
+          "16": 0.02035223,
+          "32": 0.01590291,
+          "64": 0.01188532,
+          "128": 0.00645942
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.05374,
+          "browser": 0.053127,
+          "ratio": 0.98859
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            -1
+          ],
+          "best_mean_difference": 1.95962,
+          "zero_offset_mean_difference": 2.09202,
+          "zero_offset_is_best": false,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 9,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/icml2026/wide/default-bar-signed/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/icml2026/wide/default-bar-signed/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/icml2026/wide/default-bar-signed/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/icml2026/wide/default-bar-signed/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/icml2026/wide/default-bar-signed/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/icml2026/wide/default-bar-signed/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    },
+    {
+      "id": "tuned-line-multi",
+      "venue": "icml2026",
+      "layout": "narrow",
+      "example": "line-multi",
+      "controls": {
+        "fonts.size_x_label_pt": 7.0,
+        "fonts.size_y_label_pt": 7.0,
+        "lines.marker_size_pt": 2.0,
+        "axes.max_yticks": 4
+      },
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_placed_at_slot_width",
+          "passed": true,
+          "detail": "LaTeX placed it at 82.5500 mm; the browser drew 82.5500 mm"
+        },
+        {
+          "id": "placed_at_scale_one",
+          "passed": true,
+          "detail": "scale 1.00000"
+        },
+        {
+          "id": "raster_sizes_agree",
+          "passed": true,
+          "detail": "browser [2550, 3300] vs LaTeX [2550, 3300] pixels"
+        },
+        {
+          "id": "no_page_drift",
+          "passed": true,
+          "detail": "best whole-image alignment [0, -1] px = 0.0847 mm"
+        },
+        {
+          "id": "ink_within_range",
+          "passed": true,
+          "detail": "browser/LaTeX ink coverage ratio 1.0001"
+        },
+        {
+          "id": "context_no_failures",
+          "passed": true,
+          "detail": "context evaluation is warn"
+        }
+      ],
+      "figure": {
+        "browser_width_mm": 82.55,
+        "browser_height_mm": 51.0159,
+        "placed_width_mm": 82.55,
+        "scale": 1.0,
+        "slot_width_mm": 82.55
+      },
+      "render_status": "pass",
+      "render_warnings": [],
+      "context_status": "warn",
+      "context_page": 2,
+      "image": {
+        "pixels": 8415000,
+        "mean_absolute_difference": 5.7457,
+        "pixels_over": {
+          "16": 488837,
+          "32": 386966,
+          "64": 282517,
+          "128": 146285
+        },
+        "fraction_over": {
+          "16": 0.05809115,
+          "32": 0.04598526,
+          "64": 0.03357302,
+          "128": 0.01738384
+        },
+        "max_difference": 255,
+        "ink_coverage": {
+          "latex": 0.056425,
+          "browser": 0.05643,
+          "ratio": 1.00009
+        },
+        "alignment": {
+          "best_offset_px": [
+            0,
+            -1
+          ],
+          "best_mean_difference": 5.59035,
+          "zero_offset_mean_difference": 5.74568,
+          "zero_offset_is_best": false,
+          "pixel_mm": 0.08467
+        }
+      },
+      "raster_sizes": {
+        "latex": [
+          2550,
+          3300
+        ],
+        "browser": [
+          2550,
+          3300
+        ]
+      },
+      "image_dpi": 150,
+      "image_note": "The kept images are 150 DPI for review; the comparison was made at 300 DPI.",
+      "resolved_type": {
+        "x_label": {
+          "size_pt": 7,
+          "weight": "normal"
+        },
+        "y_label": {
+          "size_pt": 7,
+          "weight": "normal"
+        },
+        "xtick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "ytick": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "legend": {
+          "size_pt": 8,
+          "weight": "normal"
+        },
+        "title": {
+          "size_pt": 10,
+          "weight": "normal"
+        }
+      },
+      "outputs": {
+        "browser.png": "tests/web/calibration/end-to-end/icml2026/narrow/tuned-line-multi/browser.png",
+        "page.png": "tests/web/calibration/end-to-end/icml2026/narrow/tuned-line-multi/page.png",
+        "overlay.png": "tests/web/calibration/end-to-end/icml2026/narrow/tuned-line-multi/overlay.png",
+        "difference.png": "tests/web/calibration/end-to-end/icml2026/narrow/tuned-line-multi/difference.png",
+        "page.pdf": "tests/web/calibration/end-to-end/icml2026/narrow/tuned-line-multi/page.pdf",
+        "context-report.json": "tests/web/calibration/end-to-end/icml2026/narrow/tuned-line-multi/context-report.json"
+      },
+      "outputs_legend": {
+        "browser.png": "the tool's own sheet, screenshotted",
+        "page.png": "the LaTeX page it is being compared with",
+        "overlay.png": "LaTeX in red, browser in blue; agreement is magenta",
+        "difference.png": "per-pixel difference, inverted",
+        "page.pdf": "the compiled page itself, at full fidelity"
+      }
+    }
+  ],
+  "page_errors": [],
+  "repository": {
+    "note": "Digests of everything that would change this report. If any of them no longer match the files on disk, this report describes a version of the tool that is no longer here; run `python scripts/build_and_verify_web.py` to regenerate the evidence.",
+    "inputs": {
+      "skills/scientific-figures/scripts/figure_core.py": "69bef7f41e0b9d8d7cb8f50d8c03c348946de3f8422d80b16d89a2b156e87f36",
+      "skills/scientific-figures/scripts/render.py": "9b148209fb2988b5475b06289d8d73a098f234001d43616c272c91a378d6e856",
+      "skills/scientific-figures/scripts/inspect_figure.py": "b75d07d9fc373cbadde488a40f8cfff0b3adadeb5e9634c490c4406ba1e36146",
+      "skills/scientific-figures/scripts/evaluate_context.py": "bf2169a3e9c8b4e2070ebc11de8f6739d067793fa045e6657e2665928e117ee9",
+      "skills/scientific-figures/assets/templates/line.py": "c74755ec3bd90759e7d22a91403905d9981855f9d471fe8b227bb340fbbfebf0",
+      "skills/scientific-figures/assets/templates/bar.py": "138a2c568298a18adaf07bb09308f86827a67b61da5de1b1673ed67c456dbaee",
+      "skills/scientific-figures/references/profiles/single-column.json": "f620de66b19f0ea6db00b82c177363bb5d24298877b5dbcae2d585982ce7fee6",
+      "web/src/app.js": "4d4dd0653fb61f2ee886c59d1b660bc8244d614b1a4028f910170a98d93cef3c",
+      "web/src/paper-page.js": "39849a6a3d54af9ca2fc01a40ca3dda00e863c6cc50e043c77ddcfe9a78791d8",
+      "web/src/paper-page.css": "1c2b63706b89ed240379d1e50eb9194d7447f35fdc0f182aece1e9697ee0eaf4",
+      "web/src/controls.js": "98d9fbd24dab6b8f13646bf2a0ebe1a5e3a9e7860b3af72a22846c64f122c79e",
+      "web/src/export-config.js": "c48dde5f7861a329940a6a40121d059e31085fb2bda7c19a41ac16a5c5d083b8",
+      "web/src/render-worker.js": "de4ec80d0727e1cf2b56898885fc7dca64f85b1a21e9f8b754605e30a440c996",
+      "web/src/python/worker_render.py": "36267e7f138a33407b662ac6ff0aefae6d1d58ef9e5b3d75a40417c54f87eab7",
+      "web/pyodide.lock.json": "596886e67d01fd1e39c095940dc600a60a4356c4acd85800e33b778f5fb14010",
+      "tests/conference_context/wrappers/measure.tex": "28fe8b515bf6f17693c9c06d547f9f30121299cc9e32afcd7dd64a9ce944a1ae",
+      "tests/conference_context/wrappers/iclr2026.tex": "18e17ee34b99a0927f999ae796347ee06fb46b3270f5b176603ff452c0538322",
+      "tests/conference_context/wrappers/neurips2026.tex": "a6bd8672d5c9232eb01395eadfd7bf563e27a23d663d83125ac44453518383c6",
+      "tests/conference_context/wrappers/icml2026.tex": "8566670f1c414a9c758dbfc298bbc11c075aa22ce55c7de1cc3df1e5ff0195c9",
+      "tests/fixtures/article-context/body.tex": "c13dce33a8c97032a7ad399faf708123bd8224e6b1234177f9dc77a341d73e7b",
+      "tests/fixtures/article-context/references.bib": "3a2d083fea5413aad1d7e960876e332ba180e580df7404918cbc93b34c7a5015",
+      "tests/fixtures/conferences/manifest.json": "7dc42b0f57d2addfd24c650699ed3366449345b53a06dbde093d4a6d5f10e802",
+      "tests/data/line-multi.json": "7014c0a99ef202b9967f23bcb59b3f08d8136e37f9a3443c6121ef1ef6ecaf3a",
+      "tests/data/line-single.json": "7b1f50abcd8de7047c912dc2ca6433dcb840ce67703fa93e08ef8d3683d003f1",
+      "tests/data/line-many.json": "63283fd168a704dec2b2b3ee3b0525470d080a74b726bd10fbdeefefc7d7ce4c",
+      "tests/data/bar-signed.json": "bd85cb51fb3986d1d93dfc14aa6e0c2981dcf8929e553bafbcb378e0390c3657",
+      "tests/data/bar-positive.json": "82761f3c6b8d1fff8d329bd9d0f48f75b989fdbbf9553ac9ca70b832b29008a3"
+    }
+  }
+}

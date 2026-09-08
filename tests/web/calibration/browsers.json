@@ -1,0 +1,160 @@
+{
+  "report_version": "1",
+  "kind": "browser-coverage",
+  "status": "pass",
+  "baseline_engine": "chromium",
+  "baseline_note": "The millimetre thresholds in the page calibration were measured against Chromium. Other engines are checked for loading, running Pyodide, drawing at the right physical size and holding the sheet geometry — not for pixel-level agreement with the PDF.",
+  "engines_tested": [
+    "chromium",
+    "firefox"
+  ],
+  "engines_not_tested": [
+    {
+      "engine": "webkit",
+      "reason": "BrowserType.launch: "
+    }
+  ],
+  "coverage_claim": "Only the engines under engines_tested were run. An engine listed under engines_not_tested is unknown here — not working, not broken.",
+  "engines": [
+    {
+      "engine": "chromium",
+      "tested": true,
+      "version": "151.0.7922.34",
+      "boot_seconds": 1.98,
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_drawn",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "figure_at_slot_width",
+          "passed": true,
+          "detail": "82.5500 vs 82.5500 mm"
+        },
+        {
+          "id": "sheet_is_the_right_size",
+          "passed": true,
+          "detail": "[816, 1056] vs [816.0, 1056.0] CSS px"
+        },
+        {
+          "id": "body_text_present",
+          "passed": true,
+          "detail": "802 runs"
+        },
+        {
+          "id": "figure_in_the_slot",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "fonts_loaded",
+          "passed": true,
+          "detail": "3 faces"
+        },
+        {
+          "id": "no_page_errors",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "environment": {
+        "python": "3.13.2",
+        "matplotlib": "3.8.4",
+        "numpy": "2.2.5",
+        "backend": "svg",
+        "platform": "emscripten",
+        "renderer": "figure_core.render_to_svg",
+        "svg_hashsalt": "matplotlib-prefab"
+      },
+      "first_render_ms": 783,
+      "interaction_ms": {
+        "samples": 12,
+        "median": 299.7,
+        "p95": 300.6,
+        "max": 302.6,
+        "target_p95_ms": 500.0,
+        "meets_target": true,
+        "note": "The interaction target is set for the baseline engine. This is a smaller sample than the equivalence run's and is here to show the order of magnitude on this engine, not to certify it."
+      },
+      "sheet_css_px": [
+        816,
+        1056
+      ]
+    },
+    {
+      "engine": "firefox",
+      "tested": true,
+      "version": "153.0",
+      "boot_seconds": 8.73,
+      "status": "pass",
+      "checks": [
+        {
+          "id": "figure_drawn",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "figure_at_slot_width",
+          "passed": true,
+          "detail": "82.5500 vs 82.5500 mm"
+        },
+        {
+          "id": "sheet_is_the_right_size",
+          "passed": true,
+          "detail": "[816, 1056] vs [816.0, 1056.0] CSS px"
+        },
+        {
+          "id": "body_text_present",
+          "passed": true,
+          "detail": "802 runs"
+        },
+        {
+          "id": "figure_in_the_slot",
+          "passed": true,
+          "detail": ""
+        },
+        {
+          "id": "fonts_loaded",
+          "passed": true,
+          "detail": "3 faces"
+        },
+        {
+          "id": "no_page_errors",
+          "passed": true,
+          "detail": ""
+        }
+      ],
+      "environment": {
+        "python": "3.13.2",
+        "matplotlib": "3.8.4",
+        "numpy": "2.2.5",
+        "backend": "svg",
+        "platform": "emscripten",
+        "renderer": "figure_core.render_to_svg",
+        "svg_hashsalt": "matplotlib-prefab"
+      },
+      "first_render_ms": 4835,
+      "interaction_ms": {
+        "samples": 12,
+        "median": 1408.4,
+        "p95": 1417.1,
+        "max": 1417.3,
+        "target_p95_ms": null,
+        "meets_target": null,
+        "note": "The interaction target is set for the baseline engine. This is a smaller sample than the equivalence run's and is here to show the order of magnitude on this engine, not to certify it."
+      },
+      "sheet_css_px": [
+        816,
+        1056
+      ]
+    },
+    {
+      "engine": "webkit",
+      "tested": false,
+      "reason_not_tested": "BrowserType.launch: ",
+      "detail": "This engine could not be launched in this environment, so nothing is known about it here. It is not being reported as working."
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+% Measurement harness, shared by all three venue wrappers.
+%
+% Everything the report says about the *template* is measured here, by the same
+% TeX run that typesets the page — not read out of the style file and not
+% hard-coded in Python. Two probes:
+%
+%   \mpfprobebody   in ordinary body text, immediately before the float. Records
+%                   the page geometry, the margins that place the text block on
+%                   the sheet, the float and caption skips, and the body font as
+%                   they stand at the insertion point.
+%   \mpfprobefloat  inside the float box. Records \linewidth as the float sees
+%                   it, and — with a *deferred* \write, so it fires at shipout —
+%                   the page the float actually landed on.
+%
+% Plus a one-shot patch of \@makecaption that records the caption font size from
+% inside the caption's own font group, which is the only place it is true.
+%
+% Output: \jobname.measures, one `key=value' per line. Lengths are written with
+% TeX's own units, so they are TeX points (72.27 pt/in), NOT PDF points
+% (72 pt/in). The key names say so; evaluate_context.py converts.
+%
+% This file must be \input AFTER the venue style (ICML loads the caption
+% package, which redefines \@makecaption). The \@makecaption patch is deferred
+% to \AtBeginDocument so it wraps whatever definition is finally in force.
+
+\makeatletter
+
+\newwrite\mpf@out
+\immediate\openout\mpf@out=\jobname.measures\relax
+
+\newcommand{\mpfemit}[2]{\immediate\write\mpf@out{#1=#2}}
+
+% ---------------------------------------------------------------- caption font
+\newif\ifmpf@capdone \mpf@capdonefalse
+
+\newcommand{\mpf@capprobe}{%
+  \ifmpf@capdone\else
+    \global\mpf@capdonetrue
+    \mpfemit{caption_font_size_pt}{\f@size}%
+    \mpfemit{caption_baselineskip_tex_pt}{\the\baselineskip}%
+  \fi
+}
+
+% Defined out here with ordinary #1/#2: LaTeX's hook system stores the tokens of
+% an \AtBeginDocument argument verbatim, so a \def written inside the hook would
+% still be carrying its doubled ## when it finally ran. The hook does nothing but
+% swap two control sequences.
+\long\def\mpf@makecaption#1#2{\mpf@origmakecaption{#1}{\mpf@capprobe #2}}
+
+\AtBeginDocument{%
+  \let\mpf@origmakecaption\@makecaption
+  \let\@makecaption\mpf@makecaption
+}
+
+% ------------------------------------------------------------------- the probes
+\newcommand{\mpfprobebody}{%
+  \mpfemit{paperwidth_tex_pt}{\the\paperwidth}%
+  \mpfemit{paperheight_tex_pt}{\the\paperheight}%
+  \mpfemit{textwidth_tex_pt}{\the\textwidth}%
+  \mpfemit{textheight_tex_pt}{\the\textheight}%
+  \mpfemit{columnwidth_tex_pt}{\the\columnwidth}%
+  \mpfemit{columnsep_tex_pt}{\the\columnsep}%
+  \mpfemit{body_linewidth_tex_pt}{\the\linewidth}%
+  \mpfemit{body_font_size_pt}{\f@size}%
+  \mpfemit{body_baselineskip_tex_pt}{\the\baselineskip}%
+  \mpfemit{columns}{\if@twocolumn 2\else 1\fi}%
+  % Where the text block sits on the sheet. LaTeX places its origin one inch in
+  % from the top-left of the paper and then adds these; recording them is what
+  % lets a reproduction check its column positions against the template's own
+  % arithmetic instead of against a number read off a picture.
+  \mpfemit{oddsidemargin_tex_pt}{\the\oddsidemargin}%
+  \mpfemit{evensidemargin_tex_pt}{\the\evensidemargin}%
+  \mpfemit{topmargin_tex_pt}{\the\topmargin}%
+  \mpfemit{headheight_tex_pt}{\the\headheight}%
+  \mpfemit{headsep_tex_pt}{\the\headsep}%
+  \mpfemit{footskip_tex_pt}{\the\footskip}%
+  \mpfemit{parindent_tex_pt}{\the\parindent}%
+  \mpfemit{parskip_tex_pt}{\the\parskip}%
+  \mpfemit{textfloatsep_tex_pt}{\the\textfloatsep}%
+  \mpfemit{intextsep_tex_pt}{\the\intextsep}%
+  \mpfemit{dblfloatsep_tex_pt}{\the\dblfloatsep}%
+  \mpfemit{dbltextfloatsep_tex_pt}{\the\dbltextfloatsep}%
+  \mpfemit{abovecaptionskip_tex_pt}{\the\abovecaptionskip}%
+  \mpfemit{belowcaptionskip_tex_pt}{\the\belowcaptionskip}%
+}
+
+\newcommand{\mpfprobefloat}{%
+  \mpfemit{float_linewidth_tex_pt}{\the\linewidth}%
+  % Deferred on purpose: this whatsit travels inside the float box and is
+  % executed when the page carrying it is shipped out, so \thepage is the page
+  % the figure really landed on rather than the page it was declared on.
+  \write\mpf@out{figure_printed_page=\thepage}%
+}
+
+\AtEndDocument{%
+  \immediate\write\mpf@out{page_counter_at_end=\the\c@page}%
+  \immediate\closeout\mpf@out
+}
+
+\makeatother
