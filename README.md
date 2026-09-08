@@ -1,83 +1,116 @@
-<img src="fig/readme/title-image.png" width="100%">
+# Matplotlib Prefab
 
-Matplotlib Prefab is a repository based on matplotlib package, which provides several matplotlib ploting templates for *line plot*, *hist plot*, *scatter plot*, and some complex plottings. You can check the website at [cbhua.github.io/matplotlib-prefab](https://cbhua.github.io/matplotlib-prefab/).
+An agent-facing skill for producing publication-style matplotlib figures: give it
+data and it renders a single-column, single-panel figure at a fixed physical size,
+then checks the result and tells you what it could not check.
 
-### 💡 Introduction
-
-I have a passion for creating visually appealing figures in publications. During my time writing papers, I often dedicated significant effort to crafting plots. In this repository, I've compiled some of my previous `matplotlib` plotting source code and have designed several templates for convenient reuse. I've chosen not to package this content due to the myriad of customizable parameters. Instead, I believe a template approach is more straightforward to modify and repurpose. I hope these templates inspire you and provide techniques to craft beautiful `matplotlib` figures.
-
-### ⚙️ Environment
-
-I've aimed to keep dependencies to a minimum; thus, a basic combination of `matplotlib` and `numpy` should suffice. However, it's important to note that I've incorporated LaTeX font families and formatting. Therefore, you'll need to have [LaTeX](https://www.latex-project.org/get/) installed on your operating system.
+The previous version of this repository — a static gallery of notebook templates —
+has been removed. It remains in the git history at commit `a3f6dfb` if you need it.
 
 ```
-Python Version: 3.10 (develop)
-Python Package: matplotlib 3.8 (support Latex text), numpy
-Other: to use the Latex illustration style, the Latex is required to be installed
+README.md
+pyproject.toml
+skills/scientific-figures/   the skill: SKILL.md, scripts, templates, references, profile
+tests/                       prefab data, the proof sheet, and the behaviour tests
 ```
 
-### 🔦 How to use
+## The skill
 
-You can easily go to the website: [cbhua.github.io/matplotlib-prefab](https://cbhua.github.io/matplotlib-prefab/) and see the example figures of each prefabs:
+[`skills/scientific-figures/`](skills/scientific-figures/SKILL.md) covers two chart
+types:
 
-<img src="fig/readme/homepage.png" width="80%">
+* **line** — one shared numeric x, one or more named y series;
+* **bar** — one value per named category, vertical, negatives allowed.
 
-You can click on the figure to view the associated template code. Most of the code for these figures is self-contained and can be run independently. However, a few require external data. For those instances, please refer to the accompanying notebook.
+Each render produces a PDF at the exact physical size the profile asks for, a PNG
+preview, a snapshot of the validated input, the resolved style profile, and a
+report of deterministic checks — five files, and nothing else in the directory is
+touched.
 
-<img src="fig/readme/single-linear-1-page.png" width="80%">
+Scatter, histogram, heatmap, 3D, multi-panel and two-column figures are
+deliberately out of scope for now; they will arrive as new templates and profiles.
 
-You can also refer to the `notebook` directory to access Jupyter notebooks for those example figures and tailor them to your needs.
+```sh
+python -m venv .venv && .venv/bin/pip install matplotlib numpy
 
-### 🔧 Structure
-
-```
-.
-├── css - webpage
-├── js - webpage
-├── pages - webpage
-├── vendor - webpage
-├── data - some complex figures reauqired external data
-├── fig - example figures
-├── notebook - jupyter notebook for creating figures
-└── *.html - webpage
+.venv/bin/python skills/scientific-figures/scripts/render.py \
+    --spec tests/data/line-multi.json \
+    --output-dir .tmp/figure-preview/line-multi
 ```
 
-### 🖼 Visualization Example
+Input is a small JSON file — see [`tests/data/`](tests/data/) and the
+[input contract](skills/scientific-figures/references/input-schema.md):
 
-**Line Plots**: [Jupyter notebook](https://github.com/cbhua/matplotlib-prefab/blob/main/notebook/single-linear.ipynb)
+```json
+{
+  "schema_version": "1",
+  "kind": "bar",
+  "x_label": "Method",
+  "y_label": "Accuracy change (pp)",
+  "categories": ["Baseline", "Dropout", "Mixup"],
+  "values": [0.0, -0.8, 2.4]
+}
+```
 
-<img src="fig/single-linear-1.jpg" width="30%">
+## Style is one file — and you can see it
 
-<img src="fig/single-linear-2.jpg" width="30%">
+Every size, colour, line width, tick count and export setting lives in
+[`skills/scientific-figures/references/profiles/single-column.json`](skills/scientific-figures/references/profiles/single-column.json).
+Templates draw artists and hold no defaults of their own, so editing that file
+changes both chart types.
 
-<img src="fig/single-linear-3.jpg" width="60%">
+> **The values in it are provisional.** They are this project's initial choices —
+> 85 mm wide, 0.618 aspect ratio, 9 pt axis labels, 8 pt ticks, 1.2 pt data lines,
+> DejaVu Sans, a Paul Tol qualitative palette — not a journal or conference
+> requirement. They are meant to be reviewed and finalised by hand.
 
-**Hist Plots**: [Jupyter notebook](https://github.com/cbhua/matplotlib-prefab/blob/main/notebook/single-hist.ipynb)
+To tune them, edit the profile and regenerate the proof sheet:
 
-<img src="fig/single-hist-horizon.jpg" width="30%">
+```sh
+.venv/bin/python tests/render_gallery.py
+```
 
-<img src="fig/single-hist-vertical.jpg" width="30%">
+That renders every prefab spec in `tests/data/` with the current profile into
+`tests/output/`, and writes [`tests/output/index.md`](tests/output/index.md) — the
+pictures, with the values that produced them printed above. Six cases, chosen so
+that each knob shows up somewhere: single and multi series, eight series (where
+colours run out and the dash pattern takes over), mathtext labels, all-positive
+bars and bars crossing zero.
 
-**Scatter Plots**: [Jupyter notebook](https://github.com/cbhua/matplotlib-prefab/blob/main/notebook/single-scatter.ipynb)
+The rendered sheet is committed, and the test suite checks it against the profile
+and the data, so it can never quietly disagree with the settings in the repository.
 
-<img src="fig/single-scatter-1.jpg" width="30%">
+Point sizes are physical: a 9 pt label is 9 pt on the printed page, and the PNG DPI
+only changes preview resolution. `--profile <path>` renders with an edited copy
+without touching the default. The reasoning behind each value, and an honest
+account of what the automatic checks can and cannot prove, is in
+[design-rules.md](skills/scientific-figures/references/design-rules.md).
 
-<img src="fig/single-scatter-2.jpg" width="30%">
+No LaTeX installation is required — maths labels use matplotlib mathtext.
 
-<img src="fig/single-scatter-3.jpg" width="30%">
+## Tests
 
-<img src="fig/single-scatter-4.jpg" width="30%">
+```sh
+.venv/bin/pip install pytest pypdf
+.venv/bin/python -m pytest
+```
 
-<img src="fig/single-scatter-5.jpg" width="60%">
+`tests/` is both the test suite and the worked reference:
 
-**Complex Examples**: [3D Plots jupyter notebook](https://github.com/cbhua/matplotlib-prefab/blob/main/notebook/single-3dplot.ipynb), [Matshow jupyter notebook](https://github.com/cbhua/matplotlib-prefab/blob/main/notebook/multi-matshow.ipynb)
+```
+tests/data/            prefab specs — the input format, by example
+tests/render_gallery.py  renders them all; regenerates the proof sheet
+tests/output/          the committed result: five files per case, plus index.md
+tests/test_*.py        the behaviour tests
+```
 
-<img src="fig/single-3dplot-1.jpg" width="30%">
+The suite checks observable behaviour: every prefab case produces every
+deliverable, data order and point counts survive the drawing, the PDF page and PNG
+pixel sizes match the profile, editing the profile changes both templates, bad
+input fails with a message naming the field, missing glyphs and unavailable fonts
+are reported rather than hidden, the skill directory still runs after being copied
+elsewhere, and the committed proof sheet matches the current profile and data.
 
-<img src="fig/single-3dplot-2.jpg" width="30%">
+## Contact
 
-<img src="fig/multi-matshow.jpg" width="60%">
-
-### 📬 Contact
-
-If you have any question or find any bug, feel free to raise an issue. If you have ideas to contribute to this repo, welcome to pull request or contact cbhua@kaist.ac.kr. Thanks for interested to our work!
+Questions and bug reports are welcome as issues, or at cbhua@kaist.ac.kr.

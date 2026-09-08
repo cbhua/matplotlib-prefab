@@ -1,0 +1,95 @@
+{
+  "profile_version": "0.1.0",
+  "name": "single-column",
+  "status": "provisional",
+  "note": "PROVISIONAL. Every number below is an initial project choice, not a venue or journal requirement. The repository owner is expected to finalise these values by hand. This file is the single source of truth for style: templates must not carry their own defaults. Run tests/render_gallery.py after editing to regenerate the proof sheet in tests/output/.",
+  "canvas": {
+    "width_mm": 85.0,
+    "aspect_ratio": 0.618,
+    "background": "#FFFFFF"
+  },
+  "fonts": {
+    "family": "DejaVu Sans",
+    "fallbacks": [],
+    "weight": "normal",
+    "mathtext_fontset": "dejavusans",
+    "size_axis_label_pt": 9.0,
+    "size_tick_pt": 8.0,
+    "size_legend_pt": 8.0,
+    "size_title_pt": 10.0
+  },
+  "colors": {
+    "categorical": [
+      "#4477AA",
+      "#EE6677",
+      "#228833",
+      "#CCBB44",
+      "#66CCEE",
+      "#AA3377"
+    ],
+    "text": "#000000",
+    "axes": "#000000",
+    "grid": "#B0B0B0"
+  },
+  "lines": {
+    "data_linewidth_pt": 1.2,
+    "axes_linewidth_pt": 0.6,
+    "tick_linewidth_pt": 0.6,
+    "tick_length_pt": 2.5,
+    "tick_pad_pt": 2.0,
+    "markers_enabled": true,
+    "marker_size_pt": 4.0,
+    "max_markers_per_series": 12,
+    "markers": [
+      "o",
+      "s",
+      "^",
+      "D",
+      "v",
+      "P"
+    ],
+    "dash_patterns": [
+      "solid",
+      "dashed",
+      "dotted",
+      "dashdot"
+    ]
+  },
+  "axes": {
+    "max_xticks": 6,
+    "max_yticks": 6,
+    "spine_top": false,
+    "spine_right": false,
+    "margin_x": 0.02,
+    "margin_y": 0.05,
+    "grid_enabled": true,
+    "grid_axis": "y",
+    "grid_alpha": 0.3,
+    "grid_linewidth_pt": 0.5,
+    "grid_linestyle": ":"
+  },
+  "bar": {
+    "width_fraction": 0.7,
+    "edge_linewidth_pt": 0.0,
+    "zero_line_linewidth_pt": 0.6,
+    "category_label_rotation_deg": 0.0
+  },
+  "legend": {
+    "show_for_single_series": false,
+    "location": "best",
+    "frame": false,
+    "columns": 1,
+    "handlelength": 1.8,
+    "border_pad": 0.3,
+    "label_spacing": 0.3
+  },
+  "layout": {
+    "engine": "constrained",
+    "pad_pt": 1.5
+  },
+  "output": {
+    "write_pdf": true,
+    "write_png": true,
+    "png_dpi": 300
+  }
+}

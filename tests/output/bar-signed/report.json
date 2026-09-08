@@ -1,0 +1,205 @@
+{
+  "report_schema_version": "1",
+  "kind": "bar",
+  "profile": {
+    "name": "single-column",
+    "version": "0.1.0",
+    "status": "provisional"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "matplotlib": "3.11.1",
+    "matplotlib_backend": "Agg",
+    "resolved_fonts": {
+      "DejaVu Sans": "/home/cbhua/github/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+    }
+  },
+  "checks": [
+    {
+      "id": "canvas_size",
+      "status": "pass",
+      "message": "Canvas is 3.3465x2.0681 in (85.00x52.53 mm); the profile asks for 3.3465x2.0681 in.",
+      "details": {
+        "actual_in": [
+          3.346457,
+          2.06811
+        ],
+        "expected_in": [
+          3.346457,
+          2.06811
+        ],
+        "width_mm": 85.0
+      }
+    },
+    {
+      "id": "single_panel",
+      "status": "pass",
+      "message": "The figure holds 1 axes; this skill renders exactly one panel.",
+      "details": {
+        "n_axes": 1
+      }
+    },
+    {
+      "id": "panel_area",
+      "status": "pass",
+      "message": "The panel occupies 86.3% of the canvas width and 79.9% of its height. The plotting area has room for the data.",
+      "details": {
+        "width_fraction": 0.8626,
+        "height_fraction": 0.7986,
+        "min_fraction": 0.25
+      }
+    },
+    {
+      "id": "font_sizes",
+      "status": "pass",
+      "message": "Checked 12 text element(s) against the profile; 0 mismatch(es).",
+      "details": {
+        "n_checked": 12,
+        "mismatches": []
+      }
+    },
+    {
+      "id": "font_resolution",
+      "status": "pass",
+      "message": "All text resolves to the requested family 'DejaVu Sans'.",
+      "details": {
+        "requested": [
+          "DejaVu Sans"
+        ],
+        "resolved": {
+          "DejaVu Sans": "/home/cbhua/github/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+        }
+      }
+    },
+    {
+      "id": "glyph_coverage",
+      "status": "pass",
+      "message": "Every character in the figure exists in its resolved font."
+    },
+    {
+      "id": "text_within_canvas",
+      "status": "pass",
+      "message": "All text fits inside the canvas."
+    },
+    {
+      "id": "tick_label_overlap",
+      "status": "pass",
+      "message": "No neighbouring tick labels overlap."
+    },
+    {
+      "id": "bar_zero_in_range",
+      "status": "pass",
+      "message": "The y range [-1, 3.4] contains zero, so bar lengths are comparable.",
+      "details": {
+        "ylim": [
+          -1.0,
+          3.4000000000000004
+        ]
+      }
+    },
+    {
+      "id": "bar_category_order",
+      "status": "pass",
+      "message": "Category order matches the spec exactly.",
+      "details": {
+        "categories": [
+          "Baseline",
+          "Dropout",
+          "Mixup",
+          "Label smth.",
+          "EMA"
+        ]
+      }
+    },
+    {
+      "id": "bar_count",
+      "status": "pass",
+      "message": "Drew one bar per category (5).",
+      "details": {
+        "n_bars": 5
+      }
+    },
+    {
+      "id": "outputs_present",
+      "status": "pass",
+      "message": "All expected outputs exist and are non-empty: figure.pdf, figure.png",
+      "details": {
+        "files": [
+          "figure.pdf",
+          "figure.png"
+        ]
+      }
+    },
+    {
+      "id": "png_pixel_size",
+      "status": "pass",
+      "message": "figure.png is 1003x620 px; expected 1004x620 px at 300 DPI (tolerance 1 px for rounding).",
+      "details": {
+        "actual_px": [
+          1003,
+          620
+        ],
+        "expected_px": [
+          1004,
+          620
+        ],
+        "dpi": 300.0
+      }
+    },
+    {
+      "id": "pdf_page_size",
+      "status": "pass",
+      "message": "figure.pdf page is 240.94x148.90 pt (85.00x52.53 mm); expected 240.94x148.90 pt.",
+      "details": {
+        "actual_pt": [
+          240.945,
+          148.904
+        ],
+        "expected_pt": [
+          240.945,
+          148.904
+        ]
+      }
+    },
+    {
+      "id": "visual_review",
+      "status": "not_checked",
+      "message": "Open figure.png and judge it: is every label legible at final size, does the legend sit clear of the data, are the series separable, is the panel crowded? No script can settle this, and nothing here fills it in automatically. If the environment cannot display images, record that the visual review did not happen."
+    }
+  ],
+  "status": "pass",
+  "counts": {
+    "pass": 14,
+    "warn": 0,
+    "fail": 0,
+    "not_checked": 1
+  },
+  "inputs": {
+    "spec_source": "/home/cbhua/github/matplotlib-prefab/tests/data/bar-signed.json",
+    "profile_source": "/home/cbhua/github/matplotlib-prefab/skills/scientific-figures/references/profiles/single-column.json"
+  },
+  "outputs": {
+    "pdf": "/home/cbhua/github/matplotlib-prefab/tests/output/bar-signed/figure.pdf",
+    "png": "/home/cbhua/github/matplotlib-prefab/tests/output/bar-signed/figure.png",
+    "spec": "/home/cbhua/github/matplotlib-prefab/tests/output/bar-signed/spec.json",
+    "profile": "/home/cbhua/github/matplotlib-prefab/tests/output/bar-signed/profile.resolved.json",
+    "report": "/home/cbhua/github/matplotlib-prefab/tests/output/bar-signed/report.json"
+  },
+  "reproduce": "python skills/scientific-figures/scripts/render.py --spec tests/output/bar-signed/spec.json --profile tests/output/bar-signed/profile.resolved.json --output-dir tests/output/bar-signed",
+  "drawn": {
+    "kind": "bar",
+    "n_categories": 5,
+    "categories": [
+      "Baseline",
+      "Dropout",
+      "Mixup",
+      "Label smth.",
+      "EMA"
+    ],
+    "n_series": 1,
+    "legend_drawn": false,
+    "has_negative": true,
+    "zero_baseline": true,
+    "color": "#4477AA"
+  }
+}

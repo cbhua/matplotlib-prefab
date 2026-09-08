@@ -1,0 +1,27 @@
+[project]
+name = "matplotlib-prefab"
+version = "0.2.0.dev0"
+description = "Agent-facing skill for rendering publication-style single-column matplotlib figures."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "matplotlib>=3.7",
+    "numpy>=1.23",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pypdf>=4.0",
+]
+
+# Not published to PyPI: the skill is used by copying or referencing
+# skills/scientific-figures/, not by installing a package.
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = [
+    "ignore:Glyph .* missing from font:UserWarning",
+    "ignore:constrained_layout not applied:UserWarning",
+]

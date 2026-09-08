@@ -1,0 +1,231 @@
+{
+  "report_schema_version": "1",
+  "kind": "line",
+  "profile": {
+    "name": "single-column",
+    "version": "0.1.0",
+    "status": "provisional"
+  },
+  "environment": {
+    "python": "3.12.13",
+    "matplotlib": "3.11.1",
+    "matplotlib_backend": "Agg",
+    "resolved_fonts": {
+      "DejaVu Sans": "/home/cbhua/github/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+    }
+  },
+  "checks": [
+    {
+      "id": "canvas_size",
+      "status": "pass",
+      "message": "Canvas is 3.3465x2.0681 in (85.00x52.53 mm); the profile asks for 3.3465x2.0681 in.",
+      "details": {
+        "actual_in": [
+          3.346457,
+          2.06811
+        ],
+        "expected_in": [
+          3.346457,
+          2.06811
+        ],
+        "width_mm": 85.0
+      }
+    },
+    {
+      "id": "single_panel",
+      "status": "pass",
+      "message": "The figure holds 1 axes; this skill renders exactly one panel.",
+      "details": {
+        "n_axes": 1
+      }
+    },
+    {
+      "id": "panel_area",
+      "status": "pass",
+      "message": "The panel occupies 84.1% of the canvas width and 80.1% of its height. The plotting area has room for the data.",
+      "details": {
+        "width_fraction": 0.8414,
+        "height_fraction": 0.8013,
+        "min_fraction": 0.25
+      }
+    },
+    {
+      "id": "font_sizes",
+      "status": "pass",
+      "message": "Checked 15 text element(s) against the profile; 0 mismatch(es).",
+      "details": {
+        "n_checked": 15,
+        "mismatches": []
+      }
+    },
+    {
+      "id": "font_resolution",
+      "status": "pass",
+      "message": "All text resolves to the requested family 'DejaVu Sans'.",
+      "details": {
+        "requested": [
+          "DejaVu Sans"
+        ],
+        "resolved": {
+          "DejaVu Sans": "/home/cbhua/github/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+        }
+      }
+    },
+    {
+      "id": "glyph_coverage",
+      "status": "pass",
+      "message": "Every character in the figure exists in its resolved font."
+    },
+    {
+      "id": "text_within_canvas",
+      "status": "pass",
+      "message": "All text fits inside the canvas."
+    },
+    {
+      "id": "tick_label_overlap",
+      "status": "pass",
+      "message": "No neighbouring tick labels overlap."
+    },
+    {
+      "id": "line_data_integrity",
+      "status": "pass",
+      "message": "Every series keeps its input order and all 51 point(s).",
+      "details": {
+        "n_series": 3,
+        "n_points": 51,
+        "problems": []
+      }
+    },
+    {
+      "id": "series_distinguishable",
+      "status": "pass",
+      "message": "All 3 series carry a distinct colour/dash/marker combination.",
+      "details": {
+        "styles": [
+          {
+            "color": "#4477AA",
+            "linestyle": "solid",
+            "marker": "o"
+          },
+          {
+            "color": "#EE6677",
+            "linestyle": "solid",
+            "marker": "s"
+          },
+          {
+            "color": "#228833",
+            "linestyle": "solid",
+            "marker": "^"
+          }
+        ]
+      }
+    },
+    {
+      "id": "legend_present",
+      "status": "pass",
+      "message": "Legend drawn."
+    },
+    {
+      "id": "outputs_present",
+      "status": "pass",
+      "message": "All expected outputs exist and are non-empty: figure.pdf, figure.png",
+      "details": {
+        "files": [
+          "figure.pdf",
+          "figure.png"
+        ]
+      }
+    },
+    {
+      "id": "png_pixel_size",
+      "status": "pass",
+      "message": "figure.png is 1003x620 px; expected 1004x620 px at 300 DPI (tolerance 1 px for rounding).",
+      "details": {
+        "actual_px": [
+          1003,
+          620
+        ],
+        "expected_px": [
+          1004,
+          620
+        ],
+        "dpi": 300.0
+      }
+    },
+    {
+      "id": "pdf_page_size",
+      "status": "pass",
+      "message": "figure.pdf page is 240.94x148.90 pt (85.00x52.53 mm); expected 240.94x148.90 pt.",
+      "details": {
+        "actual_pt": [
+          240.945,
+          148.904
+        ],
+        "expected_pt": [
+          240.945,
+          148.904
+        ]
+      }
+    },
+    {
+      "id": "visual_review",
+      "status": "not_checked",
+      "message": "Open figure.png and judge it: is every label legible at final size, does the legend sit clear of the data, are the series separable, is the panel crowded? No script can settle this, and nothing here fills it in automatically. If the environment cannot display images, record that the visual review did not happen."
+    }
+  ],
+  "status": "pass",
+  "counts": {
+    "pass": 14,
+    "warn": 0,
+    "fail": 0,
+    "not_checked": 1
+  },
+  "inputs": {
+    "spec_source": "/home/cbhua/github/matplotlib-prefab/tests/data/line-multi.json",
+    "profile_source": "/home/cbhua/github/matplotlib-prefab/skills/scientific-figures/references/profiles/single-column.json"
+  },
+  "outputs": {
+    "pdf": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi/figure.pdf",
+    "png": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi/figure.png",
+    "spec": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi/spec.json",
+    "profile": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi/profile.resolved.json",
+    "report": "/home/cbhua/github/matplotlib-prefab/tests/output/line-multi/report.json"
+  },
+  "reproduce": "python skills/scientific-figures/scripts/render.py --spec tests/output/line-multi/spec.json --profile tests/output/line-multi/profile.resolved.json --output-dir tests/output/line-multi",
+  "drawn": {
+    "kind": "line",
+    "series": [
+      {
+        "name": "Baseline",
+        "n_points": 51,
+        "style": {
+          "color": "#4477AA",
+          "linestyle": "solid",
+          "marker": "o"
+        }
+      },
+      {
+        "name": "+ augmentation",
+        "n_points": 51,
+        "style": {
+          "color": "#EE6677",
+          "linestyle": "solid",
+          "marker": "s"
+        }
+      },
+      {
+        "name": "+ augmentation + EMA",
+        "n_points": 51,
+        "style": {
+          "color": "#228833",
+          "linestyle": "solid",
+          "marker": "^"
+        }
+      }
+    ],
+    "n_series": 3,
+    "n_points": 51,
+    "legend_drawn": true,
+    "marker_every": 5
+  }
+}

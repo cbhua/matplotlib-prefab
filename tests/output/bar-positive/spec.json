@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "kind": "bar",
+  "x_label": "Dataset",
+  "y_label": "Top-1 accuracy (%)",
+  "title": null,
+  "categories": [
+    "CIFAR-10",
+    "CIFAR-100",
+    "SVHN",
+    "STL-10"
+  ],
+  "values": [
+    94.2,
+    76.5,
+    96.8,
+    85.1
+  ]
+}

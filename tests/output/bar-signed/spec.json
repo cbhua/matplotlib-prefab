@@ -1,0 +1,21 @@
+{
+  "schema_version": "1",
+  "kind": "bar",
+  "x_label": "Method",
+  "y_label": "Accuracy change (pp)",
+  "title": null,
+  "categories": [
+    "Baseline",
+    "Dropout",
+    "Mixup",
+    "Label smth.",
+    "EMA"
+  ],
+  "values": [
+    0.0,
+    -0.8,
+    2.4,
+    1.1,
+    3.2
+  ]
+}
