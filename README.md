@@ -11,7 +11,9 @@ has been removed. It remains in the git history at commit `a3f6dfb` if you need 
 README.md
 pyproject.toml
 skills/scientific-figures/   the skill: SKILL.md, scripts, templates, references, profile
-tests/                       prefab data, the proof sheet, and the behaviour tests
+scripts/                     build and verification tooling for the browser style lab
+web/                         the browser style lab: a static site, no server, no LaTeX
+tests/                       prefab data, the proof sheets, the conference fixtures, the tests
 ```
 
 ## The skill
@@ -86,7 +88,89 @@ without touching the default. The reasoning behind each value, and an honest
 account of what the automatic checks can and cannot prove, is in
 [design-rules.md](skills/scientific-figures/references/design-rules.md).
 
-No LaTeX installation is required — maths labels use matplotlib mathtext.
+No LaTeX installation is required to render a figure — maths labels use
+matplotlib mathtext. Only the in-page evaluation below needs one.
+
+## But how big is it *on the page*?
+
+A figure on a white background is not the figure a reader sees. Half of ICLR
+2026's text block is 69.85 mm; one ICML 2026 column is 82.55 mm. Drop the default
+85 mm figure into the ICLR slot and everything in it shrinks by 0.82 — 9 pt axis
+labels print at 7.4 pt. No amount of inspecting `figure.pdf` reveals that.
+
+```sh
+sudo apt install texlive-latex-recommended texlive-fonts-recommended \
+                 texlive-latex-extra latexmk poppler-utils
+.venv/bin/python tests/render_conference_context.py --all
+```
+
+That compiles the venues' own unmodified style files around a page of real
+running prose, sets each figure in as an ordinary float, and keeps the single
+body page it landed on:
+[`tests/output/conference-context/index.md`](tests/output/conference-context/index.md).
+
+| Venue | Layout | The figure gets |
+| --- | --- | --- |
+| ICLR 2026 | one column, camera-ready | half the text width |
+| NeurIPS 2026 | one column, camera-ready | half the text width |
+| ICML 2026 | two columns, camera-ready | one whole column, not half the text width |
+
+The width is measured by TeX inside the document, the figure is re-rendered at
+that width so it lands at scale 1, and the width in the report is read back out
+of the compiled page's drawing transform — not out of the `\includegraphics`
+argument, which would prove nothing. Change a number in the profile, re-run,
+and you can see what it does to a real page.
+
+The compiled documents are typesetting fixtures and say so on their own title
+pages. The prose is an excerpt from a published article used only as typographic
+context, credited in
+[`tests/fixtures/article-context/provenance.md`](tests/fixtures/article-context/provenance.md);
+the plotted data is synthetic. This part is the only thing in the repository that
+needs LaTeX.
+
+## Or move the sliders yourself
+
+Everything above is a command line. There is also a static web page that shows the
+figure at its printed size inside a real conference page and lets you change the
+type sizes, weights, line widths, tick counts and bar settings with the figure
+redrawing as you go — then hands you a configuration an agent can reproduce.
+
+```sh
+.venv/bin/python scripts/fetch_pyodide.py      # ~24 MiB of pinned runtime, once
+.venv/bin/python scripts/build_fonts.py
+.venv/bin/python scripts/build_web_assets.py
+.venv/bin/python web/serve.py                  # http://127.0.0.1:8765/index.html
+```
+
+It is not a mock-up of the figure. It runs **this repository's own
+`figure_core.py` and templates** in the browser through Pyodide, and the page
+around the figure is **generated from a compiled LaTeX page** of the venue's
+style — every line's baseline, every run's face. The numbers behind both claims:
+
+| Measured | Result |
+| --- | --- |
+| Browser SVG versus a local render at the pinned matplotlib, over ten style configurations | byte-identical, all ten |
+| Text-run baselines and left edges, browser page versus compiled PDF, six venue/width pages | ≤ 0.00001 mm |
+| Text-run widths, same six pages | ≤ 0.023 mm |
+| Figure slot rectangle, same six pages | ≤ 0.004 mm |
+| Browser page versus a LaTeX page built from the browser's own export, 12 default + 3 tuned | all 15 agree, figure included |
+| Redraw after a slider stops, Chromium, 40 samples | p95 217 ms (target 500 ms) |
+| Cold start, self-hosted runtime | 24.2 MiB, ~1.9 s on loopback |
+
+The evidence, with overlays and difference images, is in
+[`tests/web/calibration/`](tests/web/calibration/); how it is produced and what it
+does *not* promise is in [`web/README.md`](web/README.md). Three venues, two width
+modes each:
+
+| Venue | Narrow (default) | Wide |
+| --- | --- | --- |
+| ICLR 2026 | half the text width, 69.85 mm | the full text width, 139.70 mm |
+| NeurIPS 2026 | half the text width, 69.85 mm | the full text width, 139.70 mm |
+| ICML 2026 | one column, 82.55 mm | both columns via `figure*`, 171.45 mm |
+
+Building the calibrated pages needs LaTeX; **using the site does not.** Nothing is
+deployed — the tree under `web/` is a static site ready to be served, and
+publishing it is the repository owner's call.
 
 ## Tests
 
@@ -98,10 +182,15 @@ No LaTeX installation is required — maths labels use matplotlib mathtext.
 `tests/` is both the test suite and the worked reference:
 
 ```
-tests/data/            prefab specs — the input format, by example
-tests/render_gallery.py  renders them all; regenerates the proof sheet
-tests/output/          the committed result: five files per case, plus index.md
-tests/test_*.py        the behaviour tests
+tests/data/                        prefab specs — the input format, by example
+tests/render_gallery.py            renders them all; regenerates the proof sheet
+tests/output/                      the committed result: five files per case, plus index.md
+tests/render_conference_context.py builds the in-page proof sheet
+tests/output/conference-context/   its committed result: one body page per venue and case
+tests/fixtures/                    the venues' style files and the body-text excerpt
+tests/conference_context/wrappers/ one test document per venue
+tests/web/                         the browser tool's tests and its committed evidence
+tests/test_*.py                    the behaviour tests
 ```
 
 The suite checks observable behaviour: every prefab case produces every
@@ -110,6 +199,25 @@ pixel sizes match the profile, editing the profile changes both templates, bad
 input fails with a message naming the field, missing glyphs and unavailable fonts
 are reported rather than hidden, the skill directory still runs after being copied
 elsewhere, and the committed proof sheet matches the current profile and data.
+
+The conference-context tests add: the venue style files are byte-for-byte the
+ones the manifest recorded, no wrapper touches the page geometry, every citation
+in the body excerpt has a real bibliography entry, the target width follows each
+venue's own column rule, a figure rendered to that width lands at scale 1, a
+figure that is *not* is reported as shrunk rather than unchanged, each committed
+page is one body page and not a title page, and every input that would make a
+committed page stale is fingerprinted. The ones that actually compile LaTeX are
+marked `conference_context` and skipped when the toolchain is absent.
+
+The browser tests in `tests/web/` add: every published copy of the repository's
+Python still matches its source, the runtime is pinned by digest, the packaged
+fonts have the same advance widths as the fonts in the compiled PDFs, **every
+control in the panel actually changes the drawing** (a knob bound to a field the
+renderer ignores is the failure this guards against), a superseded render never
+replaces a newer one, an invalid spec comes back as a sentence, export is refused
+until the current configuration has been drawn, a clipboard refusal shows the text
+instead, and forty renders do not grow the worker's heap. They skip with a message
+naming the missing command when the runtime, the fonts or Playwright are absent.
 
 ## Contact
 

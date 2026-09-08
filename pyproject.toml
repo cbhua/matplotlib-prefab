@@ -14,6 +14,16 @@ dev = [
     "pytest>=7.0",
     "pypdf>=4.0",
 ]
+# Building and verifying the browser style lab under web/. Not needed to render a
+# figure, and not needed by anyone opening the published site.
+web = [
+    "pytest>=7.0",
+    "pypdf>=4.0",
+    "playwright>=1.40",   # drives the browser for the calibration and the web tests
+    "pillow>=10.0",       # compares page rasters
+    "fonttools>=4.50",    # packages the venue body faces and reads embedded Type 1
+    "brotli>=1.1",        # WOFF2 compression, via fonttools
+]
 
 # Not published to PyPI: the skill is used by copying or referencing
 # skills/scientific-figures/, not by installing a package.
@@ -24,4 +34,8 @@ addopts = "-q"
 filterwarnings = [
     "ignore:Glyph .* missing from font:UserWarning",
     "ignore:constrained_layout not applied:UserWarning",
+]
+markers = [
+    "conference_context: compiles a conference template with LaTeX and rasterises the page. Needs latexmk, pdflatex, bibtex and pdftoppm; skipped without them. Run just these with `-m conference_context`.",
+    "web: exercises the browser style lab. Needs the fetched Pyodide runtime, the packaged fonts and a Playwright browser; skipped with a message naming the missing command. Run just these with `python -m pytest tests/web`.",
 ]

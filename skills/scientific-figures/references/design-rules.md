@@ -55,6 +55,31 @@ cropping, you must prove the final size still matches the profile.
 | Tick labels, legend | 8 pt |
 | Title (optional) | 10 pt |
 
+Each of those has an optional per-axis override, so the two axes need not share a
+size or a weight:
+
+| Shared field | Overrides that refine it |
+| --- | --- |
+| `fonts.size_axis_label_pt` | `fonts.size_x_label_pt`, `fonts.size_y_label_pt` |
+| `fonts.size_tick_pt` | `fonts.size_xtick_pt`, `fonts.size_ytick_pt` |
+| `fonts.weight` | `fonts.weight_x_label`, `fonts.weight_y_label`, `fonts.weight_xtick`, `fonts.weight_ytick`, `fonts.weight_legend`, `fonts.weight_title` |
+
+An override that is absent or `null` falls back to the shared field, so a profile
+written before these existed renders exactly what it did before — that is a test,
+not an intention. Resolution is `figure_core.font_size(profile, role)` and
+`font_weight(profile, role)` for the roles `x_label`, `y_label`, `xtick`, `ytick`,
+`legend`, `title`; `resolved_type(profile)` returns all of them at once and is what
+goes into the report and the browser tool's hand-off.
+
+Weights are validated against the set matplotlib actually applies. An
+unrecognised weight is rejected rather than silently ignored: a style control that
+appears to do something and does not is worse than one that refuses.
+
+Tick-label weight cannot be set through rcParams, so it is applied to the label
+artists after the template has drawn and re-applied on every draw. The
+`font_sizes` check verifies the weight as well as the size on every text artist,
+which is what turns "the field is in the profile" into "the drawing took it".
+
 Family is DejaVu Sans at normal weight — chosen because it ships with matplotlib,
 so a fresh checkout renders identically without font installation. Ordinary text is
 upright; italics are reserved for maths variables, which mathtext handles.

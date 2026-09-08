@@ -4,3 +4,12 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .tmp/figure-preview/
+
+# The browser tool's runtime is fetched, not committed: 24 MiB of Pyodide and
+# wheels, pinned by web/pyodide.lock.json. Recreate it with
+# `python scripts/fetch_pyodide.py`.
+web/public/generated/pyodide/
+
+# The local interpreter pinned to the versions the browser runs. Recreate it
+# with `python scripts/parity.py --setup`.
+.venv-render-parity/

@@ -47,6 +47,26 @@ PDF_POINT_TOLERANCE = 1.0
 OVERFLOW_TOLERANCE_PX = 1.0
 
 
+def figure_renderer(fig):
+    """A renderer for measuring text — the same one whatever backend drew the figure.
+
+    These checks measure text extents, and text extents depend on the renderer
+    doing the measuring. The Agg canvas can hand one out; the SVG canvas the
+    browser worker runs on cannot, and matplotlib's fallback for that leaves the
+    figure at 72 DPI afterwards, which quietly changes every measurement taken
+    after it. Either way the browser and the command line would disagree about
+    whether a label overflows — the same figure, two verdicts.
+
+    So one is built here, from Agg, at the figure's own DPI, touching nothing.
+    The check then depends on the figure and not on how it happens to be being
+    exported.
+    """
+    from matplotlib.backends.backend_agg import RendererAgg
+
+    width_in, height_in = fig.get_size_inches()
+    return RendererAgg(int(round(width_in * fig.dpi)), int(round(height_in * fig.dpi)), fig.dpi)
+
+
 class Report:
     def __init__(self) -> None:
         self.checks: List[Dict[str, Any]] = []
@@ -263,7 +283,7 @@ MIN_PANEL_FRACTION = 0.25
 def check_panel_area(report: Report, fig, ax) -> None:
     fig.draw_without_rendering()
     canvas = fig.bbox
-    panel = ax.get_window_extent(renderer=fig.canvas.get_renderer())
+    panel = ax.get_window_extent(renderer=figure_renderer(fig))
     fractions = (panel.width / canvas.width, panel.height / canvas.height)
     if min(fractions) <= 0.0:
         status, advice = FAIL, "The plotting area collapsed to zero; nothing usable was drawn."
@@ -319,42 +339,59 @@ def _visible_texts(fig) -> List[Any]:
 
 
 def _role_texts(fig, ax) -> List[Tuple[str, Any, str]]:
-    """(role, text artist, profile key) for the texts whose size the profile fixes."""
+    """(role, text artist, style role) for the texts whose type the profile fixes.
+
+    The role names are ``figure_core``'s, so x and y are asked about separately:
+    a profile can now give the y label a different size from the x label, and a
+    check that compared both against one shared field would pass a figure whose
+    y label was ignored.
+    """
     roles: List[Tuple[str, Any, str]] = []
     if ax.get_xlabel().strip():
-        roles.append(("x_label", ax.xaxis.label, "size_axis_label_pt"))
+        roles.append(("x_label", ax.xaxis.label, "x_label"))
     if ax.get_ylabel().strip():
-        roles.append(("y_label", ax.yaxis.label, "size_axis_label_pt"))
+        roles.append(("y_label", ax.yaxis.label, "y_label"))
     if ax.get_title().strip():
-        roles.append(("title", ax.title, "size_title_pt"))
+        roles.append(("title", ax.title, "title"))
     hidden = _offscreen_tick_labels(fig)
-    for label in ax.get_xticklabels() + ax.get_yticklabels():
-        if label.get_text().strip() and label.get_visible() and id(label) not in hidden:
-            roles.append(("tick_label", label, "size_tick_pt"))
+    for axis_role, labels in (("xtick", ax.get_xticklabels()), ("ytick", ax.get_yticklabels())):
+        for label in labels:
+            if label.get_text().strip() and label.get_visible() and id(label) not in hidden:
+                roles.append((axis_role, label, axis_role))
     legend = ax.get_legend()
     if legend is not None:
         for text in legend.get_texts():
-            roles.append(("legend", text, "size_legend_pt"))
+            roles.append(("legend", text, "legend"))
     return roles
 
 
 def check_font_sizes(report: Report, fig, ax, profile: Dict[str, Any]) -> None:
-    fonts = profile["fonts"]
+    """Every text artist is the size *and weight* the resolved profile asks for.
+
+    Weight is checked as well as size because the per-axis weight overrides are
+    applied to artists rather than through rcParams, and a control whose value
+    never reached the drawing would otherwise look like it worked.
+    """
     mismatches = []
     checked = 0
-    for role, artist, key in _role_texts(fig, ax):
-        expected = float(fonts[key])
+    for role, artist, style_role in _role_texts(fig, ax):
+        expected = figure_core.font_size(profile, style_role)
+        expected_weight = figure_core.font_weight(profile, style_role)
         actual = float(artist.get_fontsize())
+        actual_weight = artist.get_fontweight()
         checked += 1
         if abs(actual - expected) > 1e-6:
-            mismatches.append(
-                {
-                    "role": role,
-                    "text": artist.get_text(),
-                    "actual_pt": actual,
-                    "expected_pt": expected,
-                }
-            )
+            mismatches.append({
+                "role": role, "attribute": "size",
+                "text": artist.get_text(),
+                "actual_pt": actual, "expected_pt": expected,
+            })
+        if str(actual_weight) != str(expected_weight):
+            mismatches.append({
+                "role": role, "attribute": "weight",
+                "text": artist.get_text(),
+                "actual": actual_weight, "expected": expected_weight,
+            })
     if not checked:
         report.add("font_sizes", NOT_CHECKED, "The figure carries no non-empty text.")
         return
@@ -362,10 +399,11 @@ def check_font_sizes(report: Report, fig, ax, profile: Dict[str, Any]) -> None:
     report.add(
         "font_sizes",
         status,
-        "Checked %d text element(s) against the profile; %d mismatch(es)."
-        % (checked, len(mismatches)),
+        "Checked %d text element(s) against the resolved profile (size and weight); "
+        "%d mismatch(es)." % (checked, len(mismatches)),
         n_checked=checked,
         mismatches=mismatches,
+        resolved_type=figure_core.resolved_type(profile),
     )
 
 
@@ -480,7 +518,7 @@ def check_glyph_coverage(
 
 def check_text_within_canvas(report: Report, fig) -> None:
     fig.draw_without_rendering()
-    renderer = fig.canvas.get_renderer()
+    renderer = figure_renderer(fig)
     canvas = fig.bbox
     overflowing = []
     for artist in _visible_texts(fig):
@@ -517,7 +555,7 @@ def check_text_within_canvas(report: Report, fig) -> None:
 
 def check_tick_label_overlap(report: Report, fig, ax) -> None:
     fig.draw_without_rendering()
-    renderer = fig.canvas.get_renderer()
+    renderer = figure_renderer(fig)
     hidden = _offscreen_tick_labels(fig)
     collisions = []
     for axis_name, labels in (
@@ -698,17 +736,15 @@ def environment_info(resolved_fonts: Dict[str, str]) -> Dict[str, Any]:
     }
 
 
-def inspect_render(
-    fig,
-    ax,
-    spec: Dict[str, Any],
-    profile: Dict[str, Any],
-    drawn: Dict[str, Any],
-    output_dir: str,
-) -> Dict[str, Any]:
-    """Run every check against a freshly rendered figure and its output files."""
-    report = Report()
+def _run_live_checks(report: "Report", fig, ax, spec, profile, drawn) -> Dict[str, str]:
+    """Every check that needs only the live figure. Shared by both entry points.
 
+    Split out so the browser can run exactly these — the same functions, the same
+    thresholds — rather than a second, more forgiving set. The crowding and
+    collision warnings are the ones that matter most while someone is moving a
+    type-size slider, and a preview that stayed silent about them would be
+    inviting an illegible figure.
+    """
     check_canvas(report, fig, profile)
     check_single_panel(report, fig)
     check_panel_area(report, fig, ax)
@@ -722,6 +758,52 @@ def inspect_render(
         check_line_data(report, ax, spec, drawn)
     else:
         check_bar_axis(report, ax, spec)
+    return resolved_fonts
+
+
+def inspect_live(
+    fig,
+    ax,
+    spec: Dict[str, Any],
+    profile: Dict[str, Any],
+    drawn: Dict[str, Any],
+) -> Dict[str, Any]:
+    """The checks that do not need files on disk.
+
+    For callers that have a figure in memory and no output directory — the
+    browser worker. The file-level checks are absent rather than faked, and
+    ``visual_review`` stays open here as everywhere else: an automatic render
+    succeeding is not somebody looking at it.
+    """
+    report = Report()
+    resolved_fonts = _run_live_checks(report, fig, ax, spec, profile, drawn)
+    add_visual_review_placeholder(report)
+    payload = {
+        "report_schema_version": REPORT_SCHEMA_VERSION,
+        "mode": "live-only",
+        "kind": spec["kind"],
+        "checks_not_run": ["outputs_present", "png_pixel_size", "pdf_page_size"],
+        "checks_not_run_reason": "nothing was written to disk, so there are no files to "
+                                 "check. render.py runs these when it writes its five files.",
+        "environment": environment_info(resolved_fonts),
+        "checks": report.checks,
+    }
+    payload.update(report.summary())
+    return payload
+
+
+def inspect_render(
+    fig,
+    ax,
+    spec: Dict[str, Any],
+    profile: Dict[str, Any],
+    drawn: Dict[str, Any],
+    output_dir: str,
+) -> Dict[str, Any]:
+    """Run every check against a freshly rendered figure and its output files."""
+    report = Report()
+
+    resolved_fonts = _run_live_checks(report, fig, ax, spec, profile, drawn)
 
     check_outputs(report, output_dir, profile)
     check_exported_sizes(report, output_dir, profile)

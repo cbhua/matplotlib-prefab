@@ -21,7 +21,6 @@ directory is left untouched and nothing is deleted.
 from __future__ import annotations
 
 import argparse
-import importlib.util
 import json
 import os
 import sys
@@ -40,17 +39,13 @@ import inspect_figure  # noqa: E402
 
 
 def load_template(kind: str):
-    """Load the template module for ``kind`` from this skill's assets directory."""
-    path = os.path.join(SKILL_ROOT, "assets", "templates", "%s.py" % kind)
-    if not os.path.isfile(path):
-        raise figure_core.SpecError(
-            "No template found for kind %r (looked for %s)." % (kind, path)
-        )
-    spec = importlib.util.spec_from_file_location("scientific_figures_template_%s" % kind, path)
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[spec.name] = module
-    spec.loader.exec_module(module)
-    return module
+    """Load the template module for ``kind`` from this skill's assets directory.
+
+    Kept as a name here because it is part of this module's surface; the
+    implementation lives in ``figure_core`` so the browser worker and the context
+    evaluator load templates exactly the same way.
+    """
+    return figure_core.load_template(kind, SKILL_ROOT)
 
 
 def render(
@@ -59,23 +54,15 @@ def render(
     profile_path: Optional[str] = None,
 ) -> Dict[str, Any]:
     """Validate, draw, export and check. Returns the report payload."""
-    import matplotlib.pyplot as plt
-
     resolved_profile_path = profile_path or figure_core.default_profile_path(SKILL_ROOT)
     profile = figure_core.load_profile(resolved_profile_path)
     spec = figure_core.load_spec(spec_path)
-    template = load_template(spec["kind"])
 
     os.makedirs(output_dir, exist_ok=True)
 
-    with figure_core.style_context(profile):
-        fig, ax = figure_core.create_figure(profile)
-        try:
-            drawn = template.draw(ax, spec, profile)
-            written = figure_core.export_figure(fig, output_dir, profile)
-            report = inspect_figure.inspect_render(fig, ax, spec, profile, drawn, output_dir)
-        finally:
-            plt.close(fig)
+    with figure_core.drawn_figure(spec, profile, SKILL_ROOT) as (fig, ax, drawn):
+        written = figure_core.export_figure(fig, output_dir, profile)
+        report = inspect_figure.inspect_render(fig, ax, spec, profile, drawn, output_dir)
 
     figure_core.write_json(os.path.join(output_dir, "spec.json"), spec)
     figure_core.write_json(os.path.join(output_dir, "profile.resolved.json"), profile)
