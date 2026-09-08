@@ -13,3 +13,5 @@ web/public/generated/pyodide/
 # The local interpreter pinned to the versions the browser runs. Recreate it
 # with `python scripts/parity.py --setup`.
 .venv-render-parity/
+
+.tmp/
