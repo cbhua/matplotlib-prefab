@@ -1,0 +1,75 @@
+{
+  "manifest_version": "1",
+  "note": "Written by scripts/build_web_assets.py. Every file here is a copy of a repository file, listed with the digest it was copied from. Editing a copy instead of its source makes the site and the command line disagree; the web tests fail when they do.",
+  "generated_from": "the working tree, not a release",
+  "files": [
+    {
+      "source": "skills/scientific-figures/scripts/figure_core.py",
+      "target": "python/skill/scripts/figure_core.py",
+      "sha256": "69bef7f41e0b9d8d7cb8f50d8c03c348946de3f8422d80b16d89a2b156e87f36",
+      "bytes": 36176
+    },
+    {
+      "source": "skills/scientific-figures/scripts/inspect_figure.py",
+      "target": "python/skill/scripts/inspect_figure.py",
+      "sha256": "b75d07d9fc373cbadde488a40f8cfff0b3adadeb5e9634c490c4406ba1e36146",
+      "bytes": 31984
+    },
+    {
+      "source": "skills/scientific-figures/assets/templates/line.py",
+      "target": "python/skill/assets/templates/line.py",
+      "sha256": "c74755ec3bd90759e7d22a91403905d9981855f9d471fe8b227bb340fbbfebf0",
+      "bytes": 1979
+    },
+    {
+      "source": "skills/scientific-figures/assets/templates/bar.py",
+      "target": "python/skill/assets/templates/bar.py",
+      "sha256": "138a2c568298a18adaf07bb09308f86827a67b61da5de1b1673ed67c456dbaee",
+      "bytes": 2376
+    },
+    {
+      "source": "web/src/python/worker_render.py",
+      "target": "python/worker_render.py",
+      "sha256": "36267e7f138a33407b662ac6ff0aefae6d1d58ef9e5b3d75a40417c54f87eab7",
+      "bytes": 3699
+    },
+    {
+      "source": "skills/scientific-figures/references/profiles/single-column.json",
+      "target": "profiles/single-column.json",
+      "sha256": "f620de66b19f0ea6db00b82c177363bb5d24298877b5dbcae2d585982ce7fee6",
+      "bytes": 2137
+    },
+    {
+      "source": "tests/data/line-multi.json",
+      "target": "specs/line-multi.json",
+      "sha256": "7014c0a99ef202b9967f23bcb59b3f08d8136e37f9a3443c6121ef1ef6ecaf3a",
+      "bytes": 3187
+    },
+    {
+      "source": "tests/data/line-single.json",
+      "target": "specs/line-single.json",
+      "sha256": "7b1f50abcd8de7047c912dc2ca6433dcb840ce67703fa93e08ef8d3683d003f1",
+      "bytes": 1431
+    },
+    {
+      "source": "tests/data/line-many.json",
+      "target": "specs/line-many.json",
+      "sha256": "63283fd168a704dec2b2b3ee3b0525470d080a74b726bd10fbdeefefc7d7ce4c",
+      "bytes": 2095
+    },
+    {
+      "source": "tests/data/bar-positive.json",
+      "target": "specs/bar-positive.json",
+      "sha256": "82761f3c6b8d1fff8d329bd9d0f48f75b989fdbbf9553ac9ca70b832b29008a3",
+      "bytes": 260
+    },
+    {
+      "source": "tests/data/bar-signed.json",
+      "target": "specs/bar-signed.json",
+      "sha256": "bd85cb51fb3986d1d93dfc14aa6e0c2981dcf8929e553bafbcb378e0390c3657",
+      "bytes": 282
+    }
+  ],
+  "python_import_root": "python/skill/scripts",
+  "python_skill_root": "python/skill"
+}

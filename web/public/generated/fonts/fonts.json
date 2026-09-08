@@ -1,0 +1,445 @@
+{
+  "manifest_version": "1",
+  "note": "Written by scripts/build_fonts.py. These are the faces the venue templates set their body text in, packaged for the browser and checked glyph by glyph against the fonts embedded in the compiled pages.",
+  "licence": "The Nimbus faces are URW's, distributed under the GNU AGPL v3 with the URW font exception, from https://github.com/ArtifexSoftware/urw-base35-fonts. They are redistributed here in WOFF2 form — a format conversion, not a redesign — with the licence text beside them in LICENCE-urw-base35.txt. They are here because they are the fonts the venue templates actually set their body text in, not because they look similar to them. A repository owner publishing this site should confirm the licence position for their own distribution.",
+  "licence_file": "fonts/LICENCE-urw-base35.txt",
+  "faces": {
+    "NimbusRomNo9L-Regu": {
+      "file": "NimbusRoman-Regular.otf",
+      "css_family": "MPF Nimbus Roman",
+      "weight": "normal",
+      "style": "normal",
+      "role": "body text",
+      "pdf_base_font": "NimbusRomNo9L-Regu",
+      "asset": "fonts/NimbusRoman-Regular.woff2",
+      "source": "/usr/share/fonts/opentype/urw-base35/NimbusRoman-Regular.otf",
+      "source_sha256": "fd41669443616a7ae890c42e53a58f47fa24a940fd1e367acaff665cf5b6e9d8",
+      "woff2_sha256": "49e7a910a63076cfdc11f8d4feb789fc2eb7cbbc2debc4a597512c67b03beca7",
+      "woff2_bytes": 65852,
+      "metrics": {
+        "units_per_em": 1000,
+        "typo_ascender": 683,
+        "typo_descender": -317,
+        "hhea_ascent": 683,
+        "hhea_descent": -317,
+        "full_name": "Nimbus Roman",
+        "version": "Version 1.00"
+      }
+    },
+    "NimbusRomNo9L-Medi": {
+      "file": "NimbusRoman-Bold.otf",
+      "css_family": "MPF Nimbus Roman",
+      "weight": "bold",
+      "style": "normal",
+      "role": "section headings and run-in bold",
+      "pdf_base_font": "NimbusRomNo9L-Medi",
+      "asset": "fonts/NimbusRoman-Bold.woff2",
+      "source": "/usr/share/fonts/opentype/urw-base35/NimbusRoman-Bold.otf",
+      "source_sha256": "e0ad81923bc6d85d5426f796217c87963ca1ae3c65e22c87a25b6c6353de299e",
+      "woff2_sha256": "7b24dd9d0f0817ff7df45caaa4e64797b2c5dd9d800f71b2a8d1bda3da1ce451",
+      "woff2_bytes": 67116,
+      "metrics": {
+        "units_per_em": 1000,
+        "typo_ascender": 676,
+        "typo_descender": -324,
+        "hhea_ascent": 676,
+        "hhea_descent": -324,
+        "full_name": "Nimbus Roman Bold",
+        "version": "Version 1.00"
+      }
+    },
+    "NimbusRomNo9L-ReguItal": {
+      "file": "NimbusRoman-Italic.otf",
+      "css_family": "MPF Nimbus Roman",
+      "weight": "normal",
+      "style": "italic",
+      "role": "emphasis and journal titles",
+      "pdf_base_font": "NimbusRomNo9L-ReguItal",
+      "asset": "fonts/NimbusRoman-Italic.woff2",
+      "source": "/usr/share/fonts/opentype/urw-base35/NimbusRoman-Italic.otf",
+      "source_sha256": "b7c424e6cb79baddfcdcd9a9d87f9fc4fdd06f0e5160066e2b2e47bcd647c7b9",
+      "woff2_sha256": "d28c45f1bbcc61e6f136e96bc24c4a669d5be1286acfb3f078776d98a71f285d",
+      "woff2_bytes": 71624,
+      "metrics": {
+        "units_per_em": 1000,
+        "typo_ascender": 683,
+        "typo_descender": -317,
+        "hhea_ascent": 683,
+        "hhea_descent": -317,
+        "full_name": "Nimbus Roman Italic",
+        "version": "Version 1.00"
+      }
+    },
+    "NimbusRomNo9L-MediItal": {
+      "file": "NimbusRoman-BoldItalic.otf",
+      "css_family": "MPF Nimbus Roman",
+      "weight": "bold",
+      "style": "italic",
+      "role": "bold italic, if a page uses it",
+      "pdf_base_font": "NimbusRomNo9L-MediItal",
+      "asset": "fonts/NimbusRoman-BoldItalic.woff2",
+      "source": "/usr/share/fonts/opentype/urw-base35/NimbusRoman-BoldItalic.otf",
+      "source_sha256": "c84bcb17ab4ee54f16dadad6a3b0b2df37a24f9fc812897c4a59eeca785a5dec",
+      "woff2_sha256": "a27025c0c64b4c4fe21c19f137444e4a01c597a19d847517fcd6d24be14a8b9c",
+      "woff2_bytes": 70272,
+      "metrics": {
+        "units_per_em": 1000,
+        "typo_ascender": 699,
+        "typo_descender": -301,
+        "hhea_ascent": 699,
+        "hhea_descent": -301,
+        "full_name": "Nimbus Roman Bold Italic",
+        "version": "Version 1.00"
+      }
+    },
+    "NimbusMonL-Regu": {
+      "file": "NimbusMonoPS-Regular.otf",
+      "css_family": "MPF Nimbus Mono",
+      "weight": "normal",
+      "style": "normal",
+      "role": "\\texttt{} in the caption and the fixture notices",
+      "pdf_base_font": "NimbusMonL-Regu",
+      "asset": "fonts/NimbusMonoPS-Regular.woff2",
+      "source": "/usr/share/fonts/opentype/urw-base35/NimbusMonoPS-Regular.otf",
+      "source_sha256": "4f225ca8e13acb16f733ce741693105e527d5f7a5443901b9ecc190fca4e149b",
+      "woff2_sha256": "c198604644872e2e5d59141ad3a2fac905c5da11f9052597318633cee889eec9",
+      "woff2_bytes": 53132,
+      "metrics": {
+        "units_per_em": 1000,
+        "typo_ascender": 603,
+        "typo_descender": -397,
+        "hhea_ascent": 603,
+        "hhea_descent": -397,
+        "full_name": "Nimbus Mono PS",
+        "version": "Version 1.00"
+      }
+    }
+  },
+  "not_packaged": {
+    "computer_modern_maths": "CMMI7, CMMI10 and CMSY10 carry the inline maths in these pages. There is no web font with those exact outlines and metrics, so those glyphs are emitted as SVG paths extracted from the PDF's own embedded font programs, at the positions the PDF gives them. That is a local vector asset with a recorded source, not a substitute font pretending to be Computer Modern."
+  },
+  "verification": [
+    {
+      "pdf": "tests/output/conference-context/iclr2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/bar-signed/page.pdf",
+      "font": "NimbusMonL-Regu",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/bar-signed/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/bar-signed/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/bar-signed/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+      "font": "NimbusMonL-Regu",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi-at-85mm/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi/page.pdf",
+      "font": "NimbusMonL-Regu",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/iclr2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-Medi",
+      "checked": true,
+      "glyphs_compared": 68,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 67,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "NimbusMonL-Regu",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/bar-signed/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-Medi",
+      "checked": true,
+      "glyphs_compared": 68,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 67,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "NimbusMonL-Regu",
+      "checked": true,
+      "glyphs_compared": 66,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/icml2026/line-multi/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "CMTT10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-Medi",
+      "checked": true,
+      "glyphs_compared": 69,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/bar-signed/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 67,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-Regu",
+      "checked": true,
+      "glyphs_compared": 79,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "CMTT10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-Medi",
+      "checked": true,
+      "glyphs_compared": 69,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "CMMI10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "CMMI7",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "CMSY10",
+      "checked": false,
+      "reason": "not a packaged text face (maths and symbol fonts are drawn as outlines instead)"
+    },
+    {
+      "pdf": "tests/output/conference-context/neurips2026/line-multi/page.pdf",
+      "font": "NimbusRomNo9L-ReguItal",
+      "checked": true,
+      "glyphs_compared": 67,
+      "mismatches": [],
+      "glyphs_missing_from_packaged_face": []
+    }
+  ]
+}

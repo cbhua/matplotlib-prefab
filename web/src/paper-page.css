@@ -1,0 +1,64 @@
+/*
+ * The paper sheet. Everything here is geometry; nothing is decoration that
+ * could move a measured position.
+ */
+
+.mpf-paper {
+  position: relative;
+  background: #ffffff;
+  /* The sheet has to be the sheet: no border, no padding, no shadow inside the
+     measured box, because the calibration screenshots this element and compares
+     it pixel for pixel with a raster of the PDF. The drop shadow that makes it
+     look like paper lives on the wrapper. */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.mpf-sheet {
+  position: absolute;
+  inset: 0;
+  display: block;
+}
+
+.mpf-sheet .mpf-run {
+  fill: #000000;
+  /* Kerning and ligature formation would move glyphs inside a run. TeX already
+     applied its own kerns — they are why one line arrives as several runs — so
+     letting the browser add more would double them. Explicit ligature
+     characters in the text (the fi in "fixture") still render: this switches off
+     substitution, not the glyphs themselves. */
+  font-kerning: none;
+  font-variant-ligatures: none;
+  font-feature-settings: "kern" 0, "liga" 0, "clig" 0;
+  /* Ask for unhinted, sub-pixel advances rather than advances rounded to whole
+     device pixels: rounding accumulates across a line and is exactly the drift
+     the calibration is looking for. */
+  text-rendering: geometricPrecision;
+  white-space: pre;
+}
+
+.mpf-sheet .mpf-run-outline path {
+  fill: #000000;
+  stroke: none;
+}
+
+.mpf-sheet .mpf-rules rect {
+  fill: #000000;
+}
+
+.mpf-slot {
+  position: absolute;
+  box-sizing: border-box;
+  background: transparent;
+  overflow: hidden;
+}
+
+.mpf-slot > svg {
+  display: block;
+}
+
+/* Only while there is no figure: the empty slot's hairline edge, matching the
+   placeholder in the baseline PDF. */
+.mpf-slot-empty {
+  border: 0.4pt solid #b8b8b8;
+}
