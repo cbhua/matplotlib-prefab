@@ -36,8 +36,8 @@ def test_input_order_is_preserved():
 
 
 def test_unknown_kind_is_rejected_by_name():
-    message = spec_error(mutate(LINE_SPEC, kind="scatter"))
-    assert "scatter" in message and "kind" in message
+    message = spec_error(mutate(LINE_SPEC, kind="histogram"))
+    assert "histogram" in message and "kind" in message
 
 
 def test_wrong_schema_version_is_rejected():

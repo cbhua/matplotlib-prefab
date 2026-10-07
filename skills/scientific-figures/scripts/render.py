@@ -1,4 +1,4 @@
-"""Render one single-column, single-panel scientific figure from a JSON spec.
+"""Render a line/bar/scatter figure or panel grid from a JSON spec.
 
 Usage::
 
@@ -56,13 +56,22 @@ def render(
     """Validate, draw, export and check. Returns the report payload."""
     resolved_profile_path = profile_path or figure_core.default_profile_path(SKILL_ROOT)
     profile = figure_core.load_profile(resolved_profile_path)
-    spec = figure_core.load_spec(spec_path)
+    raw_spec = figure_core.load_json(spec_path, "spec")
+    is_grid = raw_spec.get("kind") == "grid"
+    if is_grid:
+        import grid_core
+        spec = grid_core.validate_spec(raw_spec)
+        draw = grid_core.drawn_figure
+    else:
+        spec = figure_core.validate_spec(raw_spec)
+        draw = figure_core.drawn_figure
 
     os.makedirs(output_dir, exist_ok=True)
 
-    with figure_core.drawn_figure(spec, profile, SKILL_ROOT) as (fig, ax, drawn):
+    with draw(spec, profile, SKILL_ROOT) as (fig, ax, drawn):
         written = figure_core.export_figure(fig, output_dir, profile)
-        report = inspect_figure.inspect_render(fig, ax, spec, profile, drawn, output_dir)
+        report = (grid_core.inspect_grid(fig, ax, spec, profile, drawn, output_dir) if is_grid
+                  else inspect_figure.inspect_render(fig, ax, spec, profile, drawn, output_dir))
 
     figure_core.write_json(os.path.join(output_dir, "spec.json"), spec)
     figure_core.write_json(os.path.join(output_dir, "profile.resolved.json"), profile)
@@ -113,7 +122,7 @@ def _print_summary(report: Dict[str, Any], output_dir: str) -> None:
 
 def main(argv: Optional[Sequence[str]] = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Render a single-column, single-panel line or bar figure from a JSON spec.",
+        description="Render a line/bar/scatter figure or rectangular grid from a JSON spec.",
     )
     parser.add_argument("--spec", required=True, help="Path to the JSON figure spec.")
     parser.add_argument(

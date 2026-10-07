@@ -29,7 +29,7 @@ SPEC_SCHEMA_VERSION = "1"
 MM_PER_INCH = 25.4
 PT_PER_INCH = 72.0
 
-SUPPORTED_KINDS = ("line", "bar")
+SUPPORTED_KINDS = ("line", "bar", "scatter")
 
 
 class SpecError(ValueError):
@@ -71,6 +71,7 @@ def load_json(path: str, what: str) -> Dict[str, Any]:
 _COMMON_KEYS = {"schema_version", "kind", "x_label", "y_label", "title"}
 _KIND_KEYS = {
     "line": {"x", "series"},
+    "scatter": {"x", "series"},
     "bar": {"categories", "values"},
 }
 
@@ -139,7 +140,7 @@ def validate_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
     if kind not in SUPPORTED_KINDS:
         raise SpecError(
             "spec.kind is %r, which this skill does not support. Supported kinds: %s. "
-            "Multi-panel, two-column, scatter, histogram, heatmap and 3D figures are "
+            "Histogram, heatmap and 3D figures are "
             "explicitly out of scope for this version."
             % (kind, ", ".join(SUPPORTED_KINDS))
         )
@@ -158,7 +159,7 @@ def validate_spec(spec: Dict[str, Any]) -> Dict[str, Any]:
         title = _as_str(title, "spec.title", allow_empty=True)
     normalised["title"] = title
 
-    if kind == "line":
+    if kind in ("line", "scatter"):
         normalised.update(_validate_line(spec))
     else:
         normalised.update(_validate_bar(spec))

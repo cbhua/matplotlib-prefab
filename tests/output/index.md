@@ -87,3 +87,13 @@ Checks: 14 pass, 0 warn, 0 fail, 1 not checked (`visual_review` is always the la
 ![line-single](line-single/figure.png)
 
 Spec: [`tests/data/line-single.json`](../data/line-single.json) · PDF: [`line-single/figure.pdf`](line-single/figure.pdf) · Report: [`line-single/report.json`](line-single/report.json)
+
+## scatter
+
+Two groups of unconnected samples: marker size, marker shapes, colour separation and legend scale. Every sample remains visible; no line or thinning.
+
+Checks: 14 pass, 0 warn, 0 fail, 1 not checked (`visual_review` is always the last of those — no script can close it).
+
+![scatter](scatter/figure.png)
+
+Spec: [`tests/data/scatter.json`](../data/scatter.json) · PDF: [`scatter/figure.pdf`](scatter/figure.pdf) · Report: [`scatter/report.json`](scatter/report.json)

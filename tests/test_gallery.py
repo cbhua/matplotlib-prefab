@@ -49,9 +49,9 @@ def test_every_case_describes_what_it_shows():
         assert os.path.isfile(case(name))
 
 
-def test_cases_cover_both_kinds_and_the_style_edges():
+def test_cases_cover_supported_kinds_and_the_style_edges():
     kinds = {load(case(name))["kind"] for name in CASES}
-    assert kinds == {"line", "bar"}
+    assert kinds == {"line", "bar", "scatter"}
 
     profile = figure_core.load_profile(DEFAULT_PROFILE)
     widest = max(

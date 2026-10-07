@@ -1,0 +1,243 @@
+{
+  "report_schema_version": "1",
+  "kind": "scatter",
+  "profile": {
+    "name": "single-column",
+    "version": "0.1.0",
+    "status": "provisional"
+  },
+  "environment": {
+    "python": "3.12.15",
+    "matplotlib": "3.11.2",
+    "matplotlib_backend": "Agg",
+    "resolved_fonts": {
+      "DejaVu Sans": "/Users/cbhua/GitHub/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+    }
+  },
+  "checks": [
+    {
+      "id": "canvas_size",
+      "status": "pass",
+      "message": "Canvas is 3.3465x2.0681 in (85.00x52.53 mm); the profile asks for 3.3465x2.0681 in.",
+      "details": {
+        "actual_in": [
+          3.346457,
+          2.06811
+        ],
+        "expected_in": [
+          3.346457,
+          2.06811
+        ],
+        "width_mm": 85.0
+      }
+    },
+    {
+      "id": "single_panel",
+      "status": "pass",
+      "message": "The figure holds 1 axes; this skill renders exactly one panel.",
+      "details": {
+        "n_axes": 1
+      }
+    },
+    {
+      "id": "panel_area",
+      "status": "pass",
+      "message": "The panel occupies 86.9% of the canvas width and 80.1% of its height. The plotting area has room for the data.",
+      "details": {
+        "width_fraction": 0.8686,
+        "height_fraction": 0.8013,
+        "min_fraction": 0.25
+      }
+    },
+    {
+      "id": "font_sizes",
+      "status": "pass",
+      "message": "Checked 12 text element(s) against the resolved profile (size and weight); 0 mismatch(es).",
+      "details": {
+        "n_checked": 12,
+        "mismatches": [],
+        "resolved_type": {
+          "x_label": {
+            "size_pt": 9.0,
+            "weight": "normal"
+          },
+          "y_label": {
+            "size_pt": 9.0,
+            "weight": "normal"
+          },
+          "xtick": {
+            "size_pt": 8.0,
+            "weight": "normal"
+          },
+          "ytick": {
+            "size_pt": 8.0,
+            "weight": "normal"
+          },
+          "legend": {
+            "size_pt": 8.0,
+            "weight": "normal"
+          },
+          "title": {
+            "size_pt": 10.0,
+            "weight": "normal"
+          }
+        }
+      }
+    },
+    {
+      "id": "font_resolution",
+      "status": "pass",
+      "message": "All text resolves to the requested family 'DejaVu Sans'.",
+      "details": {
+        "requested": [
+          "DejaVu Sans"
+        ],
+        "resolved": {
+          "DejaVu Sans": "/Users/cbhua/GitHub/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+        }
+      }
+    },
+    {
+      "id": "glyph_coverage",
+      "status": "pass",
+      "message": "Every character in the figure exists in its resolved font."
+    },
+    {
+      "id": "text_within_canvas",
+      "status": "pass",
+      "message": "All text fits inside the canvas."
+    },
+    {
+      "id": "tick_label_overlap",
+      "status": "pass",
+      "message": "No neighbouring tick labels overlap."
+    },
+    {
+      "id": "line_data_integrity",
+      "status": "pass",
+      "message": "Every series keeps its input order and all 12 point(s).",
+      "details": {
+        "n_series": 2,
+        "n_points": 12,
+        "problems": []
+      }
+    },
+    {
+      "id": "series_distinguishable",
+      "status": "pass",
+      "message": "All 2 series carry a distinct colour/dash/marker combination.",
+      "details": {
+        "styles": [
+          {
+            "color": "#4477AA",
+            "linestyle": "None",
+            "marker": "o"
+          },
+          {
+            "color": "#EE6677",
+            "linestyle": "None",
+            "marker": "s"
+          }
+        ]
+      }
+    },
+    {
+      "id": "legend_present",
+      "status": "pass",
+      "message": "Legend drawn."
+    },
+    {
+      "id": "outputs_present",
+      "status": "pass",
+      "message": "All expected outputs exist and are non-empty: figure.pdf, figure.png",
+      "details": {
+        "files": [
+          "figure.pdf",
+          "figure.png"
+        ]
+      }
+    },
+    {
+      "id": "png_pixel_size",
+      "status": "pass",
+      "message": "figure.png is 1003x620 px; expected 1004x620 px at 300 DPI (tolerance 1 px for rounding).",
+      "details": {
+        "actual_px": [
+          1003,
+          620
+        ],
+        "expected_px": [
+          1004,
+          620
+        ],
+        "dpi": 300.0
+      }
+    },
+    {
+      "id": "pdf_page_size",
+      "status": "pass",
+      "message": "figure.pdf page is 240.94x148.90 pt (85.00x52.53 mm); expected 240.94x148.90 pt.",
+      "details": {
+        "actual_pt": [
+          240.945,
+          148.904
+        ],
+        "expected_pt": [
+          240.945,
+          148.904
+        ]
+      }
+    },
+    {
+      "id": "visual_review",
+      "status": "not_checked",
+      "message": "Open figure.png and judge it: is every label legible at final size, does the legend sit clear of the data, are the series separable, is the panel crowded? No script can settle this, and nothing here fills it in automatically. If the environment cannot display images, record that the visual review did not happen."
+    }
+  ],
+  "status": "pass",
+  "counts": {
+    "pass": 14,
+    "warn": 0,
+    "fail": 0,
+    "not_checked": 1
+  },
+  "inputs": {
+    "spec_source": "/Users/cbhua/GitHub/matplotlib-prefab/tests/data/scatter.json",
+    "profile_source": "/Users/cbhua/GitHub/matplotlib-prefab/skills/scientific-figures/references/profiles/single-column.json"
+  },
+  "outputs": {
+    "pdf": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/scatter/figure.pdf",
+    "png": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/scatter/figure.png",
+    "spec": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/scatter/spec.json",
+    "profile": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/scatter/profile.resolved.json",
+    "report": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/scatter/report.json"
+  },
+  "reproduce": "python skills/scientific-figures/scripts/render.py --spec tests/output/scatter/spec.json --profile tests/output/scatter/profile.resolved.json --output-dir tests/output/scatter",
+  "drawn": {
+    "kind": "scatter",
+    "series": [
+      {
+        "name": "Group A",
+        "n_points": 12,
+        "style": {
+          "color": "#4477AA",
+          "linestyle": "None",
+          "marker": "o"
+        }
+      },
+      {
+        "name": "Group B",
+        "n_points": 12,
+        "style": {
+          "color": "#EE6677",
+          "linestyle": "None",
+          "marker": "s"
+        }
+      }
+    ],
+    "n_series": 2,
+    "n_points": 12,
+    "legend_drawn": true,
+    "marker_every": 1
+  }
+}

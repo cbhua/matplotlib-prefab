@@ -754,7 +754,7 @@ def _run_live_checks(report: "Report", fig, ax, spec, profile, drawn) -> Dict[st
     check_text_within_canvas(report, fig)
     check_tick_label_overlap(report, fig, ax)
 
-    if spec["kind"] == "line":
+    if spec["kind"] in ("line", "scatter"):
         check_line_data(report, ax, spec, drawn)
     else:
         check_bar_axis(report, ax, spec)

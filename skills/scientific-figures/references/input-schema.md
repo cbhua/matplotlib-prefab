@@ -8,12 +8,12 @@ is drawn lives here, everything about *how* it looks lives in the profile
 purpose: a spec that is wrong produces an error naming the offending field, never
 a figure plus a clean report.
 
-## Common fields
+## Common fields (line, bar and scatter)
 
 | Field | Type | Required | Meaning |
 | --- | --- | --- | --- |
 | `schema_version` | string | yes | Must be `"1"`. Any other value is an error. |
-| `kind` | string | yes | `"line"` or `"bar"`. Nothing else is supported yet. |
+| `kind` | string | yes | `"line"`, `"bar"` or `"scatter"`. |
 | `x_label` | string | yes | X axis label. May be `""` to leave the axis unlabelled. |
 | `y_label` | string | yes | Y axis label. May be `""`. |
 | `title` | string or `null` | no | Panel title. Omitted by default — in a paper the caption usually carries it. |
@@ -109,7 +109,7 @@ to `fonts.fallbacks`) in your profile. The skill does not download or bundle fon
 
 | Situation | Result |
 | --- | --- |
-| Unknown `kind` (`"scatter"`, `"hist"`, …) | Error naming the kind and listing what is supported |
+| Unknown `kind` (`"heatmap"`, `"hist"`, …) | Error naming the kind and listing what is supported |
 | Unknown or misspelled field | Error naming the field |
 | Empty `x`, `series`, `categories` or `values` | Error naming the field |
 | `y` length ≠ `x` length | Error stating both lengths |
@@ -129,3 +129,35 @@ reused colours stay separable. Past that product there is no honest way to keep
 them apart, so the render fails with a message giving the capacity. Split the
 figure, plot fewer series, or extend the palette in the profile — the skill will
 not quietly recycle styles into an unreadable figure.
+
+
+## `kind: "grid"` — browser panel layouts
+
+`render.py` also accepts a grid envelope with exactly these fields:
+
+| Field | Meaning |
+| --- | --- |
+| `schema_version` | `"1"` |
+| `kind` | `"grid"` |
+| `rows`, `columns` | Integers from 1 to 4; `1 × 2` is one row, two columns |
+| `panels` | Exactly `rows * columns` ordinary line/bar specs, in row-major order |
+
+Each panel follows the contracts above, including its own `schema_version`,
+labels, optional title and data. Nested grids are rejected. The profile applies
+to every panel and `canvas` is the physical size of the **whole figure**.
+Labels and line widths are not scaled down when the grid gains panels.
+`grid_core.py` checks each panel's data and type, tick collisions and available
+plot area, plus clipping and overlaps across the whole figure.
+
+The browser fills panels with synthetic examples initially. Select a panel in
+the generated workspace to import its data, then export the full grid spec and
+profile for reproduction with the usual `render.py` command. A grid is rendered
+as one Matplotlib figure, so SVG, PDF and PNG have one consistent canvas size.
+
+## `kind: "scatter"`
+
+Uses the same `x` and named `series[].y` arrays as a line spec. Every sample is
+drawn as a marker, without connecting lines or marker thinning. Marker size is
+`lines.marker_size_pt` (diameter in points); colors and marker shapes follow the
+profile. The browser offers one fixed two-group example for scale comparison.
+Scatter panels can be mixed with line/bar panels in a grid.

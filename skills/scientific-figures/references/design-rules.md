@@ -178,9 +178,13 @@ in. Only a person or an agent that actually opens `figure.png` can close it, and
 that is impossible in the environment, the honest report is that the visual review
 did not happen.
 
+Rectangular grids use the same physical type and line sizes on a shared canvas.
+Their plot-area check is relative to each allocated cell, and they additionally
+check overlaps between panel decorations. Wide profiles can span columns.
+
 ## Deliberately out of scope in this version
 
-Two-column and multi-panel figures, scatter, histogram, heatmap and 3D charts,
+Nonrectangular panel layouts, scatter, histogram, heatmap and 3D charts,
 stacked or grouped bars, twin axes, error bars, log axes, venue-specific profiles,
 CSV input inference, interactive output. Each of those arrives as a new profile or
 a new template, not as options bolted onto these two.

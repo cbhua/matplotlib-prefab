@@ -34,6 +34,7 @@ OUTPUT_DIR = os.path.join(TESTS_DIR, "output")
 
 # Case name -> what this picture is here to let you judge.
 CASES = {
+    "scatter": "Two groups of unconnected samples: marker size, marker shapes, colour separation and legend scale. Every sample remains visible; no line or thinning.",
     "line-single": "One series: line width, marker size and spacing, tick and axis-label "
                    "sizes. No legend, because a single series names itself in the y label.",
     "line-multi": "Three series: the first three palette colours, their bound marker "

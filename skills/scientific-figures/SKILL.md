@@ -1,31 +1,48 @@
 ---
 name: scientific-figures
-description: Render a publication-style single-column, single-panel line or bar chart from data with matplotlib, at a fixed physical size, then check the result. Use when someone asks for a figure, chart, plot or graph for a paper, report or thesis, or wants an existing figure redone at a consistent size with legible labels. Covers line charts (one shared x, one or more named series) and vertical bar charts (one value per named category). Not for scatter, histogram, heatmap, 3D, multi-panel or two-column figures.
+description: Render publication-style matplotlib line, bar and scatter figures, including rectangular grids exported from the conference style lab, at a fixed physical size. Use for paper, report or thesis plots and for reproducing browser-selected figure configurations. Checks dimensions, typography and data integrity. Does not cover heatmap, statistical estimation or arbitrary panel layouts.
 ---
 
-# Scientific figures (single column, single panel)
+# Scientific figures
 
-Turns tabular data into an 85 mm wide, single-panel line or bar figure: a PDF at a
-fixed physical size, a PNG preview, a snapshot of the input, the resolved style
-profile and a check report. Then, where the toolchain allows, sets that figure
-into a real conference body page so its final printed size can be judged rather
-than assumed.
+Turns tabular data into line/bar/scatter figures or rectangular grids: a PDF at a
+fixed physical size (85 mm wide by default), a PNG preview, a snapshot of the input, the resolved style
+profile and a check report. When actual paper placement is requested, it can
+also set that figure into a real conference body page using the separate
+article-context workflow.
 
 **The style numbers are provisional.** They are the project's initial choices, not
 a journal or conference requirement. Never present them as a venue standard.
 
 ## Scope
 
-Handled: line charts (one shared numeric x, one or more named y series) and
-vertical bar charts (one numeric value per named category, negatives allowed).
+Handled: line and scatter charts (one shared numeric x, one or more named y series), and
+vertical bar charts (one numeric value per named category, negatives allowed),
+and rectangular grids of these charts with a shared style profile.
 
-Not handled — say so plainly rather than improvising: scatter, histogram, heatmap,
+Not handled — say so plainly rather than improvising: histogram, heatmap,
 3D, box/violin, stacked or grouped bars, twin axes, error bars, log axes,
-multi-panel and two-column layouts. A bar chart here compares named categories; it
+nonrectangular panel layouts. Single-panel and grid canvases can use the measured
+wide profile, including ICML’s cross-column width. A bar chart here compares named categories; it
 does not bin raw samples, so a request for a distribution is a histogram request
 and is out of scope.
 
 ## Workflow
+
+### Browser grid exports
+
+For a hand-off with `spec.kind: "grid"`, retain its `rows`, `columns`, and
+row-major `panels` array. Read the grid section of `references/input-schema.md`.
+The ordinary `render.py --spec ... --profile ... --output-dir ...` command
+produces one combined PDF/PNG, using the Python grid renderer. The browser uses SVG layout with matching physical style units.
+Canvas dimensions describe the whole grid; type sizes remain physical points
+and are shared by every panel. Read the panel-specific checks as well as the
+global overlap check. Dense grids may warn even when rendering succeeds.
+
+The conference evaluator's spec input remains single-panel. To evaluate a grid,
+pass its rendered directory to `scripts/evaluate_context.py --figure-dir <out>`
+with the venue, layout and fixture paths from `references/article-context-evaluation.md`.
+Do not run the fixed `line-multi` example as evidence for the user's grid.
 
 ### 1. Write the spec
 
@@ -91,42 +108,23 @@ automatically. Open `figure.png` and judge what no script can:
 If the environment cannot display images, say explicitly that the visual review did
 not happen. Never report it as passed.
 
-### 4b. Or let the user choose the numbers themselves
+### 4b. Receive a browser handoff
 
-There is a browser tool that shows a single-panel figure at its printed size on a
-calibrated page of any of the three venues, with sliders for the type sizes,
-weights, line widths, tick counts and bar settings. It runs this repository's own
-`figure_core.py` in the browser through Pyodide, so the preview is not an
-imitation of the figure — it is the figure.
+Read [references/browser-handoff.md](references/browser-handoff.md) when the user
+pastes **Copy for Agents** output or asks to reproduce browser-selected settings.
+Preserve the selected physical dimensions and style. Distinguish illustrative
+example data from imported user data before drawing. The handoff contains the
+profile, spec, data provenance, print-size target and current checks.
+
+The main tool at `web/index.html` is a static HTML/CSS paper preview and native
+SVG figure renderer using offline Matplotlib glyph outlines. It needs neither
+LaTeX nor Python/Pyodide at runtime. Template typography is fixed, and only the
+first illustrative page is shown. Browser and Python layout can differ; repeat
+checks with the chosen output renderer and actual data.
 
 ```sh
-python scripts/build_and_verify_web.py --only fetch-runtime --only fonts --only assets
-python web/serve.py            # then open http://127.0.0.1:8765/index.html
+python web/serve.py --static-only
 ```
-
-Point the user at it when they want to *decide* how the figure should look rather
-than have you decide. Its "Copy for an agent" button produces a complete hand-off:
-the resolved profile, the spec, the physical size, the versions and the exact
-`render.py` command.
-
-**When a user hands you that text, load it and use it.** Do not "improve" the
-values they chose. Render with the profile as given, and report the profile, the
-size, the fonts and the environment you actually used. If something in it cannot
-work, say which field and why — do not quietly substitute your own number.
-
-Three things about that preview are worth being straight about, because a user
-may assume otherwise:
-
-* It is a calibrated fixture page, not their paper. It says nothing about whether
-  their document compiles, where their float lands, or how their own macros
-  behave.
-* Its automatic rendering succeeding is **not** a visual review. Someone still has
-  to look at the figure.
-* The same style over different data is not the same figure: the legend position,
-  the tick values and the layout all move with the data.
-
-Step 5 below is still the check for a real page. The browser tool exists so that
-day-to-day previewing does not need LaTeX; it does not replace the compile.
 
 ### 5. Check it in a real article page
 
@@ -147,12 +145,12 @@ found.
 
 **When to do this:**
 
-* The user named a venue this repository has fixtures for (ICLR 2026, NeurIPS
-  2026, ICML 2026) — then it is not optional; produce that venue's page.
-* You changed the profile, added a case, or are refreshing the reference sheet —
-  then run the whole matrix, `--all`.
-* The user named no venue — ICLR 2026 half width is a reasonable default to show
-  them, said as what it is: a simulated context, not their submission template.
+* The user requests actual article placement/LaTeX verification and names a venue
+  with fixtures (ICLR 2026, NeurIPS 2026, ICML 2026): produce that venue's page.
+* When refreshing the compiled reference sheet, run its whole matrix, `--all`.
+  Ordinary browser style selection does not require a LaTeX calibration rebuild.
+* For a standalone figure request without article placement, deliver the figure
+  and print-size checks; do not invent a venue requirement.
 
 The default path re-renders the figure at the template's width, so it lands at
 scale 1 and the type sizes are the ones you set. Placing an already-rendered
@@ -175,16 +173,17 @@ from step 2; `report.json` keeps the standalone check results.
 
 ### 6. Fix and re-render
 
-Fix what the report and your own look at the PNG turned up, then re-render. **At
-most two correction rounds**, then report what is still wrong. Never edit the
-user's data to make a check pass, and never loop.
+Fix what the report and visual inspection found within the user's authorized
+scope, then re-render. Stop repeating checks once they pass unless new changes
+justify another run. Report unresolved constraints rather than changing data to
+make a check pass.
 
 Style fixes go in a *copy* of the profile passed with `--profile`, or — if the user
 wants the change to be the new default — in
 `references/profiles/single-column.json` itself, with their agreement. Never
 hard-code a size or colour in a template.
 
-Changing the figure changes the page, so re-run step 5 as well as step 2.
+When article placement is in scope, figure changes also require checking that placement again.
 
 ### 7. Hand over
 
@@ -250,8 +249,9 @@ that it did not run.
 * `scripts/evaluate_context.py` — places a figure in a conference template, measures
   the result, keeps the body page. Takes its fixtures by path, so a copied skill
   still works
-* `scripts/figure_core.py` — spec/profile validation, style resolution, export
-* `assets/templates/line.py`, `assets/templates/bar.py` — drawing only
+* `scripts/figure_core.py` — single-panel spec/profile validation, style resolution, export
+* `scripts/grid_core.py` — grid validation, rendering and panel-aware checks
+* `assets/templates/line.py`, `bar.py`, `scatter.py` — drawing only
 * `references/input-schema.md` — the input contract
 * `references/design-rules.md` — the design decisions and the limits of the checks
 * `references/article-context-evaluation.md` — how the in-page check works, what it
@@ -259,9 +259,9 @@ that it did not run.
 * `references/profiles/single-column.json` — every style value
 
 Outside the skill, `web/` holds the browser style lab described in step 4b — its
-paper pages are generated from compiled LaTeX by
-`scripts/calibrate_conference_pages.py` and the evidence that they match is under
-`tests/web/calibration/`. `tests/data/` holds prefab specs and `tests/output/` holds their
+paper pages use `web/presets/papers.json` and `web/src/css-paper.js` without a
+LaTeX dependency. Historical compiled-page evidence under `tests/web/calibration/`
+does not certify the current proportional preview. `tests/data/` holds prefab specs and `tests/output/` holds their
 rendered results — a proof sheet of the current profile, regenerated by
 `python tests/render_gallery.py`. Look there when you need a worked example of the
 input format or want to see what the preset values actually produce.
