@@ -57,6 +57,7 @@ async function boot(config) {
     try { fs.mkdir(dir); } catch (e) { /* already there */ }
   }
   const targets = {
+    'python/skill/scripts/grid_core.py': '/skill/scripts/grid_core.py',
     'python/skill/scripts/figure_core.py': '/skill/scripts/figure_core.py',
     'python/skill/scripts/inspect_figure.py': '/skill/scripts/inspect_figure.py',
     'python/skill/assets/templates/line.py': '/skill/assets/templates/line.py',

@@ -62,3 +62,17 @@
 .mpf-slot-empty {
   border: 0.4pt solid #b8b8b8;
 }
+
+.mpf-wrapped-body {
+  position: absolute;
+  overflow: hidden;
+  color: #000;
+  text-align: justify;
+  font-weight: normal;
+}
+.mpf-wrapped-body p { margin: 0; }
+.mpf-wrapped-figure {
+  float: right;
+  margin: 0 0 10pt 0;
+}
+.mpf-wrapped-figure figcaption { margin-top: 7pt; text-align: justify; }

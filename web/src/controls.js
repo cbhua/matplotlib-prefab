@@ -7,7 +7,7 @@
  * and fails if moving the control changes nothing.
  *
  * `min`, `max` and `step` are UI convenience, not science and not validation.
- * The number box accepts anything; only the Python validator decides what is a
+ * The number box accepts anything; only the active renderer validates what is a
  * legal profile, and it is deliberately more permissive than these sliders.
  */
 
@@ -59,8 +59,8 @@ export const CONTROL_GROUPS = [
   {
     id: 'type-weight',
     label: 'Type weight',
-    note: 'Applied to the drawing, then checked: render.py fails if an artist did not take '
-        + 'the weight asked for.',
+    note: 'Uses the matching Matplotlib font outlines for each weight. The exported profile retains '
+        + 'the selected weight.',
     controls: [
       { path: 'fonts.weight_x_label', fallback: 'fonts.weight', label: 'X axis label',
         kind: 'choice', choices: WEIGHTS },
@@ -80,13 +80,13 @@ export const CONTROL_GROUPS = [
     id: 'lines',
     label: 'Lines and markers',
     controls: [
-      { path: 'lines.data_linewidth_pt', label: 'Data lines', unit: 'pt', min: 0.2, max: 4, step: 0.05 },
+      { path: 'lines.data_linewidth_pt', kinds: ['line'], label: 'Data lines', unit: 'pt', min: 0.2, max: 4, step: 0.05 },
       { path: 'lines.axes_linewidth_pt', label: 'Axis spines', unit: 'pt', min: 0.1, max: 3, step: 0.05 },
       { path: 'lines.tick_linewidth_pt', label: 'Tick marks', unit: 'pt', min: 0.1, max: 3, step: 0.05 },
       { path: 'lines.tick_length_pt', label: 'Tick length', unit: 'pt', min: 0, max: 8, step: 0.25 },
       { path: 'lines.tick_pad_pt', label: 'Tick label gap', unit: 'pt', min: 0, max: 10, step: 0.25 },
       { path: 'lines.marker_size_pt', label: 'Marker size', unit: 'pt', min: 0, max: 12, step: 0.25 },
-      { path: 'lines.max_markers_per_series', label: 'Markers per series', unit: 'max',
+      { path: 'lines.max_markers_per_series', kinds: ['line'], label: 'Markers per series', unit: 'max',
         min: 2, max: 40, step: 1, integer: true },
     ],
   },
@@ -122,8 +122,9 @@ export const ALL_CONTROLS = CONTROL_GROUPS.flatMap((group) =>
 
 /** Does this control affect a figure drawn from `spec`? */
 export function controlApplies(control, spec) {
+  if (spec?.kind === 'grid') return spec.panels.some(panel => controlApplies(control, panel));
   const kind = (spec && spec.kind) || 'line';
-  if (control.groupKinds && !control.groupKinds.includes(kind)) return false;
+  if ((control.kinds || control.groupKinds) && !(control.kinds || control.groupKinds).includes(kind)) return false;
   if (control.requiresTitle && !(spec && typeof spec.title === 'string' && spec.title.trim())) {
     return false;
   }
@@ -152,21 +153,17 @@ export function buildPanel(root, { onChange, onReset }) {
   const registry = new Map();
   root.textContent = '';
 
-  for (const group of CONTROL_GROUPS) {
-    const section = document.createElement('section');
+  const order=['type-size','lines','bar','axes','type-weight'];
+  for (const group of [...CONTROL_GROUPS].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id))) {
+    const section = document.createElement('details');
+    section.open=['type-size','lines','bar'].includes(group.id);
     section.className = 'panel-group';
     section.dataset.group = group.id;
     if (group.kinds) section.dataset.kinds = group.kinds.join(' ');
 
-    const heading = document.createElement('h3');
+    const heading = document.createElement('summary');
     heading.textContent = group.label;
     section.appendChild(heading);
-    if (group.note) {
-      const note = document.createElement('p');
-      note.className = 'panel-note';
-      note.textContent = group.note;
-      section.appendChild(note);
-    }
 
     for (const raw of group.controls) {
       // The group's `kinds` restriction belongs to each of its controls from
@@ -195,7 +192,13 @@ export function buildPanel(root, { onChange, onReset }) {
       let box;
       if (control.kind === 'choice') {
         box = document.createElement('select');
-        box.id = id;
+        box.hidden = true;
+        slider = document.createElement('input');slider.type='range';slider.id=id;slider.min=0;slider.max=control.choices.length-1;slider.step=1;slider.className='weight-slider';slider.setAttribute('aria-label',control.label+' weight');
+        slider.style.setProperty('--steps',control.choices.length-1);
+        slider.addEventListener('input',()=>{box.value=control.choices[Number(slider.value)];onChange(control,box.value);});inputs.append(slider);
+        const legend=document.createElement('div');legend.className='weight-legend';
+        for(const [i,weight] of control.choices.entries()){const mark=document.createElement('span');mark.textContent=weight;legend.append(mark);}
+        row.append(legend);
         for (const choice of control.choices) {
           const option = document.createElement('option');
           option.value = choice;
@@ -209,6 +212,7 @@ export function buildPanel(root, { onChange, onReset }) {
         slider.min = control.min;
         slider.max = control.max;
         slider.step = control.step;
+        slider.style.setProperty('--steps',Math.min(40,Math.round((control.max-control.min)/control.step)));
         slider.setAttribute('aria-label', `${control.label} slider`);
         slider.addEventListener('input', () => {
           box.value = slider.value;
@@ -230,10 +234,10 @@ export function buildPanel(root, { onChange, onReset }) {
       }
       inputs.appendChild(box);
 
-      if (control.unit) {
+      if (control.kind !== 'choice') {
         const unit = document.createElement('span');
         unit.className = 'control-unit';
-        unit.textContent = control.unit;
+        unit.textContent = control.unit || '';
         inputs.appendChild(unit);
       }
 
@@ -245,7 +249,8 @@ export function buildPanel(root, { onChange, onReset }) {
       reset.addEventListener('click', () => onReset(control));
       inputs.appendChild(reset);
 
-      row.appendChild(inputs);
+      row.insertBefore(inputs,row.querySelector('.weight-legend'));
+      if(control.kind !== 'choice'){const ticks=document.createElement('div');ticks.className='range-legend';ticks.innerHTML=`<span>${control.min}</span><span>${control.max}${control.unit?' '+control.unit:''}</span>`;row.append(ticks);}
 
       const reason = document.createElement('p');
       reason.className = 'control-reason';
@@ -268,11 +273,12 @@ export function buildPanel(root, { onChange, onReset }) {
      */
     sync(profile, baseProfile, spec) {
       const kind = (spec && spec.kind) || 'line';
-      const hasTitle = Boolean(spec && typeof spec.title === 'string' && spec.title.trim());
+      const hasTitle = spec?.kind === 'grid' ? spec.panels.some(p => Boolean(p.title?.trim())) : Boolean(spec && typeof spec.title === 'string' && spec.title.trim());
+      for(const section of root.querySelectorAll('[data-kinds]'))section.hidden=!section.dataset.kinds.split(',').some(k=>spec?.kind==='grid'?spec.panels.some(p=>p.kind===k):kind===k);
       for (const { control, row, slider, box, flag, reason } of registry.values()) {
         const value = effectiveValue(profile, control);
         if (value !== undefined) {
-          if (slider) slider.value = String(value);
+          if (slider) {slider.value = control.kind==='choice'?String(control.choices.indexOf(value)):String(value);slider.setAttribute('aria-valuetext',String(value));slider.style.setProperty('--fill',`${(Number(slider.value)-Number(slider.min))/(Number(slider.max)-Number(slider.min))*100}%`);}
           box.value = String(value);
         }
         const changed = isOverridden(profile, baseProfile, control);
@@ -280,13 +286,14 @@ export function buildPanel(root, { onChange, onReset }) {
         flag.hidden = !changed;
 
         let why = '';
-        if (control.groupKinds && !control.groupKinds.includes(kind)) {
-          why = `only applies to ${control.groupKinds.join(' and ')} charts`;
+        if ((control.kinds || control.groupKinds) && !(spec?.kind === 'grid' ? spec.panels.some(p => (control.kinds || control.groupKinds).includes(p.kind)) : (control.kinds || control.groupKinds).includes(kind))) {
+          why = `only applies to ${(control.kinds || control.groupKinds).join(' and ')} charts`;
         } else if (control.requiresTitle && !hasTitle) {
           why = 'this spec has no title, so this would change nothing';
         }
         const applies = why === '';
         row.classList.toggle('is-inapplicable', !applies);
+        row.hidden=!applies;
         reason.textContent = why;
         reason.hidden = applies;
         if (slider) slider.disabled = !applies;

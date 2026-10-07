@@ -1,0 +1,2165 @@
+{
+  "note": "Semantic content of the ICML fixed reference page. Body/citations transcribed from its original fixture; bibliography joined from its measured text. Line-break hyphens removed, typographic ligatures expanded. Dynamic flow uses browser line breaking. See tests/fixtures/article-context/provenance.md.",
+  "caption": "Figure 1. Synthetic evaluation fixture, not a result. The panel above occupies exactly the width this template gives a figure in this mode, so its type prints at the size it is drawn at. The surrounding prose is an excerpt reproduced as typographic context; this page is not a paper and not a submission.",
+  "body": "Self-attention, sometimes called intra-attention is an attention mechanism relating different positions of a single sequence in order to compute a representation of the sequence. Self-attention has been used successfully in a variety of tasks including reading comprehension, abstractive summarization, textual entailment and learning task-independent sentence representations (Cheng et al., 2016; Parikh et al., 2016; Paulus et al., 2017; Lin et al., 2017).\n\nEnd-to-end memory networks are based on a recurrent attention mechanism instead of sequence-aligned recurrence and have been shown to perform well on simple-language question answering and language modeling tasks (Sukhbaatar et al., 2015).\n\nTo the best of our knowledge, however, the Transformer is the first transduction model relying entirely on self-attention to compute representations of its input and output without using sequence-aligned RNNs or convolution. In the following sections, we will describe the Transformer, motivate self-attention and discuss its advantages over models such as (Kaiser & Sutskever, 2015; Kalchbrenner et al., 2016) and (Gehring et al., 2017).\n\n## 3. Attention\n\nAn attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values, and output are all vectors. The output is computed as a weighted sum of the values, where the weight assigned to each value is computed by a compatibility function of the query with the corresponding key.\n\nIn practice, we compute the attention function on a set of queries simultaneously, packed together into a matrix Q. The keys and values are also packed together into matrices K and V. We compare each query with all keys, normalize the resulting scores, and apply a softmax function to obtain the weights on the values.",
+  "references": [
+    {
+      "segments": [
+        {
+          "text": "Bahdanau,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "D.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Cho,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "K.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Bengio,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Neural",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "machine",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "translation",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "by",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "jointly",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "learning",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "to",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "align",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "translate.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1409.0473",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2014.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Cheng,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "J.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Dong,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "L.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Lapata,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "M.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Long",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "short-term",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "memory-netw",
+          "italic": false
+        },
+        {
+          "text": "orks",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "for",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "machine",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "reading.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1601.06733",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2016.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Cho,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "K.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "an",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Merrienboer",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "B.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Gulcehre,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "C.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Bahdanau,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "D.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Boug",
+          "italic": false
+        },
+        {
+          "text": "ares,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "F",
+          "italic": false
+        },
+        {
+          "text": ".,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Schwenk,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "H.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Bengio,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Learn",
+          "italic": false
+        },
+        {
+          "text": "ing",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "phrase",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "representations",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "using",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "RNN",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "encoder",
+          "italic": false
+        },
+        {
+          "text": "-decoder",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "for",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "statistical",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "machine",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "translation.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1406.1078",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2014.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Chung,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "J.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Gulcehre,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "C.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Cho,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "K.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Bengio,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Em",
+          "italic": false
+        },
+        {
+          "text": "pirical",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "e",
+          "italic": false
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "aluation",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "of",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "g",
+          "italic": false
+        },
+        {
+          "text": "ated",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "recurrent",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "neural",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "netw",
+          "italic": false
+        },
+        {
+          "text": "orks",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "on",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "sequence",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "modeling.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1412.3555",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2014.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Gehring,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "J.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Auli,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "M.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Grangier",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "D.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": "arats,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "D.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Dauphin,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "N.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Con",
+          "italic": false
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "olutional",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "sequence",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "to",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "sequence",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "learning.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1705.03122",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2017.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Hochreiter",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "S.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Schmidhuber",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "J.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Long",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "short-term",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "mem",
+          "italic": false
+        },
+        {
+          "text": "ory",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Neur",
+          "italic": true
+        },
+        {
+          "text": "al",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Computation",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "9(8):1735–1780,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "1997.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Hochreiter",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "S.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Bengio,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Frasconi,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "P",
+          "italic": false
+        },
+        {
+          "text": ".,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Schmidhuber",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "J.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Gradient",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "flo",
+          "italic": false
+        },
+        {
+          "text": "w",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "in",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "recurrent",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "nets:",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "the",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "dif",
+          "italic": false
+        },
+        {
+          "text": "ficulty",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "of",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "learn",
+          "italic": false
+        },
+        {
+          "text": "ing",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "long-term",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "dependencies.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "In",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Kremer",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "S.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "C.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "K",
+          "italic": false
+        },
+        {
+          "text": "olen,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "J.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "F",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "(eds.),",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "A",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "F",
+          "italic": true
+        },
+        {
+          "text": "ield",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Guide",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "to",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Dynamical",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Recurr",
+          "italic": true
+        },
+        {
+          "text": "ent",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Neu",
+          "italic": true
+        },
+        {
+          "text": "r",
+          "italic": true
+        },
+        {
+          "text": "al",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Networks",
+          "italic": true
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "IEEE",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Press,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2001.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Jozefo",
+          "italic": false
+        },
+        {
+          "text": "wicz,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "R.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "V",
+          "italic": false
+        },
+        {
+          "text": "in",
+          "italic": false
+        },
+        {
+          "text": "yals,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "O.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Schuster",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "M.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Shazeer",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "N.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "W",
+          "italic": false
+        },
+        {
+          "text": "u,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Exploring",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "the",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "limi",
+          "italic": false
+        },
+        {
+          "text": "ts",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "of",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "language",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "modeling.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1602.02410",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2016.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Kaiser",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Ł.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Bengio,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "S.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Can",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "acti",
+          "italic": false
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "e",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "memory",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "replace",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "at",
+          "italic": false
+        },
+        {
+          "text": "tention?",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1610.08613",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2016.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Kaiser",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Ł.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Sutsk",
+          "italic": false
+        },
+        {
+          "text": "e",
+          "italic": false
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "er",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "I.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Neural",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "GPUs",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "learn",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "algorithms.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1511.08228",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2015.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Kalchbrenner",
+          "italic": false
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "N.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Es",
+          "italic": false
+        },
+        {
+          "text": "p",
+          "italic": false
+        },
+        {
+          "text": "e",
+          "italic": false
+        },
+        {
+          "text": "ho",
+          "italic": false
+        },
+        {
+          "text": "l",
+          "italic": false
+        },
+        {
+          "text": "t,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "L.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Simon",
+          "italic": false
+        },
+        {
+          "text": "yan,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "K.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "an",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "den",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Oord,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "A.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Gra",
+          "italic": false
+        },
+        {
+          "text": "v",
+          "italic": false
+        },
+        {
+          "text": "es,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "A.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Ka",
+          "italic": false
+        },
+        {
+          "text": "vukcuoglu,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "K.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Neu",
+          "italic": false
+        },
+        {
+          "text": "ral",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "machine",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "translation",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "in",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "linear",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "time.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1610.10099",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2016.",
+          "italic": false
+        }
+      ]
+    },
+    {
+      "segments": [
+        {
+          "text": "Kim,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Y",
+          "italic": false
+        },
+        {
+          "text": ".,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Denton,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "C.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Hoang,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "L.,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "and",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Rush,",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "A.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "M.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "Structured",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "attention",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "netw",
+          "italic": false
+        },
+        {
+          "text": "orks.",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "pr",
+          "italic": true
+        },
+        {
+          "text": "eprint",
+          "italic": true
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "arXiv:1702.00887",
+          "italic": true
+        },
+        {
+          "text": ",",
+          "italic": false
+        },
+        {
+          "text": " "
+        },
+        {
+          "text": "2017.",
+          "italic": false
+        }
+      ]
+    }
+  ]
+}

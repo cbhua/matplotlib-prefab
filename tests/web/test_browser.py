@@ -187,17 +187,9 @@ def test_the_clipboard_failing_shows_the_text_instead(lab):
     lab.wait_for_render()
 
 
-def test_the_venue_tabs_are_keyboard_operable(lab):
-    tabs = lab.page.query_selector_all("#venue-tabs .tab")
-    assert len(tabs) == 3
-    selected = [tab for tab in tabs if tab.get_attribute("aria-selected") == "true"]
-    assert len(selected) == 1
-    selected[0].focus()
-    lab.page.keyboard.press("ArrowRight")
-    lab.wait_for_render()
-    now = [tab.get_attribute("aria-selected") for tab in lab.page.query_selector_all("#venue-tabs .tab")]
-    assert now.count("true") == 1
-    assert lab.page.evaluate("document.activeElement.getAttribute('aria-selected')") == "true"
+def test_setup_has_no_accidental_return_button(lab):
+    assert lab.page.locator('#edit-setup').count()==0
+    assert lab.page.locator('#editor').is_visible()
 
 
 def test_bar_only_controls_are_disabled_for_a_line_chart(lab):
@@ -256,8 +248,9 @@ def test_a_crowded_figure_is_reported_rather_than_just_drawn(lab):
 
     before = lab.page_manifest()["slot"]["width_mm"]
     assert lab.status()["kind"] == "warn", lab.status()
+    lab.page.click("#figure-assessment")
     checks = lab.page.inner_text("#checks")
-    assert "tick_label_overlap" in checks, checks
+    assert "Text overlap" in checks, checks
 
     # And the slot is exactly where it was: the tool reports the problem instead
     # of quietly making room for it.
@@ -279,15 +272,17 @@ def test_pushing_the_type_up_starts_warning(lab):
         "type this large in a 69.85 mm slot has to produce a warning, not a silent "
         "crowded figure"
     )
+    lab.page.click("#figure-assessment")
     assert lab.page.inner_text("#checks").strip()
 
 
-def test_a_clean_figure_says_so_without_claiming_a_visual_review(lab):
+def test_clean_figure_keeps_status_quiet_and_review_in_export(lab):
     lab.select("icml2026", "wide")
     lab.wait_for_render()
     assert lab.status()["kind"] == "ok"
-    note = lab.page.inner_text("#checks")
-    assert "not a visual review" in note.lower() or "visual review" in note.lower()
+    assert lab.page.locator("#status").is_hidden()
+    assert lab.page.inner_text("#checks")==""
+    assert "visual_review is open" in lab.export_text()
 
 
 def test_the_checks_travel_with_the_export(lab):

@@ -1,5 +1,7 @@
 /**
  * Build the paper page from a generated baseline manifest.
+ * For browser text-wrap previews, keep the header/folio and measured dimensions
+ * while wrap-layout.js lays out illustrative prose around the figure.
  *
  * Nothing in here decides where anything goes. Every position, size, face and
  * line break comes from `page.json`, which was measured off a compiled LaTeX
@@ -24,6 +26,8 @@
  * is still real text — selectable, copyable, in reading order, set in the actual
  * font — which is what the page needs it to be.
  */
+
+import { mountWrappedBody } from './wrap-layout.js';
 
 const PT_TO_PX = 96 / 72;
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -102,6 +106,8 @@ export function renderPaperPage(page, options = {}) {
   paper.style.height = `${heightPx}px`;
   paper.setAttribute('data-venue', page.venue.id);
   paper.setAttribute('data-layout', page.layout.id);
+  const wrapped = page.layout.preview_engine === 'browser-text-flow';
+  paper.dataset.textWrap = String(wrapped);
 
   const sheet = svg('svg', {
     class: 'mpf-sheet',
@@ -127,6 +133,10 @@ export function renderPaperPage(page, options = {}) {
 
   const byIndex = new Map(page.runs.map((run) => [run.index, run]));
   for (const block of blocksInReadingOrder(page)) {
+    if (wrapped && block.region === 'body') continue;
+    // The source extractor can classify the last bibliography line as footer.
+    // In reflow mode retain the folio, not fragments from the replaced prose.
+    if (wrapped && block.region === 'footer' && !/^\d+$/.test(block.text.trim())) continue;
     const group = svg('g', {
       class: `mpf-block mpf-block-${block.kind}`,
       'data-kind': block.kind,
@@ -155,48 +165,12 @@ export function renderPaperPage(page, options = {}) {
   slot.setAttribute('aria-label',
     `Figure slot, ${page.slot.width_mm.toFixed(2)} by ${page.slot.height_mm.toFixed(2)} millimetres`);
   if (options.showSlotOutline) slot.classList.add('mpf-slot-empty');
-  paper.appendChild(slot);
+  if (wrapped) mountWrappedBody(paper, slot, page);
+  else paper.appendChild(slot);
 
   return { paper, sheet, slot, widthPx, heightPx };
 }
 
-/** Put a rendered figure into the slot, at the slot's exact size. */
-export function setFigure(slot, svgMarkup) {
-  slot.classList.remove('mpf-slot-empty');
-  slot.innerHTML = svgMarkup;
-  const figure = slot.firstElementChild;
-  if (figure && figure.tagName.toLowerCase() === 'svg') {
-    // matplotlib writes a physical size in CSS points and a matching viewBox.
-    // Letting it fill the slot keeps the drawing at the size the slot measures
-    // rather than at whatever the browser's default sizing would make of it —
-    // and if the two ever disagree, the geometry check says so.
-    figure.setAttribute('width', '100%');
-    figure.setAttribute('height', '100%');
-    figure.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-  }
-  return figure;
-}
-
-export function clearFigure(slot) {
-  slot.innerHTML = '';
-  slot.classList.add('mpf-slot-empty');
-}
-
-/** The @font-face rules for the packaged faces, built from the font manifest. */
-export function fontFaceCss(fonts, base) {
-  const seen = new Set();
-  const rules = [];
-  for (const face of Object.values(fonts.faces)) {
-    const key = `${face.css_family}|${face.weight}|${face.style}`;
-    if (seen.has(key)) continue;
-    seen.add(key);
-    rules.push(
-      `@font-face{font-family:"${face.css_family}";`
-      + `src:url("${base}${face.asset}") format("woff2");`
-      + `font-weight:${face.weight};font-style:${face.style};font-display:block;}`,
-    );
-  }
-  return rules.join('\n');
-}
+export { setFigure, clearFigure, fontFaceCss } from './figure-view.js';
 
 export const POINTS_TO_PIXELS = PT_TO_PX;

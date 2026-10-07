@@ -3,53 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Conference figure style lab</title>
+<title>Figure studio</title>
 <link rel="stylesheet" href="./src/styles.css">
 <link rel="stylesheet" href="./src/paper-page.css">
+<link rel="stylesheet" href="./src/fixed-paper.css">
+<link rel="stylesheet" href="./src/reflow-paper.css">
+<link rel="stylesheet" href="./src/css-paper.css">
+<link rel="stylesheet" href="./src/design-overrides.css">
 </head>
 <body>
+<div class="language-toolbar"><button type="button" id="ui-language" aria-label="切换为中文" title="切换为中文"><span aria-hidden="true">🌐 <span data-language="en">EN</span>/<span data-language="zh">中</span></span></button></div>
 
-<header class="masthead">
-  <div>
-    <h1>Conference figure style lab</h1>
-    <p class="sub">
-      A single-panel matplotlib figure, drawn by this repository’s own code in your browser,
-      shown at its printed size on a page calibrated against the venue’s real LaTeX output.
-    </p>
-  </div>
-  <p class="runtime" id="runtime">starting…</p>
-</header>
+<div hidden><span id="runtime"></span><span id="configuration-summary"></span><dl id="readout"></dl></div>
 
-<nav class="tabs" role="tablist" aria-label="Conference" id="venue-tabs"></nav>
+<main id="setup" class="setup" aria-label="Figure setup">
+  <p id="setup-loading" role="status">Loading templates…</p>
+</main>
 
-<div class="toolbar">
-  <div class="toolbar-group">
-    <span class="toolbar-label" id="layout-label">Width</span>
-    <div class="chips" id="layout-buttons" role="group" aria-labelledby="layout-label"></div>
-  </div>
-  <div class="toolbar-group">
-    <label class="toolbar-label" for="example">Example</label>
-    <select id="example">
-      <option value="line-multi">line — three series</option>
-      <option value="line-single">line — one series</option>
-      <option value="line-many">line — many series</option>
-      <option value="bar-signed">bar — crossing zero</option>
-      <option value="bar-positive">bar — positive</option>
-    </select>
-  </div>
-  <div class="toolbar-group">
-    <label class="toolbar-label" for="spec-file">Import spec</label>
-    <input type="file" id="spec-file" accept="application/json,.json">
-  </div>
-  <div class="toolbar-group toolbar-zoom">
-    <label class="toolbar-label" for="zoom">Zoom</label>
-    <input type="range" id="zoom" min="0.35" max="1.6" step="0.05" value="0.75">
-    <output id="zoom-value">75%</output>
-  </div>
-</div>
+<div id="editor" hidden>
+<div hidden id="layout-buttons"></div>
+<nav class="tabs" role="tablist" aria-label="Conference" id="venue-tabs" hidden></nav>
 
 <main class="layout">
   <section class="preview" id="preview" aria-label="Paper page preview">
+<div class="preview-tools">  <div class="toolbar-group toolbar-zoom">
+    <label class="toolbar-label" for="zoom">Zoom</label>
+    <input type="range" id="zoom" min="0.1" max="1.6" step="0.01" value="0.75">
+    <output id="zoom-value">75%</output>
+  </div>
+</div>
     <div class="preview-status" id="status" data-kind="working">
       <strong class="status-message">Starting…</strong>
       <span class="status-detail" hidden></span>
@@ -58,64 +40,62 @@
     <div class="paper-frame" id="paper-frame">
       <div class="paper-scale" id="paper-scale"></div>
     </div>
-    <ul class="checks" id="checks" hidden aria-label="Checks on this figure"></ul>
-    <p class="preview-caveat">
-      The zoom is a screen size, not a printed one — how big this looks depends on your display.
-      The millimetres on the right are the real ones. While a render is in flight the sheet is
-      dimmed: what you are looking at is the previous configuration, not this one.
-    </p>
+    <p id="wrap-note" class="preview-caveat" hidden>Half the text width, with text wrapping around the figure.</p>
+    <p id="paper-overflow" class="preview-caveat" hidden>The figure and caption exceed this page’s text area. Choose a smaller figure layout.</p>
   </section>
 
+  <aside id="warning-rail" aria-label="Figure warnings" hidden><ul class="checks" id="checks"></ul></aside>
   <aside class="side" aria-label="Style controls">
-    <section class="card">
-      <h2>This page</h2>
-      <dl class="readout" id="readout"></dl>
-    </section>
-
-    <section class="card">
-      <div class="card-head">
-        <h2>Style</h2>
-        <button type="button" id="reset-all">Reset all</button>
-      </div>
-      <p class="panel-note">
-        Sliders are a convenience; the number box takes any value the validator accepts,
-        including values outside a slider’s range. A dot marks a setting you have changed.
-      </p>
-      <div id="panel"></div>
-    </section>
-
+    <button type="button" id="figure-assessment" class="figure-assessment" aria-expanded="false" aria-controls="warning-rail" disabled>Checking figure…</button>
     <section class="card">
       <h2>Hand off</h2>
       <p class="export-state" id="export-state" data-ready="false">Not ready.</p>
-      <div class="buttons">
-        <button type="button" id="copy-handoff" disabled>Copy for an agent</button>
-        <button type="button" id="copy-profile" disabled>Copy profile JSON</button>
-        <button type="button" id="download-bundle" disabled>Download bundle</button>
-        <button type="button" id="download-profile" disabled>profile.json</button>
-        <button type="button" id="download-spec" disabled>spec.json</button>
-      </div>
+      <div class="buttons"><button type="button" id="copy-handoff" disabled>🤖 Copy for Agents</button></div><span id="copy-feedback" class="sr-only" role="status" aria-live="polite"></span>
       <div class="copy-fallback" id="copy-fallback" hidden>
         <p class="copy-fallback-reason"></p>
         <textarea rows="8" readonly aria-label="Hand-off text"></textarea>
       </div>
-      <p class="panel-note">
-        The hand-off carries the whole profile, the spec, the physical size, the matplotlib
-        version and the command. It also says what it does <em>not</em> promise: the same
-        style over different data is not the same figure, and a preview here is not evidence
-        that your paper compiles.
-      </p>
     </section>
+<section class="card figure-content"><div class="card-head"><h2>Figure content</h2><span id="data-origin" class="data-origin">Example data</span></div>  <div class="toolbar-group" id="panel-picker-group" hidden>
+    <label class="toolbar-label" for="active-panel">Panel</label>
+    <select id="active-panel"></select>
+  </div>
+  <div class="toolbar-group">
+    <label class="toolbar-label" for="example">Example</label>
+    <select id="example">
+      <option value="" disabled selected>Choose example…</option>
+      <option value="line-multi">line — three series</option>
+      <option value="line-single">line — one series</option>
+      <option value="line-many">line — many series</option>
+      <option value="bar-signed">bar — crossing zero</option>
+      <option value="bar-positive">bar — positive</option>
+      <option value="scatter">scatter — two groups</option>
+    </select>
+  </div>
+  <div class="toolbar-group">
+    <label class="toolbar-label" for="spec-file">Import spec</label>
+    <label class="file-picker"><span>Choose file…</span><input type="file" id="spec-file" class="sr-only" accept="application/json,.json"></label>
+  </div>
+</section>
+<section class="card figure-dimensions"><div class="card-head"><h2>Figure size</h2><button id="reset-size" type="button" class="control-reset">Reset size</button></div>
+<label class="paper-setting">Figure width<span><input id="figure-width" type="number" min="30" max="180" step="any"> mm</span></label><input id="figure-width-slider" type="range" min="30" max="180" step="0.5" aria-label="Figure width">
+<label class="paper-setting">Figure height<span><input id="figure-height" type="number" min="10" max="180" step="any"> mm</span></label><input id="figure-height-slider" type="range" min="10" max="180" step="0.5" aria-label="Figure height">
+</section>
+    <section class="card">
+      <div class="card-head">
+      <h2>Shared style</h2>
+        <div class="style-actions"><button type="button" id="undo-style" disabled>Undo</button><button type="button" id="reset-all">Reset all</button></div>
+      </div>
+      <p class="panel-note">
+        Applies to every panel. A dot marks a setting you have changed.
+      </p>
+      <div id="panel"></div>
+    </section>
+
+
   </aside>
 </main>
-
-<footer class="footnote">
-  <p>
-    The pages are typesetting fixtures built from each venue’s own style files. Nothing shown
-    here is a paper, a submission or an accepted work, and the prose on the sheet is an excerpt
-    reproduced as typographic context. Style values are the repository’s provisional defaults,
-    not venue requirements.
-  </p>
-</footer>
+</div>
 
 <script type="module" src="./src/app.js"></script>
 </body>

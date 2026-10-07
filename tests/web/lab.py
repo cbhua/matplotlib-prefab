@@ -25,6 +25,23 @@ if TESTS_WEB not in sys.path:
 from server import static_server  # noqa: E402
 
 BOOT_TIMEOUT_MS = 240_000
+_active_playwright = None
+
+
+@contextlib.contextmanager
+def browser_runtime():
+    """Share the driver when an isolated UI test runs alongside the session lab."""
+    global _active_playwright
+    if _active_playwright is not None:
+        yield _active_playwright
+        return
+    from playwright.sync_api import sync_playwright
+    with sync_playwright() as runtime:
+        _active_playwright = runtime
+        try:
+            yield runtime
+        finally:
+            _active_playwright = None
 
 
 class Lab:
@@ -40,6 +57,13 @@ class Lab:
     # -- lifecycle ---------------------------------------------------------
 
     def wait_ready(self, timeout: int = BOOT_TIMEOUT_MS) -> Dict[str, Any]:
+        # The public UI now starts in setup and loads Python only on Generate.
+        self.page.wait_for_function("window.__lab && window.__lab.setup", timeout=timeout)
+        if self.page.locator('#setup [data-venue="icml2026"]').is_visible() and self.page.locator('#setup [data-venue="icml2026"]').is_enabled():
+            self.page.click('[data-venue="icml2026"]')
+            self.page.click('[data-grid="1x1"]')
+            self.page.click('[data-layout="narrow"]')
+            self.page.click('#setup-next')
         self.page.wait_for_function(
             "window.__labApi && (window.__labApi.ready() || window.__labApi.bootError())",
             timeout=timeout,
@@ -122,10 +146,8 @@ def open_lab(headless: bool = True, viewport=(1500, 1000), device_scale_factor: 
     comparison against a 300 DPI raster would be comparing two different
     resolutions. Callers that screenshot for measurement pass 300/96.
     """
-    from playwright.sync_api import sync_playwright
-
     with static_server(os.path.join(REPO_ROOT, "web")) as origin:
-        with sync_playwright() as playwright:
+        with browser_runtime() as playwright:
             browser = playwright.chromium.launch(headless=headless)
             context = browser.new_context(
                 viewport={"width": viewport[0], "height": viewport[1]},

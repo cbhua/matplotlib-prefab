@@ -1,0 +1,24 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Browser SVG chart experiment</title>
+<style>
+@font-face{font-family:'Chart Demo Sans';src:url('./chart-demo/DejaVuSans.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+*{box-sizing:border-box}body{margin:0;background:#edf0f5;color:#233149;font:14px system-ui}header{background:white;border-bottom:1px solid #d1d8e2;padding:20px 28px}h1{font-size:23px;margin:10px 0}p{line-height:1.6;max-width:1000px}.workspace{display:grid;grid-template-columns:260px minmax(0,1fr);gap:22px;padding:24px}aside{background:white;padding:18px;border-radius:8px;height:fit-content}label{display:block;margin:15px 0}input[type=number],select{font:inherit;width:100%;padding:7px;border:1px solid #bfc9d8;border-radius:4px;margin-top:5px}input[type=range]{width:100%}button{font:inherit;padding:8px 12px;cursor:pointer}nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap}nav select{width:auto;margin:0}#stage{display:flex;align-items:flex-start;gap:20px;overflow:auto;padding:16px 0}figure{margin:0;flex-shrink:0}figcaption{margin:0 0 10px;color:#526079}.canvas{background:white;box-shadow:0 2px 12px #23314918;width:fit-content}.canvas>svg,.canvas>img{display:block}#stage.overlay{position:relative;display:block}#stage.overlay #reference-figure{position:absolute;left:0;top:16px;opacity:.5;pointer-events:none}#stage.overlay #reference-figure figcaption{visibility:hidden}#stage.difference #reference-figure{opacity:1;mix-blend-mode:difference}#status{color:#526079}#warnings{color:#9b4e00}#error{color:#b22222}#mismatch{padding:10px;background:#fff3d7}small{display:block;color:#62718a;line-height:1.6}[hidden]{display:none!important}@media(max-width:850px){.workspace{grid-template-columns:1fr}}
+</style></head><body><header><a href="./index.html">← Main figure tool</a><h1>Browser SVG chart experiment</h1><p>Same example data and style profile, drawn directly in JavaScript/SVG. The comparison images were generated once with Matplotlib. This demo never calls Python, the rendering API or Pyodide.</p><small>Single-panel line and bar only. Native tick placement, spacing and upper-right legend are an independent approximation, not a port of Matplotlib's layout engine. The main tool is unchanged.</small></header>
+<div class="workspace"><aside>
+<label>Text rendering<select id="text-mode"><option value="outlines">Matplotlib outlines</option><option value="browser">Browser text (previous)</option></select></label>
+<small>Outlines preserve the original letter shapes. Exported letters are vector paths; fixed labels are prepared offline.</small>
+<label>Reference case<select id="case"></select></label>
+<label>Width (mm)<input id="width" type="number" min="60" max="180" step="any"></label>
+<label>Height (mm)<input id="height" type="number" min="30" max="130" step="any"><input id="height-slider" aria-label="Height slider" type="range" min="30" max="130" step=".5"></label>
+<label>Tick / legend type (pt)<input id="type" type="number" min="6" max="14" step=".5"></label>
+<small>Axis labels use one additional point.</small>
+<label>Data line width (pt)<input id="line-width" type="number" min=".4" max="3" step=".1"></label>
+<label><input id="markers" type="checkbox"> Markers</label>
+<label>Category rotation<select id="rotation"><option value="0">0°</option><option value="30">30°</option><option value="45">45°</option></select></label>
+<button id="reset">Reset to reference</button>
+</aside><main>
+<nav><label>View <select id="view"><option value="side">Side by side</option><option value="native">Browser only</option><option value="overlay">Overlay</option><option value="difference">Difference</option></select></label><button id="download">Download browser SVG</button></nav>
+<p id="status" role="status">Loading local assets…</p><p id="error" role="alert" hidden></p><p id="mismatch" hidden>Custom configuration: the frozen Matplotlib reference has different settings. Overlay is disabled; select Reset to compare identical inputs.</p><p id="warnings" role="status"></p>
+<div id="stage"><figure id="native-figure"><figcaption>Browser · live SVG</figcaption><div id="native" class="canvas"></div></figure><figure id="reference-figure"><figcaption>Matplotlib · frozen reference</figcaption><div id="reference" class="canvas"></div></figure></div>
+<small id="versions"></small>
+</main></div><script type="module" src="./src/chart-demo.js"></script></body></html>

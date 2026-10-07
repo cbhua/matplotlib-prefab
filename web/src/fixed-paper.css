@@ -1,0 +1,13 @@
+.fixed-paper { position: relative; background: white; color: black; overflow: hidden; padding: 0; margin: 0; }
+.fixed-paper * { box-sizing: border-box; }
+.fixed-run {
+  position: absolute; display: block; white-space: pre; width: max-content;
+  line-height: 1; margin: 0; padding: 0; border: 0;
+  font-kerning: none; font-variant-ligatures: none;
+  font-feature-settings: "kern" 0, "liga" 0, "clig" 0;
+  font-synthesis: none; text-rendering: geometricPrecision;
+}
+.baseline-marker { display: inline-block; width: 0; height: 0; padding: 0; margin: 0; vertical-align: baseline; }
+.fixed-math { position: absolute; inset: 0; pointer-events: none; }
+.fixed-rule { position: absolute; background: black; }
+.fixed-slot { position: absolute; border: .4pt solid #b8b8b8; }

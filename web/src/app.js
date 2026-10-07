@@ -1,12 +1,9 @@
+import { initLanguage } from './i18n.js';
+initLanguage();
 /**
- * The style lab: three venues, two width modes, live matplotlib, one hand-off.
- *
- * The flow is deliberately narrow. A venue and a width mode choose a calibrated
- * paper page; that page fixes the figure's physical size; the panel edits a
- * style profile; the worker draws it with the repository's own Python; the SVG
- * goes into the page's measured slot. Nothing here computes a style number and
- * nothing draws — those live in Python so the browser and the command line
- * cannot disagree.
+ * The style lab: native paper layout, browser SVG outlines, one hand-off.
+ * The profile controls physical sizes; offline Matplotlib glyphs preserve text
+ * shapes while JavaScript handles chart layout and dynamic configuration.
  *
  * Two rules that the code exists to enforce:
  *
@@ -18,19 +15,29 @@
  *      configuration currently on screen.
  */
 
-import { renderPaperPage, setFigure, clearFigure, fontFaceCss } from './paper-page.js';
+import {validateFigureSpec} from './spec-validation.js';
+import {evaluatePaper,combinedReport} from './paper-checks.js';
+import { outlineRenderer } from './outline-renderer.js';
+import { contentBlocks, paginatePaper } from './reflow-paper.js';
+import { createSetup } from './setup.js';
+import { createPage, templateIndex, validatePresets } from './css-paper.js';
+import { setFigure, fontFaceCss } from './figure-view.js';
 import { buildPanel, ALL_CONTROLS, controlApplies, getPath, setPath, deletePath, effectiveValue } from './controls.js';
-import { buildBundle, handoffText, copyToClipboard, downloadJson, stableStringify } from './export-config.js';
+import { buildBundle, handoffText, copyToClipboard } from './export-config.js';
 
 const BASE = new URL('./', import.meta.url).href.replace(/src\/$/, '');
 const GENERATED = `${BASE}public/generated/`;
 const DEBOUNCE_MS = 120;
 
 const state = {
+  configured: false,
+  config: null,
+  activePanel: 0,
   venue: 'icml2026',
   layout: 'narrow',
   specName: 'line-multi',
-  pages: new Map(),
+  catalog: null,
+  paperOverrides: new Map(),
   specs: new Map(),
   baseProfile: null,     // the repository profile, width untouched
   profile: null,         // the edited copy, width derived from the mode
@@ -38,6 +45,7 @@ const state = {
   paper: null,
   slot: null,
   worker: null,
+  panelSources: [],
   assets: null,
   environment: null,
   requestId: 0,
@@ -60,19 +68,24 @@ function setStatus(kind, message, detail) {
 }
 
 function signature() {
-  return JSON.stringify([state.venue, state.layout, state.specName, state.profile]);
+  return JSON.stringify([state.venue, state.layout, state.currentSpec, state.profile]);
 }
 
 /** Export is only offered for a configuration that actually rendered. */
 function refreshExportAvailability() {
-  const fresh = state.lastGood && state.lastGood.signature === signature();
-  for (const id of ['copy-handoff', 'copy-profile', 'download-bundle', 'download-profile', 'download-spec']) {
+  const fresh = !state.pendingDebounce && !state.inflight && !state.paperBusy && !state.paperError && state.lastGood && state.lastGood.signature === signature();
+  for (const id of ['copy-handoff']) {
     el(id).disabled = !fresh;
   }
   el('export-state').textContent = fresh
     ? 'Ready: this configuration rendered successfully.'
     : 'Not ready: render the current configuration before exporting it.';
   el('export-state').dataset.ready = String(Boolean(fresh));
+  const assessment=el('figure-assessment');
+  assessment.disabled=!fresh;
+  if(fresh)showChecks(state.lastGood.report,renderProblems(state.lastGood.report));
+  if(!fresh){assessment.textContent=state.paperError || el('status').dataset.kind==='error'?'⚠️ Fix figure settings.':'Checking figure…';el('warning-rail').hidden=true;}
+
 }
 
 /* ------------------------------------------------------------------- data */
@@ -84,11 +97,9 @@ async function loadJson(path) {
 }
 
 async function page(venue, layout) {
-  const key = `${venue}/${layout}`;
-  if (!state.pages.has(key)) {
-    state.pages.set(key, await loadJson(`conferences/${venue}/${layout}/page.json`));
-  }
-  return state.pages.get(key);
+  const preset = state.catalog.presets.find(p => p.id === venue);
+  if (!preset) throw new Error(`Unknown paper template: ${venue}`);
+  return createPage(preset, layout, state.paperOverrides.get(`${venue}/${layout}`));
 }
 
 async function spec(name) {
@@ -103,12 +114,13 @@ function deriveWidth(profile, page) {
   // width, taken from the slot the template measured. Every setting the user
   // has touched is kept.
   profile.canvas.width_mm = page.figure.width_mm;
+  profile.canvas.aspect_ratio = page.figure.height_mm / page.figure.width_mm;
   return profile;
 }
 
 function requestRender() {
   state.pendingDebounce = false;
-  if (!state.ready || !state.profile) return;
+  if (!state.configured || !state.ready || !state.profile) return;
   const id = ++state.requestId;
   state.inflight = { id, signature: signature() };
   el('preview').classList.add('is-rendering');
@@ -121,6 +133,7 @@ function requestRender() {
 let debounceTimer = null;
 function scheduleRender() {
   clearTimeout(debounceTimer);
+  ++state.requestId; // invalidate replies even before the next debounced render starts
   state.pendingDebounce = true;
   debounceTimer = setTimeout(() => { state.pendingDebounce = false; requestRender(); }, DEBOUNCE_MS);
   // The check list belongs to the figure on screen; the moment that figure is
@@ -136,7 +149,8 @@ function onRenderResult(message) {
   // A reply for a superseded request is dropped rather than drawn. Without this
   // a slow render could land after a fast one and put the wrong picture on the
   // screen next to the right numbers.
-  if (message.id !== state.requestId) return;
+  if (message.id !== state.requestId || !state.inflight
+      || state.inflight.signature !== signature()) return;
   state.inflight = null;
   el('preview').classList.remove('is-rendering');
 
@@ -155,6 +169,7 @@ function onRenderResult(message) {
     svg: result.svg,
     drawn: result.drawn,
     report: result.report,
+    figureReport: result.report,
     render_ms: result.render_ms,
     wall_ms: message.wall_ms,
     width_mm: result.width_mm,
@@ -163,17 +178,17 @@ function onRenderResult(message) {
     resolved_spec: result.resolved_spec,
   };
   const size = `${result.width_mm.toFixed(2)} × ${result.height_mm.toFixed(2)} mm · `
-    + `${result.render_ms.toFixed(0)} ms in matplotlib, ${message.wall_ms} ms round trip`;
-  const problems = renderProblems(result.report);
+    + `${result.render_ms.toFixed(1)} ms in browser · Matplotlib outlines`;
+  updatePaperAssessment();
+  const problems = renderProblems(state.lastGood.report);
   if (problems.length) {
-    // A figure that drew is not a figure that is legible. These are render.py's
-    // own checks, run on this very figure, and they are the difference between
-    // a preview and a picture.
+    // Browser figure checks and paper-context checks describe this preview.
+    // The Python renderer performs its own independent inspection.
     setStatus('warn', `Drawn, with ${problems.length} thing${problems.length > 1 ? 's' : ''} to look at.`, size);
   } else {
     setStatus('ok', 'Drawn.', size);
   }
-  showChecks(result.report, problems);
+  showChecks(state.lastGood.report, problems);
   updateReadout();
   refreshExportAvailability();
 }
@@ -184,40 +199,68 @@ function renderProblems(report) {
 }
 
 function showChecks(report, problems) {
-  const host = el('checks');
-  host.textContent = '';
-  if (!report) {
-    host.hidden = true;
-    return;
+  clearIssueHighlight();
+  const host=el('checks');host.replaceChildren();host.hidden=false;
+  const button=el('figure-assessment');
+  button.textContent=problems.length?`⚠️ There ${problems.length===1?'is 1 warning':`are ${problems.length} warnings`}.`:'✅ Nice figure!';
+  button.dataset.state=problems.length?'warn':'ok';
+  button.title=problems.length?'Current figure warnings':'No warnings from the current checks';
+  for(const check of problems){
+    const item=document.createElement('li');item.className='warning-card';item.tabIndex=0;
+    item.addEventListener('mouseenter',()=>highlightIssue(check));item.addEventListener('mouseleave',clearIssueHighlight);
+    item.addEventListener('focusin',()=>highlightIssue(check));item.addEventListener('focusout',clearIssueHighlight);
+    const title=document.createElement('strong');title.textContent=`⚠️ ${check.title || 'Figure warning'}`;
+    const detail=document.createElement('p');detail.textContent=check.message;
+    item.append(title,detail);
+    if(check.control){const action=document.createElement('button');action.type='button';action.className='warning-action';action.textContent='Adjust setting';action.onclick=()=>focusSetting(check.control);item.append(action);}
+    host.append(item);
   }
-  host.hidden = false;
-  for (const check of problems) {
-    const item = document.createElement('li');
-    item.className = `check check-${check.status}`;
-    const label = document.createElement('strong');
-    label.textContent = check.id;
-    item.appendChild(label);
-    item.appendChild(document.createTextNode(` ${check.message}`));
-    host.appendChild(item);
-  }
-  const review = document.createElement('li');
-  review.className = 'check check-open';
-  review.textContent = problems.length
-    ? 'These are heuristics, not verdicts — and nothing above replaces looking at the figure.'
-    : 'Every automatic check is clean. That is not a visual review: look at the figure.';
-  host.appendChild(review);
+  button.setAttribute('aria-expanded',String(Boolean(problems.length)));
+  el('warning-rail').hidden=!problems.length;
 }
 
+function clearIssueHighlight(){
+  document.querySelectorAll('[data-issue-overlay]').forEach(n=>n.remove());
+  document.querySelectorAll('.issue-figure').forEach(n=>n.classList.remove('issue-figure'));
+}
+function highlightIssue(check){
+  clearIssueHighlight();
+  const root=state.slot?.querySelector('svg');if(!root)return;
+  const panel=root.querySelectorAll('.figure-panel')[check.panel_index];
+  if(panel && check.region){
+    const ns='http://www.w3.org/2000/svg',overlay=document.createElementNS(ns,'g'),rect=document.createElementNS(ns,'rect');overlay.setAttribute('data-issue-overlay','');
+    for(const [key,value] of Object.entries({...check.region,fill:'#b66a1215',stroke:'#a86b24','stroke-width':1.5,'stroke-dasharray':'5 4','vector-effect':'non-scaling-stroke'}))rect.setAttribute(key,value);
+    overlay.append(rect);panel.append(overlay);return;
+  }
+  const nodes=panel && check.subjects?.length?[...panel.querySelectorAll('[data-chart-text]')].filter(n=>check.subjects.includes(n.dataset.chartText)):[];
+  if(!nodes.length){state.paper.querySelector('.reflow-figure')?.classList.add('issue-figure');return;}
+  const ns='http://www.w3.org/2000/svg',overlay=document.createElementNS(ns,'g');overlay.setAttribute('data-issue-overlay','');overlay.setAttribute('aria-hidden','true');
+  const inverse=root.getScreenCTM().inverse();
+  for(const node of nodes){const box=node.getBoundingClientRect(),a=new DOMPoint(box.left,box.top).matrixTransform(inverse),b=new DOMPoint(box.right,box.bottom).matrixTransform(inverse);const rect=document.createElementNS(ns,'rect');
+    for(const [key,value] of Object.entries({x:a.x-1,y:a.y-1,width:b.x-a.x+2,height:b.y-a.y+2,fill:'#b66a1215',stroke:'#a86b24','stroke-width':1.5,'vector-effect':'non-scaling-stroke'}))rect.setAttribute(key,value);overlay.append(rect);}
+  root.append(overlay);
+}
+function focusSetting(path) {
+  const control=path.startsWith('figure-')?el(path):document.querySelector(`[data-path="${path}"] input:not([type=hidden])`);
+  if(!control)return;
+  control.closest('details')?.setAttribute('open','');
+  control.scrollIntoView({block:'center',behavior:'smooth'});control.focus({preventScroll:true});
+  const row=control.closest('.control')||control.closest('.paper-setting');row?.classList.add('setting-highlight');
+  setTimeout(()=>row?.classList.remove('setting-highlight'),1600);
+}
 function updateReadout() {
   const page = state.page;
   const zoom = Number(el('zoom').value);
+  el('configuration-summary').textContent = `${page.venue.name} · ${state.config?.rows || 1} × ${state.config?.columns || 1} · ${page.layout.label}`;
   el('readout').innerHTML = '';
   const rows = [
-    ['Venue', `${page.venue.name} (${page.venue.mode})`],
-    ['Width mode', `${page.layout.label} — ${page.layout.float_environment}`],
+    ['Venue', page.venue.name],
+    ['Page preview', 'HTML/CSS · proportional reference'],
+    ['Width mode', page.layout.label],
+    ['Panel layout', `${state.config?.rows || 1} × ${state.config?.columns || 1} (rows × columns)`],
     ['Figure width', `${state.profile.canvas.width_mm.toFixed(3)} mm`],
     ['Figure height', `${(state.profile.canvas.width_mm * state.profile.canvas.aspect_ratio).toFixed(3)} mm`],
-    ['Slot measured', `${page.slot.width_mm.toFixed(3)} × ${page.slot.height_mm.toFixed(3)} mm`],
+    ['Figure slot', `${page.slot.width_mm.toFixed(3)} × ${page.slot.height_mm.toFixed(3)} mm`],
     ['Body type', `${page.template.body_font_size_pt} pt`],
     ['Caption type', `${page.template.caption_font_size_pt} pt`],
     ['Preview zoom', `${Math.round(zoom * 100)}% — a screen size, not a printed one`],
@@ -234,13 +277,19 @@ function updateReadout() {
 
 /* ------------------------------------------------------------------- paper */
 
+let autoZoom = true;
 function applyZoom() {
+  const paper = el('paper-scale').firstElementChild;
+  if (autoZoom && paper && !el('editor').hidden) {
+    const availableWidth = el('preview').clientWidth - 16;
+    const fit = Math.min(availableWidth / paper.offsetWidth, 1.6);
+    el('zoom').value = Math.max(.1, fit);
+  }
   const zoom = Number(el('zoom').value);
   el('paper-scale').style.transform = `scale(${zoom})`;
-  const paper = el('paper-scale').firstElementChild;
   if (paper) {
     el('paper-frame').style.width = `${paper.offsetWidth * zoom}px`;
-    el('paper-frame').style.height = `${paper.offsetHeight * zoom}px`;
+    el('paper-frame').style.height = `${el('paper-scale').scrollHeight * zoom}px`;
   }
   el('zoom-value').textContent = `${Math.round(zoom * 100)}%`;
   if (state.page) updateReadout();
@@ -248,14 +297,10 @@ function applyZoom() {
 
 async function mountPage() {
   state.page = await page(state.venue, state.layout);
-  const host = el('paper-scale');
-  host.textContent = '';
-  const rendered = renderPaperPage(state.page, { showSlotOutline: true });
-  host.appendChild(rendered.paper);
-  state.paper = rendered.paper;
-  state.slot = rendered.slot;
+  el('wrap-note').hidden = !state.page.layout.text_wrap;
+  syncPaperControls();
+  await fitPaper();
   applyZoom();
-  if (state.lastGood && state.lastGood.svg) setFigure(state.slot, state.lastGood.svg);
 }
 
 /* ------------------------------------------------------------------ export */
@@ -263,10 +308,11 @@ async function mountPage() {
 function exportState() {
   return {
     page: state.page,
+    panelSources: state.panelSources,
     spec: state.lastGood ? state.lastGood.resolved_spec : state.currentSpec,
     profile: state.lastGood ? state.lastGood.resolved_profile : state.profile,
     resolvedType: resolvedTypeFrom(state.lastGood ? state.lastGood.resolved_profile : state.profile),
-    environment: state.environment,
+    environment: { ...state.environment },
     assets: state.assets,
     render: state.lastGood ? {
       drawn: state.lastGood.drawn,
@@ -320,12 +366,16 @@ function resolvedTypeFrom(profile) {
   return out;
 }
 
+let copyFeedbackTimer;
 async function copyOrShow(text, label) {
   const result = await copyToClipboard(text);
   const fallback = el('copy-fallback');
   if (result.ok) {
     setStatus('ok', `${label} copied to the clipboard.`);
     fallback.hidden = true;
+    const button=el('copy-handoff');button.textContent='Copied!';
+    clearTimeout(copyFeedbackTimer);copyFeedbackTimer=setTimeout(()=>button.textContent='🤖 Copy for Agents',1600);
+    el('copy-feedback').textContent='Figure instructions copied to clipboard.';
     return;
   }
   // Not an error to hide: show the text so it can be selected by hand, and say
@@ -342,11 +392,12 @@ async function copyOrShow(text, label) {
 /* -------------------------------------------------------------------- boot */
 
 async function boot() {
-  const [manifest, fonts, index, lock] = await Promise.all([
+  const [manifest, fonts, catalog, lock, prose] = await Promise.all([
     loadJson('assets-manifest.json'),
     loadJson('fonts/fonts.json'),
-    loadJson('conferences/index.json'),
+    fetch(`${BASE}presets/papers.json`).then(r => { if (!r.ok) throw new Error('Paper presets could not load'); return r.json(); }),
     fetch(`${BASE}pyodide.lock.json`).then((r) => r.json()),
+    fetch(`${BASE}reference/reflow-content.json`).then(r => r.json()),
   ]);
 
   const style = document.createElement('style');
@@ -355,26 +406,78 @@ async function boot() {
 
   const core = manifest.files.find((f) => f.target.endsWith('figure_core.py'));
   state.assets = {
+    paper_engine: 'native HTML/CSS',
+    paper_presets: 'presets/papers.json',
     pyodide_version: lock.pyodide_version,
     figure_core_sha256: core ? core.sha256 : null,
     shared_sources: manifest.files.map((f) => ({ source: f.source, sha256: f.sha256 })),
   };
 
+  state.catalog = validatePresets(catalog);
+  state.prose = prose;
+  const index = templateIndex(state.catalog);
   buildVenueTabs(index);
 
   state.baseProfile = await loadJson('profiles/single-column.json');
-  state.profile = structuredClone(state.baseProfile);
-  state.currentSpec = await spec(state.specName);
+  state.bootstrap = { manifest, lock };
+  state.setup = createSetup(el('setup'), index, startEditor, () => {
+    el('setup').hidden = true;
+    el('editor').hidden = false;
+  });
+}
+
+async function startEditor(config) {
+  const previous = state.currentSpec?.kind === 'grid' ? state.currentSpec.panels
+    : state.currentSpec ? [state.currentSpec] : [];
+  const oldConfig = state.config;
+  const panels = await Promise.all(config.kinds.map(async (kind, i) => {
+    const row = Math.floor(i / config.columns), column = i % config.columns;
+    const oldIndex = oldConfig && column < oldConfig.columns ? row * oldConfig.columns + column : -1;
+    const old = previous[oldIndex];
+    return old?.kind === kind ? structuredClone(old) : spec(kind === 'line' ? 'line-multi' : kind==='scatter'?'scatter':'bar-signed');
+  }));
+  state.panelSources=config.kinds.map((kind,i)=>{const row=Math.floor(i/config.columns),column=i%config.columns;const oldIndex=oldConfig&&column<oldConfig.columns?row*oldConfig.columns+column:-1;return previous[oldIndex]?.kind===kind && state.panelSources[oldIndex]?state.panelSources[oldIndex]:{kind:'example',id:kind==='line'?'line-multi':kind==='scatter'?'scatter':'bar-signed'};});
+  state.config = structuredClone(config);
+  state.venue = config.venue;
+  state.layout = config.layout;
+  state.currentSpec = panels.length === 1 ? panels[0] : {
+    schema_version: '1', kind: 'grid', rows: config.rows, columns: config.columns, panels,
+  };
+  state.activePanel = 0;
+  state.profile ||= structuredClone(state.baseProfile);
+  state.lastGood = null;
+  ++state.requestId;
   await mountPage();
   deriveWidth(state.profile, state.page);
+  state.configured = true;
+  el('setup').hidden = true;
+  el('editor').hidden = false;
+  applyZoom();
+  syncPanelPicker();
+  fitPaper();
+  for (const tab of el('venue-tabs').children) {
+    const selected = tab.id === `tab-${state.venue}`;
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+  }
+  const { manifest, lock } = state.bootstrap;
 
+  const history=[];let lastEdit=null;
+  const remember=key=>{
+    const now=performance.now();
+    if(!lastEdit || lastEdit.key!==key || now-lastEdit.time>700){history.push(structuredClone(state.profile));if(history.length>30)history.shift();}
+    lastEdit={key,time:now};el('undo-style').disabled=!history.length;
+  };
+  state.undoStyle=()=>{if(!history.length)return;state.profile=history.pop();deriveWidth(state.profile,state.page);lastEdit=null;panel.sync(state.profile,state.baseProfile,state.currentSpec);el('undo-style').disabled=!history.length;scheduleRender();};
   const handlers = {
     onChange(control, value) {
+      remember(control.path);
       setPath(state.profile, control.path, value);
       panel.sync(state.profile, state.baseProfile, state.currentSpec);
       scheduleRender();
     },
     onReset(control) {
+      remember('reset-'+(control?.path||'all'));
       if (control) {
         // Resetting an override *removes* it rather than writing the fallback's
         // number in: the field then follows the shared value again, which is
@@ -392,19 +495,22 @@ async function boot() {
   const panel = buildPanel(el('panel'), handlers);
   state.panel = panel;
   state.resetAll = () => handlers.onReset(null);
+  state.setStyleControl=handlers.onChange;
   panel.sync(state.profile, state.baseProfile, state.currentSpec);
   updateReadout();
   refreshExportAvailability();
 
-  wireControls();
+  if (!state.controlsWired) { wireControls(); state.controlsWired = true; }
+  if (state.worker) {
+    if (state.ready) requestRender();
+    return;
+  }
 
-  // Start the interpreter last, so the page is usable — and honestly labelled —
-  // while it loads.
-  setStatus('working', 'Loading the Python runtime…',
-    `${lock.total_mib} MiB of Pyodide, matplotlib and numpy, served from this site`);
+  // Load outline assets after setup has a complete configuration.
+  setStatus('working', 'Connecting to the figure renderer…');
   el('preview').classList.add('is-stale');
 
-  state.worker = new Worker(`${BASE}src/render-worker.js`, { type: 'module' });
+  state.worker = outlineRenderer(BASE);
   state.worker.onmessage = (event) => {
     const message = event.data;
     if (message.type === 'boot-progress') {
@@ -412,19 +518,17 @@ async function boot() {
     } else if (message.type === 'ready') {
       state.ready = true;
       state.environment = message.stats.environment;
-      el('runtime').textContent =
-        `matplotlib ${message.stats.environment.matplotlib} · numpy ${message.stats.environment.numpy}`
-        + ` · Python ${message.stats.environment.python} · Pyodide ${message.stats.pyodide_version}`
-        + ` · started in ${(message.stats.total_ms / 1000).toFixed(1)} s`;
+      state.assets.render_backend = message.stats.backend || 'pyodide';
+      if (message.stats.backend) state.assets.pyodide_version = null;
+      el('runtime').textContent = 'SVG outlines · browser renderer v0.5.0 · no Python runtime';
       el('boot-retry').hidden = true;
       requestRender();
     } else if (message.type === 'render-result') {
       onRenderResult(message);
     } else if (message.type === 'fatal') {
       state.bootError = message.error;
-      setStatus('error', 'The Python runtime failed to start.',
-        `${message.error.slice(0, 300)} — the preview cannot draw. Nothing else is `
-        + 'substituted for it: a different plotting library would not be this figure.');
+      setStatus('error', 'The outline renderer failed to start.',
+        `${message.error.slice(0, 300)} — check that the static outline assets are available.`);
       el('boot-retry').hidden = false;
     }
   };
@@ -468,6 +572,7 @@ function buildVenueTabs(index) {
 
 async function selectVenue(venueId) {
   state.venue = venueId;
+  if (state.config) state.config.venue = venueId;
   for (const tab of el('venue-tabs').children) {
     const selected = tab.id === `tab-${venueId}`;
     tab.setAttribute('aria-selected', String(selected));
@@ -498,6 +603,7 @@ function syncLayoutButtons(available) {
     button.setAttribute('aria-pressed', String(entry.layout === state.layout));
     button.addEventListener('click', async () => {
       state.layout = entry.layout;
+      if (state.config) state.config.layout = entry.layout;
       syncLayoutButtons(available);
       await mountPage();
       deriveWidth(state.profile, state.page);
@@ -508,45 +614,149 @@ function syncLayoutButtons(available) {
   }
 }
 
+function replaceActiveSpec(value,source,index=state.activePanel) {
+  state.panelSources[index]=source;
+  if (state.currentSpec.kind === 'grid') state.currentSpec.panels[index] = value;
+  else state.currentSpec = value;
+  state.config.kinds[index] = value.kind;
+  syncPanelPicker();
+}
+
+function syncPanelPicker() {
+  const panels = state.currentSpec.kind === 'grid' ? state.currentSpec.panels : [state.currentSpec];
+  el('panel-picker-group').hidden = panels.length === 1;
+  el('active-panel').replaceChildren();
+  panels.forEach((panel, i) => {
+    const option = document.createElement('option');
+    option.value = i;
+    option.textContent = `Panel ${i + 1} · ${panel.kind}`;
+    el('active-panel').append(option);
+  });
+  el('active-panel').value = state.activePanel;
+  el('example').value = state.panelSources[state.activePanel]?.id || '';
+  el('spec-file').value = '';
+  syncDataOrigin();
+}
+
+function syncDataOrigin(){const source=state.panelSources[state.activePanel];const label=el('data-origin');label.textContent=source?.kind==='user-import'?'Imported data':'Example data';label.title=source?.kind==='user-import'?source.name:'Illustrative values for choosing scale and style.';}
+function updatePaperAssessment(){
+  if(state.paper && state.lastGood?.signature===signature())state.lastGood.report=combinedReport(state.lastGood.figureReport,evaluatePaper(state.page,state.profile,state.currentSpec,state.paper));
+}
+let paperRevision = 0;
+async function fitPaper() {
+  if (!state.page || !state.prose) return;
+  const revision = ++paperRevision;
+  state.paperBusy = true;
+  refreshExportAvailability();
+  const svg = state.slot?.querySelector('svg');
+  try {
+    const source = state.page;
+    source.article = structuredClone(state.prose);
+    const blocks = contentBlocks(state.prose.body, state.prose.references);
+    const result = await paginatePaper(el('paper-scale'), source, blocks, {
+      heightMm: source.figure.height_mm, wide: state.layout === 'wide' || source.figure.width_mm > source.text_block.column_width_mm, caption: state.prose.caption,
+      showDimensions: false, maxPages: 1, shouldCommit: () => revision === paperRevision,
+    });
+    if (!result) return;
+    state.paper = el('paper-scale').firstElementChild;
+    state.slot = state.paper.querySelector('.reflow-slot');
+    if(state.lastGood?.signature===signature())setFigure(state.slot,state.lastGood.svg);
+    else if (svg) state.slot.append(svg);
+    else if (state.lastGood?.svg) setFigure(state.slot, state.lastGood.svg);
+    state.paperError = null;
+    state.pageCount = result.pages;
+    state.paper.dataset.overflow = 'false';
+    el('paper-overflow').hidden = true;
+
+    applyZoom();
+    updatePaperAssessment();
+  } catch (error) {
+    if (revision !== paperRevision) return;
+    state.paperError = error.message;
+    el('paper-overflow').hidden = false;
+    el('paper-overflow').textContent = `${error.message} Previous valid paper layout is retained.`;
+  } finally { if (revision === paperRevision) { state.paperBusy = false; refreshExportAvailability(); } }
+}
+
+async function changeFigureDimension(axis, value) {
+  const max=axis==='width'?state.page.text_block.width_mm:180;
+  if (!Number.isFinite(value) || value < (axis==='width'?30:10) || value > max) return;
+  const key = `${state.venue}/${state.layout}`;
+  state.paperOverrides.set(key, {figure_width_mm:state.page.figure.width_mm,figure_height_mm:state.page.figure.height_mm,...state.paperOverrides.get(key), [`figure_${axis}_mm`]: value});
+  state.page = await page(state.venue, state.layout);
+  deriveWidth(state.profile, state.page);
+  syncPaperControls(); fitPaper(); updateReadout(); scheduleRender();
+}
+function syncPaperControls() {
+  for(const axis of ['width','height']) {
+    const max=axis==='width'?state.page.text_block.width_mm:180;
+    for(const suffix of ['', '-slider']){const input=el(`figure-${axis}${suffix}`);input.max=max;input.value=state.page.figure[`${axis}_mm`].toFixed(2);}
+  }
+}
+let exampleRevision = 0;
 function wireControls() {
-  el('zoom').addEventListener('input', applyZoom);
+  for(const axis of ['width','height'])for(const suffix of ['', '-slider'])el(`figure-${axis}${suffix}`).addEventListener('input',event=>{
+    if(event.target.value && event.target.checkValidity())changeFigureDimension(axis,Number(event.target.value));
+  });
+  el('active-panel').addEventListener('change', event => {
+    state.activePanel = Number(event.target.value);
+    el('example').value = state.panelSources[state.activePanel]?.id || '';
+    el('spec-file').value = '';
+    syncDataOrigin();
+  });
+  el('figure-assessment').addEventListener('click',()=>el('checks').querySelector('.warning-card')?.focus());
+  el('zoom').addEventListener('input', () => { autoZoom = false; applyZoom(); });
+  window.addEventListener('resize', applyZoom);
 
   el('example').addEventListener('change', async (event) => {
-    state.specName = event.target.value;
-    state.currentSpec = await spec(state.specName);
-    state.panel.sync(state.profile, state.baseProfile, state.currentSpec);
-    scheduleRender();
+    const name=event.target.value;
+    const panelIndex=state.activePanel;
+    const revision=++exampleRevision;
+    state.pendingDebounce=true;refreshExportAvailability();
+    try {
+      state.specName=name;
+      const next=await spec(name);
+      if(revision!==exampleRevision)return;
+      replaceActiveSpec(next,{kind:'example',id:name},panelIndex);
+      state.panel.sync(state.profile,state.baseProfile,state.currentSpec);
+      scheduleRender();
+    } catch(error) {
+      if(revision!==exampleRevision)return;
+      state.pendingDebounce=false;setStatus('error','Could not load this example.',error.message);refreshExportAvailability();
+    }
   });
 
   el('reset-all').addEventListener('click', () => state.resetAll());
+  el('undo-style').addEventListener('click',()=>state.undoStyle());
+  el('reset-size').addEventListener('click',async()=>{
+    const key=`${state.venue}/${state.layout}`;state.paperOverrides.delete(key);state.page=await page(state.venue,state.layout);
+    deriveWidth(state.profile,state.page);syncPaperControls();fitPaper();updateReadout();scheduleRender();
+  });
 
   el('spec-file').addEventListener('change', async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+    const panelIndex=state.activePanel;
+    const revision=++exampleRevision;state.pendingDebounce=true;refreshExportAvailability();
     try {
       const parsed = JSON.parse(await file.text());
-      state.currentSpec = parsed;
+      if(revision!==exampleRevision)return;
+      validateFigureSpec(parsed,{grid:false});
+      replaceActiveSpec(parsed,{kind:'user-import',name:file.name},panelIndex);
       state.specName = file.name.replace(/\.json$/, '');
-      el('example').value = '';
-      state.panel.sync(state.profile, state.baseProfile, parsed);
+      state.panel.sync(state.profile, state.baseProfile, state.currentSpec);
       scheduleRender();
       setStatus('working', `Loaded ${file.name}. The validator will accept or reject it.`);
     } catch (error) {
-      setStatus('error', `${file.name} is not valid JSON.`, String(error.message || error));
+      if(revision!==exampleRevision)return;
+      state.pendingDebounce=false;
+      setStatus('error', `Could not import ${file.name}.`, String(error.message || error));
+      refreshExportAvailability();
     }
   });
 
   el('copy-handoff').addEventListener('click', () =>
     copyOrShow(handoffText(exportState()), 'The hand-off'));
-  el('copy-profile').addEventListener('click', () =>
-    copyOrShow(stableStringify(exportState().profile), 'The profile'));
-  el('download-bundle').addEventListener('click', () =>
-    downloadJson(`${state.venue}-${state.layout}-handoff.json`, buildBundle(exportState())));
-  el('download-profile').addEventListener('click', () =>
-    downloadJson('profile.json', exportState().profile));
-  el('download-spec').addEventListener('click', () =>
-    downloadJson('spec.json', exportState().spec));
-
   el('boot-retry').addEventListener('click', () => {
     el('boot-retry').hidden = true;
     location.reload();
@@ -554,7 +764,8 @@ function wireControls() {
 }
 
 boot().catch((error) => {
-  setStatus('error', 'The tool could not start.', String(error && error.stack ? error.stack : error));
+  el('setup').textContent = `The templates could not load. Reload to retry. ${error.message || error}`;
+  state.bootError = String(error);
 });
 
 /*
@@ -597,7 +808,7 @@ window.__labApi = {
    * mid-assertion and put the page back into its working state.
    */
   idle: () => Boolean(
-    !state.pendingDebounce && !state.inflight && state.lastGood
+    !state.paperBusy && !state.pendingDebounce && !state.inflight && state.lastGood
     && state.lastGood.signature === signature(),
   ),
   exportBundle: () => buildBundle(exportState()),
@@ -607,6 +818,7 @@ window.__labApi = {
     if (layout && layout !== state.layout) {
       const available = state.venueIndex.pages.filter((p) => p.venue === venue);
       state.layout = layout;
+      if (state.config) state.config.layout = layout;
       syncLayoutButtons(available);
       await mountPage();
       deriveWidth(state.profile, state.page);
@@ -618,9 +830,7 @@ window.__labApi = {
   setControl(path, value) {
     const control = ALL_CONTROLS.find((entry) => entry.path === path);
     if (!control) throw new Error(`no control writes ${path}`);
-    setPath(state.profile, path, value);
-    state.panel.sync(state.profile, state.baseProfile, state.currentSpec);
-    scheduleRender();
+    state.setStyleControl(control,value);
   },
   resetAll: () => state.resetAll(),
   controls: () => ALL_CONTROLS.map(({ path, fallback, label, kind, groupKinds, requiresTitle }) =>

@@ -26,6 +26,10 @@ function stableStringify(value) {
 /** The envelope. `profile` stays exactly what the renderer validated. */
 export function buildBundle(state) {
   const { page, spec, profile, resolvedType, environment, assets, render } = state;
+  const sources=state.panelSources || (spec.kind==='grid'?spec.panels:[spec]).map(()=>({kind:'unknown'}));
+  const illustrative=sources.every(s=>s.kind==='example');
+  const wrapped = Boolean(page.layout.text_wrap) || page.layout.preview_engine === 'browser-text-flow';
+  const simulated = page.layout.preview_engine === 'css-paper';
   return {
     schema_version: SCHEMA_VERSION,
     kind: 'matplotlib-prefab-figure-handoff',
@@ -42,17 +46,27 @@ export function buildBundle(state) {
       layout: page.layout.id,
       layout_label: page.layout.label,
       float_environment: page.layout.float_environment,
+      placement: wrapped ? 'right, with text wrapping' : 'standard float',
+      preview_layout: simulated ? 'HTML/CSS proportions; not LaTeX-calibrated'
+        : wrapped ? 'browser text flow; not LaTeX-calibrated' : 'compiled fixture page',
       width_rule: page.layout.target_width_rule,
       figure_width_mm: profile.canvas.width_mm,
       figure_height_mm: profile.canvas.width_mm * profile.canvas.aspect_ratio,
-      insert_at: `\\includegraphics[width=\\linewidth] inside a ${page.layout.float_environment}`,
+      panel_grid: spec.kind === 'grid' ? { rows: spec.rows, columns: spec.columns } : { rows: 1, columns: 1 },
+      insert_at: wrapped
+        ? `\\begin{wrapfigure}{r}{${profile.canvas.width_mm.toFixed(3)}mm} ... \\includegraphics[width=\\linewidth]{figure.pdf} ... \\end{wrapfigure} (requires \\usepackage{wrapfig})`
+        : `\\includegraphics[width=${profile.canvas.width_mm.toFixed(3)}mm] inside a ${page.layout.float_environment}`,
       keep_size: 'Insert at its own size. Do not scale it: the figure was drawn at the '
                + 'width the template gives it, so any scale factor also shrinks the type.',
     },
     profile,
+    paper_preview: simulated ? { engine: 'native HTML/CSS', preset_id: page.preset?.id || page.venue.id,
+      settings: page.preview_settings, figure: page.figure, text_block:page.text_block, note: 'Surrounding text only; these settings do not change the figure profile.' } : null,
     resolved_type: resolvedType,
     spec,
     spec_included: true,
+    data_usage: {intent:illustrative?'style-reference':'preserve-supplied-data',panel_sources:sources,
+      instruction:illustrative?'The included values are illustrative fixtures. Apply this style and physical size to the user data when supplied; do not present fixture values as research results.':'Preserve imported values and order. Panels marked example remain illustrative; replace only when the user supplies real data.'},
     render: render || null,
     environment,
     assets,
@@ -60,7 +74,7 @@ export function buildBundle(state) {
       command: 'python skills/scientific-figures/scripts/render.py'
              + ' --spec spec.json --profile profile.json --output-dir out/',
       writes: ['figure.pdf', 'figure.png', 'spec.json', 'profile.resolved.json', 'report.json'],
-      verify: 'The report.json it writes carries the same checks the preview ran. '
+      verify: 'The Python report.json runs its own checks; the browser preview uses SVG checks. '
             + 'A clean report is not a visual review.',
     },
     limits: {
@@ -68,10 +82,14 @@ export function buildBundle(state) {
                     + 'the automatic legend placement, the tick values and the constrained '
                     + 'layout all move, so the result will not be identical — only the style '
                     + 'will be.',
-      environment_bound: 'Byte-identical output needs the matplotlib version named under '
-                       + '`environment`. A different matplotlib draws the same figure slightly '
+      environment_bound: 'The browser SVG uses packaged glyph outlines and JavaScript layout. Python reproduction uses the matplotlib version named under '
+                       + '`environment.outline_matplotlib`. Python layout can differ from the browser. A different matplotlib draws the same figure slightly '
                        + 'differently.',
-      not_a_compile: 'The preview shows this figure on a calibrated fixture page. It is not '
+      not_a_compile: (simulated
+        ? 'This page is a native HTML/CSS proportion reference using a paper preset and packaged fonts. It is not '
+        : wrapped
+        ? 'The figure has the measured template width, but surrounding text is browser-reflowed illustrative prose; its line breaks have not been calibrated against LaTeX. It is not '
+        : 'The preview shows this figure on a calibrated fixture page. It is not ')
                    + 'evidence that your own paper compiles, that the float lands where you '
                    + 'want it, or that your macros are compatible.',
     },
@@ -100,7 +118,11 @@ export function handoffText(state) {
   const bundle = buildBundle(state);
   const { target, profile, resolved_type: resolvedType, environment, assets, spec } = bundle;
   const lines = [
-    'Reproduce this figure with matplotlib-prefab.',
+    'Use the scientific-figures skill (skills/scientific-figures/SKILL.md) to apply this figure configuration.',
+    'Keep the selected dimensions and style. If the skill is unavailable, reproduce the supplied spec/profile with Matplotlib using physical points and millimetres.',
+    '',
+    'Data intent: '+bundle.data_usage.instruction,
+    'Panel sources: '+bundle.data_usage.panel_sources.map((s,i)=>`panel ${i+1}: ${s.kind}${s.id?' ('+s.id+')':''}`).join('; '),
     '',
     `Target: ${target.venue} (${target.venue_mode} layout), ${target.layout_label}.`,
     `Draw it ${target.figure_width_mm.toFixed(3)} mm wide by `
@@ -117,20 +139,22 @@ export function handoffText(state) {
     stableStringify(profile),
     '```',
     '',
-    'Figure spec — save as spec.json:',
+    'Figure spec — save as spec.json (fixture unless marked user-import):',
     '```json',
     stableStringify(spec),
     '```',
+    ...['', 'Handoff context — save as handoff.meta.json; keep separate from the style profile:',
+      '```json', stableStringify({kind:'figure-handoff-context',data_usage:bundle.data_usage,target:bundle.target,paper_preview:bundle.paper_preview,environment:bundle.environment,checks:bundle.render?.checks}), '```'],
     '',
-    'Then run:',
+    'Render at the selected canvas size; do not crop with bbox_inches="tight" or resize the exported figure:',
     '```',
     bundle.reproduce.command,
     '```',
     '',
-    `Rendered in the browser by ${environment.renderer} on matplotlib `
+    assets.render_backend === 'svg-outlines' ? `Rendered in the browser by ${environment.renderer} v${environment.version}, using offline Matplotlib ${environment.outline_matplotlib} glyph outlines.` : `Rendered ${assets.render_backend === 'matplotlib-server' ? 'on the local server' : 'in the browser'} by ${environment.renderer} on matplotlib `
       + `${environment.matplotlib}, numpy ${environment.numpy}, Python ${environment.python} `
-      + `(Pyodide ${assets.pyodide_version}).`,
-    `Shared rendering code: figure_core.py sha256 ${assets.figure_core_sha256}.`,
+      + `(${assets.render_backend === 'matplotlib-server' ? 'local Matplotlib server' : `Pyodide ${assets.pyodide_version}`}).`,
+    `Python reproduction code: figure_core.py sha256 ${assets.figure_core_sha256}.`,
     '',
     ...(bundle.render && bundle.render.checks
       ? checkLines(bundle.render.checks)
@@ -139,6 +163,8 @@ export function handoffText(state) {
     `  - ${bundle.limits.same_data_only}`,
     `  - ${bundle.limits.environment_bound}`,
     `  - ${bundle.limits.not_a_compile}`,
+    '',
+    'For new data, rerun overlap, clipping and final-size readability checks. Resolve conflicts with the user rather than silently changing chosen sizes.',
     '',
     'Do not "improve" these values. They are the ones that were chosen and looked at. '
       + 'If something here does not work, say so and report what you actually used.',

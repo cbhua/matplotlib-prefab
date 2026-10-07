@@ -1,0 +1,96 @@
+{
+  "status": "pass",
+  "browser": "153.0.8010.12",
+  "dpi": 150,
+  "thresholds": {
+    "position_mm": 0.03,
+    "width_mm": 0.05,
+    "unmatched_ink_fraction": 0.05,
+    "ink_ratio_min": 0.85,
+    "ink_ratio_max": 1.15
+  },
+  "geometry": {
+    "pass": true,
+    "failures": [],
+    "text_runs": 802,
+    "math_runs": 10,
+    "max_errors": {
+      "baseline_mm": 0.00403489583325296,
+      "left_mm": 0.0041223494444561,
+      "width_mm": 0.005458777500000404,
+      "size_pt": 2.5000000000829914e-05
+    },
+    "slot_error_mm": {
+      "x_pt": 0.0036380208333325315,
+      "top_pt": 0.0018741319444652996,
+      "width_pt": 0.0,
+      "height_pt": 0.0009260416666547951
+    }
+  },
+  "pixels": {
+    "pass": true,
+    "regions": {
+      "whole_page": {
+        "missing_ink": 0.00858555531422877,
+        "extra_ink": 0.0182592360676268,
+        "ink_ratio": 1.0034156828168315,
+        "pass": true
+      },
+      "header": {
+        "missing_ink": 0.0,
+        "extra_ink": 0.0,
+        "ink_ratio": 0.8815439247082908,
+        "pass": true
+      },
+      "caption": {
+        "missing_ink": 0.0,
+        "extra_ink": 0.0,
+        "ink_ratio": 0.9994185982666541,
+        "pass": true
+      },
+      "body": {
+        "missing_ink": 0.007303446925775897,
+        "extra_ink": 0.009497640523266232,
+        "ink_ratio": 1.0061512421122807,
+        "pass": true
+      },
+      "formula": {
+        "missing_ink": 0.0,
+        "extra_ink": 0.0020491803278688526,
+        "ink_ratio": 1.0084320354692895,
+        "pass": true
+      },
+      "references": {
+        "missing_ink": 0.012335750700078984,
+        "extra_ink": 0.014234161988773055,
+        "ink_ratio": 1.0032253608588295,
+        "pass": true
+      },
+      "folio": {
+        "missing_ink": 0.0,
+        "extra_ink": 0.0,
+        "ink_ratio": 1.0096214844576021,
+        "pass": true
+      }
+    }
+  },
+  "sources": {
+    "tests/web/calibration/baselines/icml2026/narrow/page.pdf": "cbd224a6448914dbd72dd1941a5cbe8010e7fc5523fa8e8273eb5c6997e0baa5",
+    "tests/web/calibration/baselines/icml2026/narrow/page.png": "11e8f9473e387a9bddbf76d2333e3a55c51684131ab0165fa545dfc5311ef8db",
+    "web/public/generated/conferences/icml2026/narrow/page.json": "27e75b681f82fba9b16e9f7c3de542b6b27e60bc755cb6c4ceee7ce44f53f9d0",
+    "web/src/fixed-paper.js": "2eaecac53d3ff077390992cab9bd8c50c0eab1bafe0015d98bd428765c0f9866",
+    "web/src/fixed-paper.css": "19634429ab0415da682e584ae4bcb14655483139f3f6279336002da443daa176",
+    "web/src/reference.js": "9027bfc93bc8ca69537315756c4965f5d8c1f75f61338cc3ce0fccac2467c3d9",
+    "web/src/figure-view.js": "604a81e37adc7cec584c069c3290c953974e569d9afc343cd7b9413e1bfaa206",
+    "web/reference.html": "9c4872b4f035b1537dbd4cc7f091c879dbd53b54673eb9c9a50db942757ec1c8",
+    "web/reference/icml2026-narrow.json": "52e82b5ac57606d334f35d215c70a9f72abc5ad4a012abcf01f060b6702c34c7",
+    "web/public/generated/fonts/fonts.json": "3347ca343236565633076d2f6d7d1ead3d63a0694d733b2a7573f384133c5294",
+    "scripts/verify_fixed_page.py": "2f6e983c078624cd0ae26708f3ec6281910182e879b80418a0625927cd884b54",
+    "web/public/generated/fonts/NimbusMonoPS-Regular.woff2": "c198604644872e2e5d59141ad3a2fac905c5da11f9052597318633cee889eec9",
+    "web/public/generated/fonts/NimbusRoman-Bold.woff2": "7b24dd9d0f0817ff7df45caaa4e64797b2c5dd9d800f71b2a8d1bda3da1ce451",
+    "web/public/generated/fonts/NimbusRoman-BoldItalic.woff2": "a27025c0c64b4c4fe21c19f137444e4a01c597a19d847517fcd6d24be14a8b9c",
+    "web/public/generated/fonts/NimbusRoman-Italic.woff2": "d28c45f1bbcc61e6f136e96bc24c4a669d5be1286acfb3f078776d98a71f285d",
+    "web/public/generated/fonts/NimbusRoman-Regular.woff2": "49e7a910a63076cfdc11f8d4feb789fc2eb7cbbc2debc4a597512c67b03beca7"
+  },
+  "note": "Frozen line breaks and measured positions; HTML text and local fonts, SVG only for maths. Compared to the committed LaTeX PDF and its 150 DPI raster; neither is regenerated. No registration, rescaling, whitespace-normalized score, or figure mask."
+}

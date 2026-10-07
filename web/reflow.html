@@ -1,0 +1,27 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dynamic paper layout</title><link rel="stylesheet" href="./src/fixed-paper.css"><link rel="stylesheet" href="./src/reflow-paper.css">
+<style>
+body { margin: 0; background: #e9edf2; color: #253145; font: 14px system-ui; }
+.toolbar { padding: 18px 24px; background: white; border-bottom: 1px solid #cbd2dc; }
+h1 { font-size: 21px; margin: 8px 0; }.toolbar p { max-width: 900px; margin: 8px 0; }
+nav { display: flex; flex-wrap: wrap; gap: 18px; align-items: center; margin-top: 14px; }
+input, select, button, textarea { font: inherit; } input[type=number] { width: 78px; } input, select, button { padding: 6px; }
+.workspace { display: flex; align-items: flex-start; gap: 24px; padding: 24px; }
+.preview { overflow: auto; flex: 1; min-width: 0; } #pages { width: 816px; }
+aside { width: 310px; flex-shrink: 0; } details { background: white; padding: 14px; margin-bottom: 12px; border-radius: 6px; }
+textarea { box-sizing: border-box; width: 100%; margin-top: 10px; padding: 8px; resize: vertical; }
+#status { font-variant-numeric: tabular-nums; } #error { color: #a22; } [hidden] { display:none!important; }
+@media(max-width: 1000px) { .workspace { flex-direction: column; } aside, .preview { width: 100%; } aside { order: -1; } }
+</style></head><body>
+<header class="toolbar"><a href="./reference.html">← Fixed reference</a> · <a href="./index.html">Figure lab</a>
+<h1>Dynamic paper layout · ICML</h1><p>Adjust the figure height to reflow the caption, body and references. Overflow continues onto the next page. The reference fonts, column widths, header and folio stay fixed.</p>
+<nav><label>Figure height <input id="height" type="number" min="10" max="180" step="any" value="51.0159"> mm</label>
+<input id="height-slider" aria-label="Figure height slider" type="range" min="10" max="180" step=".5" value="51.0159">
+<label>Width <select id="width"><option value="narrow">Single column · 82.55 mm</option><option value="wide">Double column · 171.45 mm</option></select></label>
+<button id="reset" type="button">Reset page</button><span id="status" role="status">Loading…</span></nav><p id="error" role="alert" hidden></p></header>
+<div class="workspace"><main class="preview"><div id="pages"></div></main><aside>
+<details open><summary>Figure</summary><p>Upload an image to compare its size with the text. The image keeps its proportions inside the adjustable frame.</p><input id="image" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml"><button id="remove-image" type="button">Remove image</button></details>
+<details open><summary>Caption</summary><textarea id="caption" rows="6" aria-label="Figure caption"></textarea></details>
+<details><summary>Body text</summary><p>Separate paragraphs with a blank line. Start a heading with ##.</p><textarea id="body" rows="18" aria-label="Body text"></textarea></details>
+<details><summary>References</summary><p>Separate entries with a blank line. Editing uses plain text; Reset page restores the reference's italic styling.</p><textarea id="references" rows="15" aria-label="References"></textarea></details>
+</aside></div><script type="module" src="./src/reflow.js"></script></body></html>

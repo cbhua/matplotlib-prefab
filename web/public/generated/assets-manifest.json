@@ -4,22 +4,34 @@
   "generated_from": "the working tree, not a release",
   "files": [
     {
+      "source": "skills/scientific-figures/scripts/grid_core.py",
+      "target": "python/skill/scripts/grid_core.py",
+      "sha256": "531af218077a4c0f17d50b916431a1cf213568f85aa9a27f908cd5b59ddbbf6e",
+      "bytes": 5433
+    },
+    {
       "source": "skills/scientific-figures/scripts/figure_core.py",
       "target": "python/skill/scripts/figure_core.py",
-      "sha256": "69bef7f41e0b9d8d7cb8f50d8c03c348946de3f8422d80b16d89a2b156e87f36",
-      "bytes": 36176
+      "sha256": "b73651300051fe8c5822e437271a10898eb5af522b8b5e0de4a124368a1bb99c",
+      "bytes": 36198
     },
     {
       "source": "skills/scientific-figures/scripts/inspect_figure.py",
       "target": "python/skill/scripts/inspect_figure.py",
-      "sha256": "b75d07d9fc373cbadde488a40f8cfff0b3adadeb5e9634c490c4406ba1e36146",
-      "bytes": 31984
+      "sha256": "69ab340023c9ae3624e703721a7d1680f84ab0e991078c6ef6fd319a1937e7b9",
+      "bytes": 31997
     },
     {
       "source": "skills/scientific-figures/assets/templates/line.py",
       "target": "python/skill/assets/templates/line.py",
       "sha256": "c74755ec3bd90759e7d22a91403905d9981855f9d471fe8b227bb340fbbfebf0",
       "bytes": 1979
+    },
+    {
+      "source": "skills/scientific-figures/assets/templates/scatter.py",
+      "target": "python/skill/assets/templates/scatter.py",
+      "sha256": "48acd370e59fc80879ccf04d437da9e1f14a9943e681c49ba5be2c51675f89c4",
+      "bytes": 1860
     },
     {
       "source": "skills/scientific-figures/assets/templates/bar.py",
@@ -30,8 +42,8 @@
     {
       "source": "web/src/python/worker_render.py",
       "target": "python/worker_render.py",
-      "sha256": "36267e7f138a33407b662ac6ff0aefae6d1d58ef9e5b3d75a40417c54f87eab7",
-      "bytes": 3699
+      "sha256": "655e7bb6b4efaa41e5ba29567cb8871b5137f682b88f4d0f97d7623bf7ee2b94",
+      "bytes": 3814
     },
     {
       "source": "skills/scientific-figures/references/profiles/single-column.json",
@@ -68,6 +80,12 @@
       "target": "specs/bar-signed.json",
       "sha256": "bd85cb51fb3986d1d93dfc14aa6e0c2981dcf8929e553bafbcb378e0390c3657",
       "bytes": 282
+    },
+    {
+      "source": "tests/data/scatter.json",
+      "target": "specs/scatter.json",
+      "sha256": "775b98c6376af6ce15609a0e883236011b672b5b3275e661496261bece5e77fe",
+      "bytes": 657
     }
   ],
   "python_import_root": "python/skill/scripts",

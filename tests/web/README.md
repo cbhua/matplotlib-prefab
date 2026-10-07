@@ -1,5 +1,44 @@
 # Evidence for the browser tool
 
+## Active browser editor checks
+
+The main editor runs without Pyodide or a plotting backend. Its active regressions
+cover paper/context diagnostics, warning navigation, responsive UI and drag
+stability, source-data preservation, asynchronous imports, style undo, and the
+Copy for Agents → skill importer → Python PDF round trip. Run:
+
+```sh
+.venv/bin/python -m pytest tests/web/test_assessment.py tests/web/test_paper_assessment.py tests/web/test_render_responsiveness.py tests/web/test_spec_validation.py tests/web/test_handoff_roundtrip.py tests/web/test_interface.py tests/web/test_interface_stability.py
+```
+
+`test_native_chart.py` and `test_chart_text_fidelity.py` independently protect
+chart geometry and Matplotlib outline fidelity against frozen references.
+Run root Python tests in a separate pytest command from `tests/web`, since their
+`conftest` helpers use different import contexts.
+
+## Active fixed-page regression
+
+`test_fixed_page.py` renders `web/reference.html` and compares the original ICML
+page against HTML text with frozen line breaks and local fonts. It extracts
+geometry/text from the PDF on each run and compares the screenshot against the
+unchanged committed 150 DPI raster. It does not depend on Pyodide, LaTeX or
+Poppler. Six deliberate defects test that the comparison actually fails.
+
+```sh
+.venv/bin/python -m pytest tests/web/test_fixed_page.py
+.venv/bin/python scripts/verify_fixed_page.py
+```
+
+The second command writes current measurements and overlays under
+`.tmp/fixed-page-regression/`. See `web/README.md` for thresholds and scope.
+The original generic CSS preview has its own `test_css_paper.py` tests.
+
+## Historical compiled-page evidence
+
+The reports below predate the current CSS preview. The old full calibration
+pipeline does not certify it; the fixed-page experiment above has a separate,
+live regression rather than relying on these historical passing reports.
+
 Everything in `calibration/` is generated. It is committed because these checks
 are slow and need a toolchain, and because a claim about millimetres should be
 readable by a person rather than re-derived on trust.

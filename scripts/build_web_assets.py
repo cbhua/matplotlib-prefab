@@ -37,9 +37,11 @@ MANIFEST_PATH = os.path.join(GENERATED, "assets-manifest.json")
 # Reproducing the layout means the browser runs the unmodified file; flattening
 # it would mean patching the loader, i.e. a second code path.
 PYTHON_COPIES = (
+    ("skills/scientific-figures/scripts/grid_core.py", "python/skill/scripts/grid_core.py"),
     ("skills/scientific-figures/scripts/figure_core.py", "python/skill/scripts/figure_core.py"),
     ("skills/scientific-figures/scripts/inspect_figure.py", "python/skill/scripts/inspect_figure.py"),
     ("skills/scientific-figures/assets/templates/line.py", "python/skill/assets/templates/line.py"),
+    ("skills/scientific-figures/assets/templates/scatter.py", "python/skill/assets/templates/scatter.py"),
     ("skills/scientific-figures/assets/templates/bar.py", "python/skill/assets/templates/bar.py"),
     ("web/src/python/worker_render.py", "python/worker_render.py"),
 )
@@ -54,7 +56,7 @@ PROFILE_COPIES = (
 # not depend on a file the receiving agent cannot see.
 SPEC_COPIES = tuple(
     ("tests/data/%s.json" % name, "specs/%s.json" % name)
-    for name in ("line-multi", "line-single", "line-many", "bar-positive", "bar-signed")
+    for name in ("line-multi", "line-single", "line-many", "bar-positive", "bar-signed", "scatter")
 )
 
 ALL_COPIES = PYTHON_COPIES + PROFILE_COPIES + SPEC_COPIES

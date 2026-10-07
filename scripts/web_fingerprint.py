@@ -23,6 +23,19 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Anything whose change would alter what the browser draws, where the page puts
 # it, or which numbers the reports contain.
 TRACKED: List[str] = [
+    "skills/scientific-figures/scripts/grid_core.py",
+    "web/src/setup.js",
+    "web/src/wrap-layout.js",
+    "web/src/css-paper.js",
+    "web/src/reflow-paper.js",
+    "web/src/reflow-paper.css",
+    "web/src/server-renderer.js",
+    "web/reference/reflow-content.json",
+    "web/figure_backend.py",
+    "web/src/css-paper.css",
+    "web/src/figure-view.js",
+    "web/src/paper-prose.js",
+    "web/presets/papers.json",
     "skills/scientific-figures/scripts/figure_core.py",
     "skills/scientific-figures/scripts/render.py",
     "skills/scientific-figures/scripts/inspect_figure.py",

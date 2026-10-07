@@ -1,0 +1,19 @@
+{
+  "baseline_pdf_sha256": "cbd224a6448914dbd72dd1941a5cbe8010e7fc5523fa8e8273eb5c6997e0baa5",
+  "note": "Fixed-page supplement: the legacy manifest extracts filled rectangles only, omitting these two stroked horizontal paths. Coordinates copied from the original PDF content stream (cm, w, m, l, S). Regression re-reads that stream independently.",
+  "strokes": [
+    {
+      "x_pt": 55.44,
+      "y_pt": 734.404,
+      "width_pt": 486,
+      "height_pt": 0.996
+    },
+    {
+      "x_pt": 528.862,
+      "y_pt": 710.964,
+      "width_pt": 10.087,
+      "height_pt": 0.398
+    }
+  ],
+  "baseline_png_sha256": "11e8f9473e387a9bddbf76d2333e3a55c51684131ab0165fa545dfc5311ef8db"
+}

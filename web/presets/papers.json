@@ -1,0 +1,84 @@
+{
+  "schema_version": "1",
+  "note": "Editable frontend presets. Sizes are mm and CSS points (72/in). Font sizes are conventional rounded template sizes, not a promise of TeX-exact typography. No LaTeX build is needed to edit or use these presets.",
+  "presets": [
+    {
+      "id": "iclr2026",
+      "name": "ICLR 2026",
+      "year": 2026,
+      "columns": 1,
+      "paper": {
+        "width_mm": 215.9,
+        "height_mm": 279.4
+      },
+      "body": {
+        "left_mm": 38.1,
+        "top_mm": 28.879,
+        "width_mm": 139.7,
+        "height_mm": 228.6
+      },
+      "column_gap_mm": 3.5146,
+      "font_family": "MPF Nimbus Roman",
+      "body_size_pt": 10.0,
+      "body_leading_pt": 11.0,
+      "caption_size_pt": 10.0,
+      "paragraph_gap_pt": 6.0,
+      "wrap_gap_mm": 3.5146,
+      "figure_aspect_ratio": 0.618,
+      "running_header": "ICLR 2026 \u00b7 Figure layout preview",
+      "source_reference": "tests/fixtures/conferences/iclr2026/ \u2014 initial dimensions transcribed from the committed template measurements; browser layout is approximate"
+    },
+    {
+      "id": "icml2026",
+      "name": "ICML 2026",
+      "year": 2026,
+      "columns": 2,
+      "paper": {
+        "width_mm": 215.9,
+        "height_mm": 279.4
+      },
+      "body": {
+        "left_mm": 19.5581,
+        "top_mm": 23.6575,
+        "width_mm": 171.45,
+        "height_mm": 228.6
+      },
+      "column_gap_mm": 6.35,
+      "font_family": "MPF Nimbus Roman",
+      "body_size_pt": 10.0,
+      "body_leading_pt": 12.0,
+      "caption_size_pt": 9.0,
+      "paragraph_gap_pt": 6.0,
+      "wrap_gap_mm": 3.5146,
+      "figure_aspect_ratio": 0.618,
+      "running_header": "ICML 2026 \u00b7 Figure layout preview",
+      "source_reference": "tests/fixtures/conferences/icml2026/ \u2014 initial dimensions transcribed from the committed template measurements; browser layout is approximate"
+    },
+    {
+      "id": "neurips2026",
+      "name": "NeurIPS 2026",
+      "year": 2026,
+      "columns": 1,
+      "paper": {
+        "width_mm": 215.9,
+        "height_mm": 279.4
+      },
+      "body": {
+        "left_mm": 38.1,
+        "top_mm": 25.4,
+        "width_mm": 139.7,
+        "height_mm": 228.6
+      },
+      "column_gap_mm": 3.5146,
+      "font_family": "MPF Nimbus Roman",
+      "body_size_pt": 10.0,
+      "body_leading_pt": 10.95,
+      "caption_size_pt": 10.0,
+      "paragraph_gap_pt": 5.5,
+      "wrap_gap_mm": 3.5146,
+      "figure_aspect_ratio": 0.618,
+      "running_header": "NeurIPS 2026 \u00b7 Figure layout preview",
+      "source_reference": "tests/fixtures/conferences/neurips2026/ \u2014 initial dimensions transcribed from the committed template measurements; browser layout is approximate"
+    }
+  ]
+}

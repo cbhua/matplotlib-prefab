@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<script>if (new URLSearchParams(location.search).has('capture')) document.documentElement.dataset.capture = 'true';</script>
+<title>ICML fixed-page regression</title>
+<link rel="stylesheet" href="./src/fixed-paper.css">
+<style>
+body { margin: 0; background: #e9edf2; font: 14px system-ui, sans-serif; color: #253145; }
+header { padding: 18px 24px; background: white; border-bottom: 1px solid #cbd2dc; }
+h1 { font-size: 20px; margin: 8px 0; } p { margin: 8px 0; max-width: 1000px; }
+nav { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+select, button { padding: 7px; font: inherit; } main { padding: 24px; overflow: auto; }
+#comparison { position: relative; width: 816px; height: 1056px; box-shadow: 0 4px 22px #26314722; }
+#reference { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+#comparison[data-mode="browser"] #reference { visibility: hidden; }
+#comparison[data-mode="baseline"] .fixed-paper { visibility: hidden; }
+#comparison[data-mode="overlay"] #reference { opacity: var(--opacity, .5); }
+#comparison[data-mode="difference"] #reference { mix-blend-mode: difference; }
+#comparison[data-mode="side"] { width: 1656px; box-shadow: none; }
+#comparison[data-mode="side"] #reference { left: 840px; width: 816px; }
+#status { color: #526079; } [hidden] { display: none !important; }
+[data-capture] header { display: none; }
+[data-capture] main { padding: 0; }
+[data-capture] #comparison { box-shadow: none; }
+</style></head><body>
+<header><a href="./index.html">← Figure lab</a><a href="./reflow.html">Try dynamic figure height →</a><h1>ICML · fixed-page reproduction</h1>
+<p>Same content and frozen line breaks as the existing LaTeX reference. Body text, references, header and folio are HTML with local fonts; formula fragments are SVG paths. No TeX, PDF renderer or Pyodide runs in this page.</p>
+<nav><label>Compare <select id="mode"><option value="browser">Frontend</option><option value="baseline">LaTeX reference</option><option value="side">Side by side</option><option value="overlay">Overlay</option><option value="difference">Difference</option></select></label>
+<label id="opacity-control" hidden>Reference opacity <input id="opacity" type="range" min="0" max="1" step=".05" value=".5"></label>
+<button id="blink" type="button">Toggle reference</button><span id="status">Loading local fonts…</span></nav></header>
+<main><div id="comparison" data-mode="browser"><div id="stage"></div><img id="reference" src="./reference/icml2026-narrow.png" alt="Previously compiled ICML LaTeX page"></div></main>
+<script type="module" src="./src/reference.js"></script></body></html>

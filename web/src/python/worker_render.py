@@ -33,6 +33,7 @@ import matplotlib
 matplotlib.use("svg")
 
 import figure_core  # noqa: E402
+import grid_core  # noqa: E402
 
 SKILL_ROOT = "/skill"
 
@@ -63,7 +64,8 @@ def render(request_json: str) -> str:
     started = time.perf_counter()
     try:
         request = json.loads(request_json)
-        result = figure_core.render_to_svg(
+        renderer = grid_core if request["spec"].get("kind") == "grid" else figure_core
+        result = renderer.render_to_svg(
             request["spec"], request["profile"], SKILL_ROOT, checks=True
         )
     except (figure_core.SpecError, figure_core.ProfileError) as exc:

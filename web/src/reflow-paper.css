@@ -1,0 +1,18 @@
+.reflow-measure { position: absolute; left: -100000px; top: 0; visibility: hidden; }
+.reflow-paper { margin-bottom: 24px; box-shadow: 0 3px 16px #26314722; }
+.reflow-column { position: absolute; font-family: 'MPF Nimbus Roman', serif; font-size: 9.96264pt; line-height: 11.9552pt; text-align: justify; overflow-wrap: anywhere; }
+.reflow-column p { margin: 0 0 var(--paragraph-gap, 5.9776pt); }
+.reflow-column .reference { padding-left: 9.96264pt; text-indent: -9.96264pt; }
+.reflow-column .reference.continuation { text-indent: 0; }
+.reflow-column .split-end { text-align-last: justify; margin-bottom: 0; }
+.reflow-column h2 { font: bold 11.9552pt/14.4pt 'MPF Nimbus Roman', serif; margin: 10pt 0 6pt; text-align: left; }
+.reflow-column h2:first-child { margin-top: 0; }
+.reflow-figure { position: absolute; margin: 0; font-family: 'MPF Nimbus Roman', serif; }
+.reflow-paper .reflow-slot { position: relative; width: 100%; box-sizing: border-box; border: .4pt solid #b8b8b8; }
+.reflow-slot img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.slot-size { position: absolute; inset: auto 4px 4px auto; background: #ffffffdc; color: #65758c; padding: 2px 4px; font: 10px system-ui; }
+.reflow-figure figcaption { font-size: 8.9664pt; line-height: 9.96264pt; margin-top: 7.2pt; text-align: justify; overflow-wrap: anywhere; white-space: pre-wrap; }
+
+.reflow-paper .reflow-slot > svg { width: 100%; height: 100%; }
+/* The figure's physical canvas must not lose width to a placeholder border. */
+.reflow-paper .reflow-slot:has(> svg) { border: 0; }

@@ -31,6 +31,7 @@ for path in (TESTS_WEB, os.path.dirname(os.path.abspath(__file__))):
         sys.path.insert(0, path)
 
 from server import static_server  # noqa: E402
+from lab import Lab  # noqa: E402
 
 OUTPUT = os.path.join(TESTS_WEB, "calibration", "browsers.json")
 ENGINES = ("chromium", "firefox", "webkit")
@@ -55,6 +56,7 @@ def probe(playwright, engine: str, origin: str) -> Dict[str, Any]:
         page.on("pageerror", lambda error: errors.append(str(error)))
         started = time.perf_counter()
         page.goto(origin + "/index.html")
+        Lab(page, origin, browser.version).wait_ready()
         page.wait_for_function(
             "window.__labApi && (window.__labApi.ready() || window.__labApi.bootError())",
             timeout=300_000,
