@@ -1,7 +1,7 @@
 # Matplotlib Prefab
 
 An agent-facing skill for producing publication-style matplotlib figures: give it
-data and it renders a single-column, single-panel figure at a fixed physical size,
+data and it renders a line/bar figure or a rectangular grid at a fixed physical size,
 then checks the result and tells you what it could not check.
 
 The previous version of this repository — a static gallery of notebook templates —
@@ -29,8 +29,9 @@ preview, a snapshot of the validated input, the resolved style profile, and a
 report of deterministic checks — five files, and nothing else in the directory is
 touched.
 
-Scatter, histogram, heatmap, 3D, multi-panel and two-column figures are
-deliberately out of scope for now; they will arrive as new templates and profiles.
+Scatter, histogram, heatmap and 3D remain out of scope. The browser workflow also
+supports rectangular grids of line/bar panels and narrow/wide paper slots; its
+exported grid specs can be reproduced with the same `render.py` command.
 
 ```sh
 python -m venv .venv && .venv/bin/pip install matplotlib numpy
@@ -130,37 +131,35 @@ needs LaTeX.
 
 ## Or move the sliders yourself
 
-Everything above is a command line. There is also a static web page that shows the
-figure at its printed size inside a real conference page and lets you change the
+The web tool starts with **Template, Panel layout and Column width** together
+on one page. Create the figure, then change Line/Bar/Scatter examples or import data
+for each panel in the right sidebar. You can adjust styles and physical dimensions,
+and use **Copy for Agents** for the complete reproducible configuration. It shows the
+figure at its target size inside a browser simulation of a conference page and lets you change the
 type sizes, weights, line widths, tick counts and bar settings with the figure
 redrawing as you go — then hands you a configuration an agent can reproduce.
 
 ```sh
-.venv/bin/python scripts/fetch_pyodide.py      # ~24 MiB of pinned runtime, once
-.venv/bin/python scripts/build_fonts.py
 .venv/bin/python scripts/build_web_assets.py
 .venv/bin/python web/serve.py                  # http://127.0.0.1:8765/index.html
 ```
 
-It is not a mock-up of the figure. It runs **this repository's own
-`figure_core.py` and templates** in the browser through Pyodide, and the page
-around the figure is **generated from a compiled LaTeX page** of the venue's
-style — every line's baseline, every run's face. The numbers behind both claims:
-
-| Measured | Result |
-| --- | --- |
-| Browser SVG versus a local render at the pinned matplotlib, over ten style configurations | byte-identical, all ten |
-| Text-run baselines and left edges, browser page versus compiled PDF, six venue/width pages | ≤ 0.00001 mm |
-| Text-run widths, same six pages | ≤ 0.023 mm |
-| Figure slot rectangle, same six pages | ≤ 0.004 mm |
-| Browser page versus a LaTeX page built from the browser's own export, 12 default + 3 tuned | all 15 agree, figure included |
-| Redraw after a slider stops, Chromium, 40 samples | p95 217 ms (target 500 ms) |
-| Cold start, self-hosted runtime | 24.2 MiB, ~1.9 s on loopback |
-
-The evidence, with overlays and difference images, is in
-[`tests/web/calibration/`](tests/web/calibration/); how it is produced and what it
-does *not* promise is in [`web/README.md`](web/README.md). Three venues, two width
-modes each:
+Version **0.5.0** draws figures directly in the browser using SVG and offline
+**Matplotlib glyph outlines**. No Python API or Pyodide runtime is needed.
+The surrounding page now uses **native HTML/CSS**, local Nimbus fonts and editable
+[`web/presets/papers.json`](web/presets/papers.json). No LaTeX compilation is needed. Page layout and pagination run entirely in the
+browser, including figure rendering. Static hosting is sufficient. Figure width and height controls redraw the chart at the chosen physical size.
+Template typography stays fixed. Automatic checks now include surrounding-paper
+fit and typography; warning cards locate issues and link to the relevant controls.
+The data-aware handoff includes separate browser checks and a validated
+[skill importer](skills/scientific-figures/references/browser-handoff.md).
+Only the first reference page is rendered;
+excess example prose is omitted. Interface styling can be adjusted in
+`web/src/design-overrides.css`.
+The page is a proportional reference; browser line breaks and float placement
+are not promised to match LaTeX. See [`web/README.md`](web/README.md) for the design
+and alternatives considered. Earlier exact-page measurements under
+`tests/web/calibration/` describe the retired compiled-page preview, not this workflow.
 
 | Venue | Narrow (default) | Wide |
 | --- | --- | --- |
@@ -168,11 +167,27 @@ modes each:
 | NeurIPS 2026 | half the text width, 69.85 mm | the full text width, 139.70 mm |
 | ICML 2026 | one column, 82.55 mm | both columns via `figure*`, 171.45 mm |
 
-Building the calibrated pages needs LaTeX; **using the site does not.** Nothing is
+LaTeX remains optional for the separate conference fixture tools. Nothing is
 deployed — the tree under `web/` is a static site ready to be served, and
 publishing it is the repository owner's call.
+A ready-to-use [GitHub Pages workflow](.github/workflows/pages.yml) publishes
+`web/` from `main`; enable **Settings → Pages → Source → GitHub Actions**. See
+[deployment setup](web/README.md#github-pages-deployment) for the one-time steps.
 
 ## Tests
+
+For a reproducible development environment, use uv with the committed
+`.python-version` (Python 3.12) and `uv.lock`:
+
+```sh
+uv sync --locked --all-extras
+uv run --all-extras python -m pytest
+```
+
+If uv is installed only inside this project's virtual environment, use
+`.venv/bin/uv` in place of `uv` and add `--inexact` to `sync` to retain it.
+The web extra installs the Python browser tooling; Playwright browser binaries,
+the Pyodide runtime and the LaTeX/Poppler toolchain are separate downloads.
 
 ```sh
 .venv/bin/pip install pytest pypdf

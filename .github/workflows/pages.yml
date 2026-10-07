@@ -1,0 +1,55 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          rsync -a web/ _site/ \
+            --exclude='__pycache__/' \
+            --exclude='*.py' \
+            --exclude='.DS_Store' \
+            --exclude='README.md' \
+            --exclude='/public/generated/pyodide/' \
+            --exclude='/public/generated/python/' \
+            --exclude='/src/python/'
+          touch _site/.nojekyll
+          test -f _site/index.html
+          test -f _site/chart-demo/text-outlines.json
+          test -f _site/public/generated/fonts/fonts.json
+          test -f _site/public/generated/profiles/single-column.json
+      - name: Upload site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
