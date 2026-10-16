@@ -17,12 +17,14 @@ initLanguage();
 
 import {validateFigureSpec} from './spec-validation.js';
 import {evaluatePaper,combinedReport} from './paper-checks.js';
+import {densityContext} from './visual-density.js';
 import { outlineRenderer } from './outline-renderer.js';
 import { contentBlocks, paginatePaper } from './reflow-paper.js';
 import { createSetup } from './setup.js';
 import { createPage, templateIndex, validatePresets } from './css-paper.js';
 import { setFigure, fontFaceCss } from './figure-view.js';
 import { buildPanel, ALL_CONTROLS, controlApplies, getPath, setPath, deletePath, effectiveValue } from './controls.js';
+import {experimentEdits} from './rule-lessons.js';
 import { buildBundle, handoffText, copyToClipboard } from './export-config.js';
 
 const BASE = new URL('./', import.meta.url).href.replace(/src\/$/, '');
@@ -65,6 +67,13 @@ function setStatus(kind, message, detail) {
   node.querySelector('.status-message').textContent = message;
   node.querySelector('.status-detail').textContent = detail || '';
   node.querySelector('.status-detail').hidden = !detail;
+  syncIssueRail();
+}
+
+function syncIssueRail() {
+  const checks = el('checks');
+  el('warning-rail').hidden = !(el('status').dataset.kind === 'error' || state.paperError
+    || (!checks.hidden && checks.childElementCount));
 }
 
 function signature() {
@@ -83,8 +92,17 @@ function refreshExportAvailability() {
   el('export-state').dataset.ready = String(Boolean(fresh));
   const assessment=el('figure-assessment');
   assessment.disabled=!fresh;
-  if(fresh)showChecks(state.lastGood.report,renderProblems(state.lastGood.report));
-  if(!fresh){assessment.textContent=state.paperError || el('status').dataset.kind==='error'?'⚠️ Fix figure settings.':'Checking figure…';el('warning-rail').hidden=true;}
+  if(fresh){showChecks(state.lastGood.report,renderProblems(state.lastGood.report));updateDensityReadout(state.lastGood.report);}
+  if(!fresh){el('density-readout').textContent='Analysis will appear after the figure is checked.';assessment.textContent='Checking figure…';assessment.dataset.state='checking';assessment.title='Checking figure…';el('checks').hidden=true;}
+  if(state.paperError || el('status').dataset.kind==='error'){
+    assessment.textContent='❌ Fix figure settings.';
+    assessment.dataset.state='error';
+    assessment.title='Current figure errors';
+  }
+  state.panel?.updateLessons(state.page,state.profile,fresh?state.lastGood.report:null,
+    {error:Boolean(state.paperError||el('status').dataset.kind==='error')});
+  syncIssueRail();
+  assessment.setAttribute('aria-expanded',String(!el('warning-rail').hidden));
 
 }
 
@@ -210,13 +228,24 @@ function showChecks(report, problems) {
     item.addEventListener('mouseenter',()=>highlightIssue(check));item.addEventListener('mouseleave',clearIssueHighlight);
     item.addEventListener('focusin',()=>highlightIssue(check));item.addEventListener('focusout',clearIssueHighlight);
     const title=document.createElement('strong');title.textContent=`⚠️ ${check.title || 'Figure warning'}`;
-    const detail=document.createElement('p');detail.textContent=check.message;
-    item.append(title,detail);
+    item.append(title);
+    if(Number.isInteger(check.panel_index)||check.panel_indices?.length){
+      const location=document.createElement('p');location.className='warning-location';
+      const columns=state.config?.columns || 1;
+      const position=i=>`${Math.floor(i/columns)+1}:${i%columns+1}`;
+      if(Number.isInteger(check.panel_index))location.textContent=`Panel ${position(check.panel_index)}`;
+      else if(check.panel_indices.length===1)location.textContent=`Panel ${position(check.panel_indices[0])}`;
+      else location.textContent=check.panel_indices.length===state.config?.kinds.length?`Shared style · All ${check.panel_indices.length} panels`:`Panels ${check.panel_indices.map(position).join(', ')}`;
+      item.append(location);
+    }
+    const detail=document.createElement('p');detail.className='warning-message';
+    detail.textContent=Number.isInteger(check.panel_index)?check.message.replace(/^Panel \d+:\s*/,''):check.message;
+    item.append(detail);
     if(check.control){const action=document.createElement('button');action.type='button';action.className='warning-action';action.textContent='Adjust setting';action.onclick=()=>focusSetting(check.control);item.append(action);}
     host.append(item);
   }
   button.setAttribute('aria-expanded',String(Boolean(problems.length)));
-  el('warning-rail').hidden=!problems.length;
+  syncIssueRail();
 }
 
 function clearIssueHighlight(){
@@ -241,9 +270,9 @@ function highlightIssue(check){
   root.append(overlay);
 }
 function focusSetting(path) {
-  const control=path.startsWith('figure-')?el(path):document.querySelector(`[data-path="${path}"] input:not([type=hidden])`);
+  const control=path.startsWith('figure-')?el(path):document.querySelector(`[data-path="${path}"] input:not([type=hidden]),[data-path="${path}"] select:not([hidden])`);
   if(!control)return;
-  control.closest('details')?.setAttribute('open','');
+  for(let parent=control.parentElement;parent;parent=parent.parentElement)if(parent.tagName==='DETAILS')parent.open=true;
   control.scrollIntoView({block:'center',behavior:'smooth'});control.focus({preventScroll:true});
   const row=control.closest('.control')||control.closest('.paper-setting');row?.classList.add('setting-highlight');
   setTimeout(()=>row?.classList.remove('setting-highlight'),1600);
@@ -280,16 +309,21 @@ function updateReadout() {
 let autoZoom = true;
 function applyZoom() {
   const paper = el('paper-scale').firstElementChild;
+  const viewport = el('paper-viewport');
   if (autoZoom && paper && !el('editor').hidden) {
-    const availableWidth = el('preview').clientWidth - 16;
+    const availableWidth = viewport.clientWidth - 16;
     const fit = Math.min(availableWidth / paper.offsetWidth, 1.6);
-    el('zoom').value = Math.max(.1, fit);
+    // Round down to the slider step so width fitting never adds horizontal overflow.
+    el('zoom').value = Math.max(.1, Math.floor(fit * 100) / 100);
   }
   const zoom = Number(el('zoom').value);
   el('paper-scale').style.transform = `scale(${zoom})`;
   if (paper) {
     el('paper-frame').style.width = `${paper.offsetWidth * zoom}px`;
-    el('paper-frame').style.height = `${el('paper-scale').scrollHeight * zoom}px`;
+    el('paper-frame').style.height = `${paper.offsetHeight * zoom}px`;
+    // Show the middle of the sheet when it is wider than the viewport.
+    // The viewport scrolls independently, keeping the zoom tools reachable.
+    viewport.scrollLeft = Math.max(0, (viewport.scrollWidth - viewport.clientWidth) / 2);
   }
   el('zoom-value').textContent = `${Math.round(zoom * 100)}%`;
   if (state.page) updateReadout();
@@ -470,6 +504,13 @@ async function startEditor(config) {
   };
   state.undoStyle=()=>{if(!history.length)return;state.profile=history.pop();deriveWidth(state.profile,state.page);lastEdit=null;panel.sync(state.profile,state.baseProfile,state.currentSpec);el('undo-style').disabled=!history.length;scheduleRender();};
   const handlers = {
+    onExperiment(action){
+      const edits=experimentEdits(action,state.baseProfile,state.page);
+      remember('experiment-'+action);
+      for(const [path,value] of Object.entries(edits))setPath(state.profile,path,value);
+      panel.sync(state.profile,state.baseProfile,state.currentSpec);
+      scheduleRender();
+    },
     onChange(control, value) {
       remember(control.path);
       setPath(state.profile, control.path, value);
@@ -530,6 +571,7 @@ async function startEditor(config) {
       setStatus('error', 'The outline renderer failed to start.',
         `${message.error.slice(0, 300)} — check that the static outline assets are available.`);
       el('boot-retry').hidden = false;
+      refreshExportAvailability();
     }
   };
   state.worker.postMessage({
@@ -638,10 +680,47 @@ function syncPanelPicker() {
   syncDataOrigin();
 }
 
-function syncDataOrigin(){const source=state.panelSources[state.activePanel];const label=el('data-origin');label.textContent=source?.kind==='user-import'?'Imported data':'Example data';label.title=source?.kind==='user-import'?source.name:'Illustrative values for choosing scale and style.';}
-function updatePaperAssessment(){
-  if(state.paper && state.lastGood?.signature===signature())state.lastGood.report=combinedReport(state.lastGood.figureReport,evaluatePaper(state.page,state.profile,state.currentSpec,state.paper));
+function syncDataOrigin(){
+  const source=state.panelSources[state.activePanel];const label=el('data-origin');label.textContent=source?.kind==='user-import'?'Imported data':'Example data';label.title=source?.kind==='user-import'?source.name:'Illustrative values for choosing scale and style.';
+  const current=state.currentSpec?.kind==='grid'?state.currentSpec.panels[state.activePanel]:state.currentSpec;
+  el('integrity-readout').textContent=current?.kind==='bar'?`${current.categories.length} categories · ${current.values.filter(v=>v===0).length} zero values retained`:current?`${current.x.length} x positions · ${current.series.length} series`:'';
 }
+function updatePaperAssessment(){
+  if(state.paper && state.lastGood?.signature===signature()){
+    const report=combinedReport(state.lastGood.figureReport,evaluatePaper(state.page,state.profile,state.currentSpec,state.paper));
+    report.visual_density=densityContext(state.lastGood.figureReport,state.page,state.prose.body);
+    state.lastGood.report=report;
+  }
+}
+function updateDensityReadout(report){
+  const host=el('density-readout');host.replaceChildren();
+  const density=report?.visual_density;
+  if(!density)return;
+  const percent=value=>`${(value*100).toFixed(1)}%`;
+  const body=document.createElement('p');
+  body.textContent=density.body_reference?.status==='measured'?`Body reference ink: ${percent(density.body_reference.ink_fraction)}`:'Body reference ink: not measured';host.append(body);
+  for(const panel of density.panels){
+    const row=document.createElement('div');row.className='density-panel';
+    const label=document.createElement('strong');const cols=state.config?.columns||1;
+    label.textContent=`Panel ${Math.floor(panel.panel_index/cols)+1}:${panel.panel_index%cols+1}`;
+    const values=document.createElement('p');
+    const ratio=density.comparisons?.find(c=>c.panel_index===panel.panel_index)?.ink_to_body_ratio;
+    values.textContent=panel.ink.status==='measured'?`Ink: ${percent(panel.ink.ink_fraction)} · Body: ${ratio==null?'—':ratio.toFixed(2)+'×'}`:'Ink: not measured';
+    const space=document.createElement('p');
+    const empty=panel.space?percent(panel.space.empty_fraction):'not measured';
+    const overdraw=panel.marks.status==='measured'?percent(panel.marks.overdraw_fraction):'not measured';
+    space.textContent=`Open space: ${empty} · Mark overdraw: ${overdraw}`;
+    row.append(label,values,space);
+    if(panel.bar_distribution?.status==='measured'){
+      const bars=panel.bar_distribution;
+      const distribution=document.createElement('p');distribution.textContent=`Categories: ${bars.category_count} · Width/category: ${bars.width_per_category_mm.toFixed(1)} mm`;
+      const fill=document.createElement('p');fill.textContent=`Bar fill: ${percent(bars.bar_fill_fraction)} · Largest X gap: ${bars.maximum_horizontal_gap_mm.toFixed(1)} mm`;
+      row.append(distribution,fill);
+    }
+    host.append(row);
+  }
+}
+
 let paperRevision = 0;
 async function fitPaper() {
   if (!state.page || !state.prose) return;
@@ -688,6 +767,7 @@ async function changeFigureDimension(axis, value) {
   syncPaperControls(); fitPaper(); updateReadout(); scheduleRender();
 }
 function syncPaperControls() {
+  el('lesson-context').textContent=`${state.page.venue.name} · ${state.page.preview_settings.body_size_pt} pt body · Project reference, not venue requirements`;
   for(const axis of ['width','height']) {
     const max=axis==='width'?state.page.text_block.width_mm:180;
     for(const suffix of ['', '-slider']){const input=el(`figure-${axis}${suffix}`);input.max=max;input.value=state.page.figure[`${axis}_mm`].toFixed(2);}
@@ -704,9 +784,15 @@ function wireControls() {
     el('spec-file').value = '';
     syncDataOrigin();
   });
-  el('figure-assessment').addEventListener('click',()=>el('checks').querySelector('.warning-card')?.focus());
+  el('figure-assessment').addEventListener('click',()=>(state.paperError?el('paper-overflow'):el('status').dataset.kind==='error'?el('status'):el('checks').querySelector('.warning-card'))?.focus());
   el('zoom').addEventListener('input', () => { autoZoom = false; applyZoom(); });
+  el('reset-zoom').addEventListener('click', () => {
+    autoZoom = true;
+    el('paper-viewport').scrollTop = 0;
+    applyZoom();
+  });
   window.addEventListener('resize', applyZoom);
+  new ResizeObserver(applyZoom).observe(el('paper-viewport'));
 
   el('example').addEventListener('change', async (event) => {
     const name=event.target.value;
@@ -762,6 +848,19 @@ function wireControls() {
     location.reload();
   });
 }
+
+// Header actions are available before the editor and renderer are started.
+el('home-open').addEventListener('click', () => location.assign(new URL('index.html', BASE)));
+const about = el('about-dialog');
+el('about-open').addEventListener('click', () => about.showModal());
+el('about-close').addEventListener('click', () => about.close());
+about.addEventListener('click', (event) => {
+  if (event.target !== about) return;
+  const rect = about.getBoundingClientRect();
+  const outside = event.clientX < rect.left || event.clientX > rect.right
+    || event.clientY < rect.top || event.clientY > rect.bottom;
+  if (outside) about.close();
+});
 
 boot().catch((error) => {
   el('setup').textContent = `The templates could not load. Reload to retry. ${error.message || error}`;
@@ -838,7 +937,7 @@ window.__labApi = {
        requiresTitle: Boolean(requiresTitle) })),
   controlApplies: (path) => {
     const control = ALL_CONTROLS.find((entry) => entry.path === path);
-    return control ? controlApplies(control, state.currentSpec) : false;
+    return control ? controlApplies(control, state.currentSpec, state.profile) : false;
   },
   signature: () => signature(),
 };

@@ -106,6 +106,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
 
 class Server(socketserver.ThreadingTCPServer):
     allow_reuse_address = True
+    # A cold page fans out into ES modules, styles and fonts. macOS can reset
+    # connections when the default five-connection accept queue fills.
+    request_queue_size = 128
     daemon_threads = True
     verbose = True
     renderer_enabled = True

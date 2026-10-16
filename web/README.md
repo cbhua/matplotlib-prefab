@@ -8,14 +8,53 @@ the historical render API and Pyodide worker remain in the repository for refere
 ## Workflow
 
 Choose **Template, panel grid and Single/Double Column** on one setup page,
-then Create figure. Panels start as line plots; select a panel and change its
-example or import data in the right sidebar. A compact assessment sits above Hand off, which offers a single **Copy for Agents**
-action containing the full spec, profile, dimensions and reproduction instructions.
-Figure content, physical size and shared styles follow. Zoom stays centered immediately above the paper. The initial zoom fills the available preview width (the tall page scrolls); manual zoom is
-retained across redraws. On desktop, the workspace uses the centered 60% of the
-window (with width bounds for readability), expanding on smaller screens.
+then Create figure. ICLR is selected by default. Panels start as line plots; select a panel and change its
+example in the right sidebar. The preview is an educational playground for the
+skill: each section explains a rule, shows the current template reference and
+exposes the existing controls that demonstrate it. A permanent lower-left panel
+combines the figure assessment and space analysis. Import and **Copy for Agents**
+follow the lessons; the handoff contains the full spec, profile, dimensions and
+reproduction instructions. Zoom stays centered immediately above the paper. The initial zoom fills the available preview width; tall sheets scroll vertically; manual zoom is
+retained across redraws. Oversized sheets open at their horizontal center, with
+their top aligned to the preview. **Reset** beside Zoom restores automatic
+page-width fitting. The paper viewport uses the blog’s subtle 16 px grid. The setup page reuses the prompt site’s container widths and 720–920 px cap.
+In the editor, the header shares the preview/control workspace boundaries.
+On desktop, the workspace uses the centered 60% of the window (with width bounds
+for readability); smaller desktop screens reserve a left gutter for warnings.
 Font weights use four discrete stops; numeric controls have stepped sliders and
 precise number inputs. Template labels omit years while internal preset IDs stay stable.
+
+## Rule-based lessons
+
+[`src/rule-lessons.js`](src/rule-lessons.js) maps the skill's descriptive rule IDs
+to six interactive lessons and a final data/review section:
+
+| Lesson | Skill constraints | Controls / experience |
+| --- | --- | --- |
+| Type in context | Paper-relative typography; matching X/Y labels | Axis/tick sizes, live body-relative ratios, oversized-label experiment |
+| Keep legends clear | Legend/data clearance; outside-legend layout | Inside/outside radios, four sides, legend size, large-inside-legend experiment |
+| Make strokes distinguishable | Print strokes; distinct series | Data/axis/tick widths, bar edges, hairline experiment; grid appearance is advanced |
+| Give labels room | Text legibility; usable plot area | Numeric tick counts, tick spacing, bar-label rotation, crowded-tick experiment |
+| Fit the paper | Physical size; wrapped width; article fit | Existing width/height sliders, live body-width ratio, size reset |
+| Balance marks and space | Marker overdraw; recoverable space; ink context; bar distribution | Mark size/count, data margins, bar width, large-mark experiment |
+| Preserve the evidence | Data integrity; final visual review | Current data counts/source, import and agent handoff; no fabricated data experiments |
+
+The original control registry and handlers are reused: every path has one home,
+and the existing dimension inputs are mounted into the paper-fit lesson. Type
+weights remain an advanced disclosure, not a new font-design rule. Lesson
+references consume the same experience registry as the checks; cross-layer tests
+compare its current calibration with the portable ICLR skill preset.
+
+Experiment buttons edit only style fields and form a single Undo step. Restore
+buttons reset the fields demonstrated by that experiment. Changing examples is
+an explicit dataset choice, separate from the experiments. Inapplicable inputs
+are hidden (for example marker size on bars or legend type when there is no
+legend). Lesson feedback comes from real browser checks and is cleared during
+pending/failed renders. **No flags** does not certify visual quality. Space/ink
+descriptors remain descriptive; experiments do not manufacture a quality score.
+
+Lesson prose and dynamic readouts support EN/中. These UI translations do not
+alter figure labels, source data, physical dimensions or agent exports.
 
 | Preset | Single Column | Double Column |
 | --- | --- | --- |
@@ -42,7 +81,9 @@ The assessment shows **Nice figure!** when the current checks produce no warning
 or a count with warning cards shown automatically beside the paper.
 The status card uses green for passing checks and yellow for warnings. During rendering it shows
 Checking figure and keeps a fixed height. Errors and pending edits cannot retain
-a stale success assessment. On smaller screens warning cards flow below the paper.
+a stale success assessment. Rendering, import and paper-layout errors share this rail as red cards with their
+error details; renderer startup failures retain a Retry action. On smaller screens
+these messages flow below the paper.
 
 Checks are split between [`src/figure-checks.js`](src/figure-checks.js) and
 [`src/paper-checks.js`](src/paper-checks.js). They cover text overlap/clipping,
@@ -51,6 +92,40 @@ markers, plus figure/caption overflow, body-text collisions, squeezed wrapping
 and figure typography relative to the paper. All thresholds are editable project
 preferences, not venue requirements. Counts are per issue category per panel;
 **Nice figure!** means these checks passed, not an exhaustive quality assessment.
+
+`src/experience-rules.js` versions owner preferences separately from style
+defaults. Axis labels default to 9 pt and accept 8.5–9.5 pt. Ticks default to
+8 pt and accept the intersection of 7.5–8 pt with 0.8 × the corresponding
+visible axis-label size ± 1 pt. Legend bounds remain 0.8–1× body size.
+X/Y axis labels should use equal sizes. One shared typography warning lists all affected grid panels. Wrapped figures should occupy one third to two thirds of the body text width; below one quarter, caption wrapping receives extra emphasis. Stroke defaults
+remain 1.2 pt data and 0.6 pt axes/ticks; no arbitrary upper-bound warning was
+added. See the [rule library and primary references](../skills/scientific-figures/references/experience-rules.md).
+Its complete registry and measured warning evidence are included in the handoff.
+
+Legend/data collisions produce **Legend overlaps data**. The detector
+renders data separately inside the legend rectangle at 288 dpi, respecting actual
+stroke widths, dash gaps, marker shapes and plot clipping. An opaque legend cannot
+hide the underlying collision from the check. Legend handles, axes and gridlines
+are excluded. A frameless legend still reserves its full rectangle for reading.
+Warnings include the affected panel, bounds and overlapping primitives in the
+agent handoff; they do not change the figure automatically. This browser check is
+independent of the Python report and does not replace visual review.
+
+**Legend placement** uses native radio buttons for **Inside plot** / **Separate
+legend**. Separate mode reveals exactly four direction radios: **Top**, **Bottom**,
+**Left**, **Right**, with Bottom selected by default. The selected direction is
+stored in `legend.side` and honored by the preview and Python export. The separate
+mode reserves one framed area for the whole grid. Repeated names and identical
+styles merge; names with different styles retain their panel positions. Explicit
+outside mode includes single-series entries. Bars have no series legend. Canvas
+dimensions include the legend; fonts and data stay unchanged. A size error asks
+for more space if the selected side does not fit. Undo/reset and Copy for Agents preserve the
+selection in `legend.placement` / `legend.side`; older profiles without placement
+retain inside mode, and older outside profiles without a side retain automatic
+right/bottom fitting.
+`src/outside-legend.js` shares text outlines, markers and dash styles with the
+native chart renderer. Python uses a figure-level constrained-layout legend,
+with the same data/style semantics and independent geometry checks.
 
 Hover or focus a warning to locate its subject. **Adjust setting** opens and focuses
 the relevant control. Diagnostics stay out of the exported SVG and configuration.
@@ -80,8 +155,8 @@ The helper validates everything before writing `spec.json`, `profile.json` and
 Browser-to-Python regressions verify imported values and PDF dimensions, including
 mixed line/scatter grids.
 
-The global **🌐 EN/中** toggle is available from the first screen and persists
-its English/Simplified Chinese choice locally. Click once to switch languages. Only interface text is translated;
+The shared header shows **Scientific Figure Skills**, **HOME**, **ABOUT**, and an **EN / 中** toggle. The language toggle is available from the first screen and persists
+its English/Simplified Chinese choice locally. HOME returns to the default ICLR, 1×1, single-column setup and clears current figure edits while retaining the language preference. Click once to switch languages. Only interface text is translated;
 paper prose, chart labels, data and agent handoff stay unchanged. UI translations
 live in `src/i18n.js`, isolated from paper/figure rendering.
 
@@ -89,8 +164,8 @@ live in `src/i18n.js`, isolated from paper/figure rendering.
 
 Edit [`src/design-overrides.css`](src/design-overrides.css), loaded last:
 
-- `:root`: shared colors, UI font, `--editor-width` (60vw), editor width bounds,
-  `--sidebar-width`, `--preview-height` and page gutters.
+- `:root`: shared colors, UI font, `--editor-width` (60vw), editor width bounds and shared workspace dimensions,
+  `--sidebar-width`, `--header-height`, `--preview-height` and page gutters.
 - `SETUP PAGE` / `#setup`: configuration-page spacing and choices.
 - `EDITOR PAGE` / `#editor`: preview, sidebar and action styling.
 - `CONTROLS`: slider tracks, thumbs and step labels.
@@ -363,7 +438,43 @@ make the print dimensions explicit. [D3 axes](https://d3js.org/d3-axis) are an
 alternative if future scope warrants a larger scale/axis toolkit; this demo adds
 no charting-library dependency.
 
-## Space-use review
+## Visual density and space review
+
+Bar categories default to a profile-driven 30-degree rotation. Bar panels add
+category count, physical width per category, fill fraction and largest horizontal
+gap to the density card. `src/bar-distribution.js` additionally exports physical
+area per category and horizontal/vertical band loads in the handoff. These are
+descriptors, with no new automatic low-information warning: zero values and few
+categories can still carry important comparisons.
+
+The permanent lower-left **Space & density** card, below the assessment, shows whole-panel ink coverage, a
+representative body-prose reference and their ratio, plus per-panel empty space
+and marker overdraw. Measurements use physical units and 144 dpi, independently
+of UI zoom. HOME returns to the initial setup and clears figure edits.
+
+`src/visual-density.js` measures ink, contrast and binary edge transitions from
+SVG rasters. The body sample is 16 naturally wrapped lines in the template font,
+size, leading and nominal column width; it is not a screenshot of the article.
+Ink ratios are descriptive and never trigger a warning by themselves. A filled
+bar is allowed to use more ink than a line chart. If raster measurement fails,
+the chart still renders and the diagnostic explicitly reports not checked.
+
+Marker crowding counts individual filled marker footprints before compositing.
+It warns only with ≥20 sampled marks, ≥25% redundant marker area and ≥30% marks
+sharing samples. Warnings identify the panel, measured overdraw and region;
+hover/focus highlights that region and Adjust setting targets marker size.
+No data is removed, aggregated or jittered. Text collisions and type checks remain
+independent. Line-line occlusion and full Feature Congestion/Subband Entropy are
+not implemented. All measurements and limits are included in Copy for Agents,
+including when checks do not warn.
+
+The [research and rule reference](../skills/scientific-figures/references/visual-density.md)
+explains the evidence, formulas, limitations, conservative thresholds and the
+need for human calibration. Thresholds are project heuristics, not experimentally
+validated aesthetics or conference rules.
+
+### Recoverable space
+
 
 `src/figure-density.js` estimates spatial occupancy inside each panel’s plotting
 rectangle, independently of screen zoom. It is not a measure of scientific

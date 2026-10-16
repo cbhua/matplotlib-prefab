@@ -5,7 +5,7 @@
  */
 const NS='http://www.w3.org/2000/svg';
 let sequence=0;
-function node(tag, attrs={}, text) {
+export function node(tag, attrs={}, text) {
   const n=document.createElementNS(NS,tag);
   for(const [key,value] of Object.entries(attrs)) n.setAttribute(key,String(value));
   if(text!==undefined)n.textContent=text;
@@ -21,14 +21,14 @@ export function ticks(low,high,count) {
   const decimals=Math.max(0,-Math.floor(Math.log10(step)) + (String(step).includes('5') && step<1 ? 1:0));
   return values.map(value=>({value,label:value.toFixed(decimals).replace('-','−')}));
 }
-function marker(shape,x,y,size,color,attrs={}) {
+export function marker(shape,x,y,size,color,attrs={}) {
   const r=size/2;
   if(shape==='s')return node('rect',{x:x-r,y:y-r,width:size,height:size,fill:color,...attrs});
   if(shape==='^')return node('path',{d:`M${x},${y-r}L${x+r},${y+r}L${x-r},${y+r}Z`,fill:color,...attrs});
   return node('circle',{cx:x,cy:y,r,fill:color,...attrs});
 }
-export function renderNativeChart(spec,p,options={}) {
-  const atlas=options.outlines;
+export function createChartText(p,atlas){
+  const f=p.fonts;
   let activeWeight='normal';
   const shape=(value,fontWeight=activeWeight)=>{const runs=fontWeight==='normal'?atlas?.shapes:atlas?.weights?.[fontWeight];let result=runs?.[value];
     if(!result && [...value].every(ch=>runs?.[ch]) && runs) {let width=0,height=0,descent=0;const parts=[];let previous='';for(const ch of value){const g=runs[ch];if(!g)break;width+=atlas.kerning?.[fontWeight]?.[previous+ch]||0;previous=ch;parts.push({path:g.path,x:width});width+=g.width;height=Math.max(height,g.height);descent=Math.max(descent,g.descent);}if(parts.length===value.length)result={parts,width,height,descent};}
@@ -41,6 +41,33 @@ export function renderNativeChart(spec,p,options={}) {
     const descent=Math.max(atlas.font_metrics.descent,glyph.descent/100)*size;
     return {ascent,descent,height:ascent+descent};
   };
+  const text=(value,x,y,size,anchor='middle',attrs={})=>{
+    activeWeight=f['weight_'+({xlabel:'x_label',ylabel:'y_label',xtick:'xtick',ytick:'ytick','legend-label':'legend'}[attrs.class]||'title')]??f.weight;
+    const common={x,y,'font-size':size,'text-anchor':anchor,'data-chart-text':value,...attrs};
+    if(!atlas)return node('text',common,value);
+    const glyph=shape(value),width=glyph.width*size/100;
+    const left=x-(anchor==='middle'?width/2:anchor==='end'?width:0);
+    const group=node('g',{...common,role:'img','aria-label':value});
+    group.append(node('title',{},value));
+    const paths=node('g',{transform:`translate(${left} ${y}) scale(${size/100} ${-size/100})`});
+    for(const part of glyph.parts||[{path:glyph.path,x:0}])paths.append(node('path',{d:part.path,transform:`translate(${part.x} 0)`}));
+    group.append(paths);activeWeight='normal';
+    return group;
+  };
+  return {measure,metrics,text};
+}
+
+export function seriesDashAttrs(i,p){
+  const l=p.lines,c=p.colors,patterns=l.dash_patterns||['solid'];
+  const tier=Math.floor(i/c.categorical.length);
+  if(tier>=patterns.length)throw Error('Too many series for the available colors and dash patterns.');
+  const pattern={solid:null,dashed:[3.7,1.6],dotted:[1,1.65],dashdot:[6.4,1.6,1,1.6]}[patterns[tier]];
+  return pattern?{'stroke-dasharray':pattern.map(v=>v*l.data_linewidth_pt).join(' ')}:{};
+}
+
+export function renderNativeChart(spec,p,options={}) {
+  const atlas=options.outlines;
+  const {measure,metrics,text}=createChartText(p,atlas);
   const drawMarker=(symbol,x,y,size,color,attrs={})=>atlas
     ?node('path',{d:atlas.markers[symbol],transform:`translate(${x} ${y}) scale(${size} ${-size})`,fill:color,...attrs})
     :marker(symbol,x,y,size,color,attrs);
@@ -52,7 +79,7 @@ export function renderNativeChart(spec,p,options={}) {
   const tick=f.size_tick_pt,label=f.size_axis_label_pt,legend=f.size_legend_pt,pad=p.layout.pad_pt;
   const xtick=f.size_xtick_pt??tick,ytick=f.size_ytick_pt??tick,xlabel=f.size_x_label_pt??label,ylabel=f.size_y_label_pt??label;
   if(spec.kind!=='bar'&&(!Array.isArray(spec.series)||!spec.series.length))throw Error('A line chart needs at least one series.');
-  const dashAttrs=i=>{const patterns=l.dash_patterns||['solid'];const tier=Math.floor(i/c.categorical.length);if(tier>=patterns.length)throw Error('Too many series for the available colors and dash patterns.');const pattern={solid:null,dashed:[3.7,1.6],dotted:[1,1.65],dashdot:[6.4,1.6,1,1.6]}[patterns[tier]];return pattern?{'stroke-dasharray':pattern.map(v=>v*l.data_linewidth_pt).join(' ')}:{};};
+  const dashAttrs=i=>seriesDashAttrs(i,p);
   const xs=spec.kind!=='bar'?spec.x:spec.categories.map((_,i)=>i);
   const ys=spec.kind!=='bar'?spec.series.flatMap(s=>s.y):spec.values;
   if(spec.kind==='bar' && spec.categories.length!==spec.values.length)throw Error('Bar values must have the same length as categories.');
@@ -96,19 +123,6 @@ export function renderNativeChart(spec,p,options={}) {
   const svg=node('svg',{xmlns:NS,width:`${p.canvas.width_mm}mm`,height:`${height*25.4/72}mm`,viewBox:`0 0 ${width} ${height}`,
     role:'img','aria-label':`${spec.kind} figure: ${spec.y_label} versus ${spec.x_label}`,'font-family':'Chart Demo Sans',fill:c.text});
   svg.append(node('rect',{width,height,fill:p.canvas.background}));
-  const text=(value,x,y,size,anchor='middle',attrs={})=>{
-    activeWeight=f['weight_'+({xlabel:'x_label',ylabel:'y_label',xtick:'xtick',ytick:'ytick','legend-label':'legend'}[attrs.class]||'title')]??f.weight;
-    const common={x,y,'font-size':size,'text-anchor':anchor,'data-chart-text':value,...attrs};
-    if(!atlas)return node('text',common,value);
-    const glyph=shape(value),width=glyph.width*size/100;
-    const left=x-(anchor==='middle'?width/2:anchor==='end'?width:0);
-    const group=node('g',{...common,role:'img','aria-label':value});
-    group.append(node('title',{},value));
-    const paths=node('g',{transform:`translate(${left} ${y}) scale(${size/100} ${-size/100})`});
-    for(const part of glyph.parts||[{path:glyph.path,x:0}])paths.append(node('path',{d:part.path,transform:`translate(${part.x} 0)`}));
-    group.append(paths);activeWeight='normal';
-    return group;
-  };
   const line=(x1,y1,x2,y2,stroke,w,attrs={})=>node('line',{x1,y1,x2,y2,stroke,'stroke-width':w,...attrs});
   const clipId=`chart-demo-${++sequence}`;
   const defs=node('defs'),clip=node('clipPath',{id:clipId});clip.append(node('rect',{x:left,y:top,width:right-left,height:bottom-top}));defs.append(clip);svg.append(defs);
@@ -138,10 +152,14 @@ export function renderNativeChart(spec,p,options={}) {
     svg.append(text(t.label,x,y,xtick,rotation?'end':'middle',{class:'xtick','data-value':t.value,...(rotation?{transform:`rotate(${-rotation} ${x} ${y})`}:{})}));
   }
   svg.append(text(spec.x_label,(left+right)/2,height-pad-(atlas?metrics(spec.x_label,xlabel,weight('x_label')).descent:xlabel*.22),xlabel,'middle',{class:'xlabel'}));
-  const ly=(top+bottom)/2,lx=pad+metrics(spec.y_label,ylabel,weight('y_label')).ascent;
+  const yLabelWidth=measure(spec.y_label,ylabel,weight('y_label'));
+  const labelFits=yLabelWidth<=height-2*pad;
+  const ly=((spec.kind==='bar'&&rotation)||options.hideLegend)&&labelFits
+    ?Math.max(pad+yLabelWidth/2,Math.min(height-pad-yLabelWidth/2,(top+bottom)/2)):(top+bottom)/2;
+  const lx=pad+metrics(spec.y_label,ylabel,weight('y_label')).ascent;
   svg.append(text(spec.y_label,lx,ly,ylabel,'middle',{transform:`rotate(-90 ${lx} ${ly})`,class:'ylabel'}));
   if(spec.title)svg.append(text(spec.title,(left+right)/2,pad+f.size_title_pt,f.size_title_pt));
-  if(spec.kind!=='bar'&&(spec.series.length>1||p.legend.show_for_single_series)){
+  if(!options.hideLegend&&spec.kind!=='bar'&&(spec.series.length>1||p.legend.show_for_single_series)){
     const handle=legend*p.legend.handlelength,row=(atlas?Math.max(...spec.series.map(s=>metrics(s.name,legend,weight('legend')).height)):legend)+legend*p.legend.label_spacing,gap=legend*.8;
     const lw=handle+gap+Math.max(...spec.series.map(s=>measure(s.name,legend,weight('legend')))),lh=spec.series.length*row;
     const inset=atlas?legend*p.legend.border_pad:0;

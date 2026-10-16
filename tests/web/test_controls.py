@@ -53,6 +53,7 @@ def parse_controls():
                 entry[name] = float(value.group(1))
         entry["integer"] = "integer: true" in rest
         entry["requires_title"] = "requiresTitle: true" in rest
+        entry["requires_outside"] = "requiresOutside: true" in rest
         controls.append(entry)
     return controls
 
@@ -73,6 +74,10 @@ def spec(name):
 
 def moved_value(control, current):
     if control.get("kind") == "choice":
+        if control["path"] == "legend.placement":
+            return "outside" if current == "inside" else "inside"
+        if control["path"] == "legend.side":
+            return "top" if current != "top" else "bottom"
         return "bold" if str(current) != "bold" else "normal"
     low, high = control.get("min", 0.5), control.get("max", 4.0)
     # Move to whichever end is further from where it is, so the change is
@@ -105,6 +110,8 @@ def test_control_changes_the_drawing(control):
         # the condition the panel makes them available in.
         source = dict(source, title="A title")
     profile = base_profile()
+    if control["requires_outside"]:
+        profile['legend']['placement']='outside'
 
     before = figure_core.render_to_svg(source, copy.deepcopy(profile))["svg"]
 

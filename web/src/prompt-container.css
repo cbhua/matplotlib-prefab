@@ -1,0 +1,12 @@
+/* Reused from ../prompt/vendor/bootstrap/css/bootstrap.min.css and css/main.css.
+   Only the .container class name is scoped to .prompt-container. */
+.prompt-container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  max-width: clamp(720px, calc(462.86px + 17.857vw), 920px);
+}
+@media (min-width: 768px) { .prompt-container { width: 750px; } }
+@media (min-width: 992px) { .prompt-container { width: 970px; } }
+@media (min-width: 1200px) { .prompt-container { width: 1170px; } }

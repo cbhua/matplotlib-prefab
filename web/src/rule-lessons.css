@@ -1,0 +1,32 @@
+/* The existing controls keep their styles; lessons add explanations and feedback. */
+#editor .lesson-intro .card-head { align-items: baseline; gap: 10px; }
+#editor .lesson-intro h2 { font-size: var(--ui-heading-size); }
+#editor .lesson-intro a { color: var(--accent); font-size: var(--ui-font-size); white-space: nowrap; text-underline-offset: 3px; }
+#editor .lesson-context { color: var(--muted); font-size: var(--ui-font-size); line-height: 1.5; margin: 8px 0; }
+#editor .lesson-intro .toolbar-group { display: grid; grid-template-columns: 48px minmax(0,1fr); margin: 10px 0 0; }
+#editor .lesson-intro select { width: 100%; min-width: 0; padding: 6px 32px 6px 9px; font-size: var(--ui-font-size); }
+#editor .lesson-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: var(--ui-font-size); color: var(--muted); padding: 0 2px; }
+#editor .rule-stack { display: flex; flex-direction: column; gap: 14px; }
+#editor .rule-lesson { border: 1px solid var(--line); border-radius: var(--radius); margin: 0; padding: 14px; background: var(--card); }
+#editor .rule-lesson > summary { display: grid; grid-template-columns: 1.8em minmax(0,1fr) 5.8em .8em; gap: 8px; padding: 0; min-height: 36px; }
+#editor .rule-lesson[open] > summary { margin-bottom: 12px; }
+#editor .lesson-number { color: var(--accent); font-size: var(--ui-font-size); font-variant-numeric: tabular-nums; font-weight: 400; }
+#editor .lesson-name { font-size: var(--ui-heading-size); line-height: 1.45; font-weight: 700; }
+#editor .lesson-badge { font-size: var(--ui-font-size); text-align: center; border: 1px solid var(--line); border-radius: 3px; padding: 3px 0; color: var(--muted); font-weight: 400; }
+#editor .lesson-principle { font-size: var(--ui-font-size); line-height: 1.65; margin: 0 0 10px; }
+#editor .lesson-reference { font-size: var(--ui-font-size); line-height: 1.65; color: #34596b; background: #edf3f5; border-radius: 4px; padding: 9px 10px; margin: 0 0 10px; }
+#editor .lesson-try { font-size: var(--ui-font-size); color: var(--muted); line-height: 1.6; margin: 0 0 10px; }
+#editor .lesson-reading { height: 2.9em; font-size: var(--ui-font-size); line-height: 1.45; font-variant-numeric: tabular-nums; margin: 0 0 8px; }
+#editor .lesson-feedback { height: 2.9em; line-height: 1.45; font-size: var(--ui-font-size); color: var(--muted); margin: 0 0 12px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+#editor .rule-lesson[data-check-state=warn] .lesson-feedback { color: #805d17; }
+#editor .rule-lesson[data-check-state=warn] .lesson-badge { border-color: #e8d28f; color: #805d17; background: #fff3cd; }
+#editor .rule-lesson[data-check-state=error] .lesson-badge { border-color: #e3aaa5; color: #922b25; background: #fff0ee; }
+#editor .lesson-actions { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
+#editor .lesson-actions button { font-size: var(--ui-font-size); color: var(--accent); background: transparent; border: 1px solid #c8d4d7; border-radius: 4px; padding: 6px 8px; cursor: pointer; }
+#editor .lesson-actions button:first-child { background: #edf3f5; }
+#editor .lesson-advanced { margin-top: 16px; padding-top: 12px; }
+#editor .lesson-advanced > summary { font-size: var(--ui-font-size); color: var(--muted); }
+#editor .figure-dimensions > .card-head { color: var(--muted); font-size: var(--ui-font-size); }
+#editor .integrity-card h2 { line-height: 1.5; }
+#editor .integrity-card .card-head { align-items: flex-start; gap: 8px; }
+#editor .handoff-card { margin-bottom: 12px; }

@@ -13,13 +13,21 @@ def test_compact_setup_and_editor():
         assert p.locator('#setup .setup-section').count()==3
         assert p.locator('[data-venue="iclr2026"]').inner_text()=='ICLR'
         assert p.locator('[data-venue="neurips2026"]').inner_text()=='NeurIPS'
-        assert p.locator('#setup-next').is_disabled()
+        assert p.locator('[data-venue="iclr2026"]').get_attribute('aria-pressed')=='true'
+        assert p.locator('#setup-next').is_enabled()
+        assert p.locator('.site-title').inner_text()=='Scientific Figure Skills'
+        button=p.locator('#setup-next').bounding_box()
+        assert button['x']+button['width']/2==pytest.approx(750,abs=1)
+        p.click('#about-open')
+        assert p.locator('#about-dialog').is_visible()
+        p.keyboard.press('Escape')
+        assert p.locator('#about-dialog').is_hidden()
         folder=Path('.tmp/interface');folder.mkdir(parents=True,exist_ok=True)
         p.screenshot(path=str(folder/'setup.png'),full_page=True)
         p.click('[data-venue="neurips2026"]');p.click('[data-grid="1x1"]');p.click('[data-layout="narrow"]');p.click('#setup-next')
         lab.wait_ready();lab.wait_for_render()
-        assert p.locator('body > header,body > footer,#edit-setup,#paper-controls,#paper-body').count()==0
-        assert p.locator('.side .card h2').first.inner_text()=='Hand off'
+        assert p.locator('body > footer,#edit-setup,#paper-controls,#paper-body').count()==0
+        assert p.locator('.side .card h2').first.inner_text()=='Explore the skill'
         assert p.locator('.side #example').count()==1
         assert p.locator('#status').is_hidden()
         assert p.locator('.reflow-paper').count()==1

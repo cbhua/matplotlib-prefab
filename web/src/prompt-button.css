@@ -1,0 +1,133 @@
+/* Scoped reuse of ../prompt/pages/write-learning-note.html #copyPromptBtn:
+ * Bootstrap v3.3.7 .btn / .btn-sm / .btn-success, then css/main.css .btn-success / .copy-actions.
+ * Declarations are copied unchanged; only #setup is added to selectors to
+ * isolate the component from this application's generic button rules.
+ * Bootstrap copyright 2011-2016 Twitter, Inc.; MIT license.
+ * Freelancer theme copyright 2013-2016 Start Bootstrap; MIT license.
+ */
+#setup .btn {display:inline-block;padding:6px 12px;margin-bottom:0;font-size:14px;font-weight:400;line-height:1.42857143;text-align:center;white-space:nowrap;vertical-align:middle;-ms-touch-action:manipulation;touch-action:manipulation;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-image:none;border:1px solid transparent;border-radius:4px}
+#setup .btn.active.focus,
+#setup .btn.active:focus,
+#setup .btn.focus,
+#setup .btn:active.focus,
+#setup .btn:active:focus,
+#setup .btn:focus {outline:5px auto -webkit-focus-ring-color;outline-offset:-2px}
+#setup .btn.focus,
+#setup .btn:focus,
+#setup .btn:hover {color:#333;text-decoration:none}
+#setup .btn.active,
+#setup .btn:active {background-image:none;outline:0;-webkit-box-shadow:inset 0 3px 5px rgba(0,0,0,.125);box-shadow:inset 0 3px 5px rgba(0,0,0,.125)}
+#setup .btn.disabled,
+#setup .btn[disabled],
+#setup fieldset[disabled] .btn {cursor:not-allowed;filter:alpha(opacity=65);-webkit-box-shadow:none;box-shadow:none;opacity:.65}
+#setup .btn-success {color:#fff;background-color:#5cb85c;border-color:#4cae4c}
+#setup .btn-success.focus,
+#setup .btn-success:focus {color:#fff;background-color:#449d44;border-color:#255625}
+#setup .btn-success:hover {color:#fff;background-color:#449d44;border-color:#398439}
+#setup .btn-success.active,
+#setup .btn-success:active,
+#setup .open>.dropdown-toggle.btn-success {color:#fff;background-color:#449d44;border-color:#398439}
+#setup .btn-success.active.focus,
+#setup .btn-success.active:focus,
+#setup .btn-success.active:hover,
+#setup .btn-success:active.focus,
+#setup .btn-success:active:focus,
+#setup .btn-success:active:hover,
+#setup .open>.dropdown-toggle.btn-success.focus,
+#setup .open>.dropdown-toggle.btn-success:focus,
+#setup .open>.dropdown-toggle.btn-success:hover {color:#fff;background-color:#398439;border-color:#255625}
+#setup .btn-success.active,
+#setup .btn-success:active,
+#setup .open>.dropdown-toggle.btn-success {background-image:none}
+#setup .btn-success.disabled.focus,
+#setup .btn-success.disabled:focus,
+#setup .btn-success.disabled:hover,
+#setup .btn-success[disabled].focus,
+#setup .btn-success[disabled]:focus,
+#setup .btn-success[disabled]:hover,
+#setup fieldset[disabled] .btn-success.focus,
+#setup fieldset[disabled] .btn-success:focus,
+#setup fieldset[disabled] .btn-success:hover {background-color:#5cb85c;border-color:#4cae4c}
+#setup .btn-success .badge {color:#5cb85c;background-color:#fff}
+#setup .btn-group-sm>.btn,
+#setup .btn-sm {padding:5px 10px;font-size:12px;line-height:1.5;border-radius:3px}
+#setup .btn-success {
+    color: white;
+    background-color: #18BC9C;
+    border-color: #18BC9C;
+    font-weight: 700;
+  }
+#setup .btn-success:hover,
+#setup .btn-success:focus,
+#setup .btn-success:active,
+#setup .btn-success.active,
+#setup .open .dropdown-toggle.btn-success {
+    color: white;
+    background-color: #128f76;
+    border-color: #11866f;
+  }
+#setup .btn-success:active,
+#setup .btn-success.active,
+#setup .open .dropdown-toggle.btn-success {
+    background-image: none;
+  }
+#setup .btn-success.disabled,
+#setup .btn-success[disabled],
+#setup fieldset[disabled] .btn-success,
+#setup .btn-success.disabled:hover,
+#setup .btn-success[disabled]:hover,
+#setup fieldset[disabled] .btn-success:hover,
+#setup .btn-success.disabled:focus,
+#setup .btn-success[disabled]:focus,
+#setup fieldset[disabled] .btn-success:focus,
+#setup .btn-success.disabled:active,
+#setup .btn-success[disabled]:active,
+#setup fieldset[disabled] .btn-success:active,
+#setup .btn-success.disabled.active,
+#setup .btn-success[disabled].active,
+#setup fieldset[disabled] .btn-success.active {
+    background-color: #18BC9C;
+    border-color: #18BC9C;
+  }
+#setup .btn-success .badge {
+    color: #18BC9C;
+    background-color: white;
+  }
+
+#setup .copy-actions { font-size: clamp(12px, calc(9.43px + 0.1786vw), 14px); }
+#setup .copy-actions .btn {
+  font-size: 1em;
+  line-height: 1.5;
+  padding: 0.625em 1.25em;
+}
+#setup .copy-actions .btn:focus-visible {
+  outline: 2px solid #296fa3;
+  outline-offset: 3px;
+}
+
+
+/*
+MIT License
+
+Copyright 2011-2016 Twitter, Inc.
+Copyright 2013-2016 Start Bootstrap
+Copyright (c) 2026 Chuanbo Hua
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/

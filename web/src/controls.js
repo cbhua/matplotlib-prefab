@@ -1,3 +1,5 @@
+import {RULE_LESSONS, EXTRA_GROUPS, lessonReference, lessonReading, lessonChecks} from './rule-lessons.js';
+
 /**
  * Every control the panel offers, and the profile field each one writes.
  *
@@ -32,8 +34,20 @@ export function deletePath(object, path) {
 }
 
 const WEIGHTS = ['normal', 'medium', 'semibold', 'bold'];
+const LEGEND_PLACEMENTS = ['inside', 'outside'];
+const LEGEND_SIDES = ['top', 'bottom', 'left', 'right'];
 
 export const CONTROL_GROUPS = [
+  {
+    id: 'legend', label: 'Legend placement', kinds: ['line','scatter'],
+    note: 'Separate legends share one framed area on the selected side.',
+    controls: [
+      { path: 'legend.placement', label: 'Mode', kind: 'radio', choices: LEGEND_PLACEMENTS,
+        choiceLabels: ['Inside plot','Separate legend'] },
+      { path: 'legend.side', label: 'Side', kind: 'radio', choices: LEGEND_SIDES,
+        choiceLabels: ['Top','Bottom','Left','Right'], requiresOutside: true },
+    ],
+  },
   {
     id: 'type-size',
     label: 'Type size',
@@ -48,7 +62,7 @@ export const CONTROL_GROUPS = [
         label: 'X tick labels', unit: 'pt', min: 3, max: 16, step: 0.25 },
       { path: 'fonts.size_ytick_pt', fallback: 'fonts.size_tick_pt',
         label: 'Y tick labels', unit: 'pt', min: 3, max: 16, step: 0.25 },
-      { path: 'fonts.size_legend_pt', label: 'Legend', unit: 'pt', min: 3, max: 16, step: 0.25 },
+      { path: 'fonts.size_legend_pt', label: 'Legend', unit: 'pt', min: 3, max: 16, step: 0.25, requiresLegend: true },
       // A title control only does something when the spec has a title, so it is
       // marked as such and the panel disables it when there is none. A live knob
       // that silently changes nothing is the thing this tool must not ship.
@@ -71,7 +85,7 @@ export const CONTROL_GROUPS = [
       { path: 'fonts.weight_ytick', fallback: 'fonts.weight', label: 'Y tick labels',
         kind: 'choice', choices: WEIGHTS },
       { path: 'fonts.weight_legend', fallback: 'fonts.weight', label: 'Legend',
-        kind: 'choice', choices: WEIGHTS },
+        kind: 'choice', choices: WEIGHTS, requiresLegend: true },
       { path: 'fonts.weight_title', fallback: 'fonts.weight', label: 'Title',
         kind: 'choice', choices: WEIGHTS, requiresTitle: true },
     ],
@@ -85,7 +99,7 @@ export const CONTROL_GROUPS = [
       { path: 'lines.tick_linewidth_pt', label: 'Tick marks', unit: 'pt', min: 0.1, max: 3, step: 0.05 },
       { path: 'lines.tick_length_pt', label: 'Tick length', unit: 'pt', min: 0, max: 8, step: 0.25 },
       { path: 'lines.tick_pad_pt', label: 'Tick label gap', unit: 'pt', min: 0, max: 10, step: 0.25 },
-      { path: 'lines.marker_size_pt', label: 'Marker size', unit: 'pt', min: 0, max: 12, step: 0.25 },
+      { path: 'lines.marker_size_pt', kinds: ['line','scatter'], label: 'Marker size', unit: 'pt', min: 0, max: 12, step: 0.25 },
       { path: 'lines.max_markers_per_series', kinds: ['line'], label: 'Markers per series', unit: 'max',
         min: 2, max: 40, step: 1, integer: true },
     ],
@@ -94,8 +108,8 @@ export const CONTROL_GROUPS = [
     id: 'axes',
     label: 'Axes and grid',
     controls: [
-      { path: 'axes.max_xticks', label: 'X tick count', unit: 'max', min: 2, max: 14, step: 1, integer: true },
-      { path: 'axes.max_yticks', label: 'Y tick count', unit: 'max', min: 2, max: 14, step: 1, integer: true },
+      { path: 'axes.max_xticks', label: 'X tick count', unit: 'max', min: 2, max: 24, step: 1, integer: true },
+      { path: 'axes.max_yticks', label: 'Y tick count', unit: 'max', min: 2, max: 24, step: 1, integer: true },
       { path: 'axes.grid_alpha', label: 'Grid opacity', unit: '', min: 0, max: 1, step: 0.05 },
       { path: 'axes.grid_linewidth_pt', label: 'Grid line width', unit: 'pt', min: 0.05, max: 2, step: 0.05 },
       { path: 'axes.margin_x', label: 'X data margin', unit: '', min: 0, max: 0.3, step: 0.01 },
@@ -121,9 +135,11 @@ export const ALL_CONTROLS = CONTROL_GROUPS.flatMap((group) =>
   group.controls.map((control) => ({ ...control, group: group.id, groupKinds: group.kinds })));
 
 /** Does this control affect a figure drawn from `spec`? */
-export function controlApplies(control, spec) {
-  if (spec?.kind === 'grid') return spec.panels.some(panel => controlApplies(control, panel));
+export function controlApplies(control, spec, profile) {
+  if(control.requiresOutside&&profile&&profile.legend.placement!=='outside')return false;
+  if (spec?.kind === 'grid') return spec.panels.some(panel => controlApplies(control, panel, profile));
   const kind = (spec && spec.kind) || 'line';
+  if(control.requiresLegend && (kind==='bar'||!(profile?.legend?.placement==='outside'||spec?.series?.length>1||profile?.legend?.show_for_single_series)))return false;
   if ((control.kinds || control.groupKinds) && !(control.kinds || control.groupKinds).includes(kind)) return false;
   if (control.requiresTitle && !(spec && typeof spec.title === 'string' && spec.title.trim())) {
     return false;
@@ -149,21 +165,42 @@ export function isOverridden(profile, baseProfile, control) {
  * Build the panel. `onChange(control, value)` fires on every edit;
  * `onReset(control | null)` resets one control or all of them.
  */
-export function buildPanel(root, { onChange, onReset }) {
+export function buildPanel(root, { onChange, onReset, onExperiment }) {
   const registry = new Map();
+  const sections = new Map();
+  // The dimension widgets already exist and keep their original handlers/IDs.
+  const dimensions=document.getElementById('figure-dimensions');
+  if(dimensions)dimensions.remove();
   root.textContent = '';
 
-  const order=['type-size','lines','bar','axes','type-weight'];
-  for (const group of [...CONTROL_GROUPS].sort((a,b)=>order.indexOf(a.id)-order.indexOf(b.id))) {
+  const byPath=new Map(ALL_CONTROLS.map(c=>[c.path,{...c,kinds:c.kinds||c.groupKinds}]));
+  const groups=[...RULE_LESSONS,...EXTRA_GROUPS].map(g=>({...g,label:g.title||g.label,controls:g.paths.map(path=>byPath.get(path))}));
+  for (const group of groups) {
     const section = document.createElement('details');
-    section.open=['type-size','lines','bar'].includes(group.id);
-    section.className = 'panel-group';
+    section.open=!group.parent;
+    section.className = group.parent?'panel-group lesson-advanced':'panel-group rule-lesson';
     section.dataset.group = group.id;
+    if(group.rules)section.dataset.skillRules=group.rules.join(' ');
     if (group.kinds) section.dataset.kinds = group.kinds.join(' ');
 
     const heading = document.createElement('summary');
-    heading.textContent = group.label;
+    if(group.number){const number=document.createElement('span');number.className='lesson-number';number.textContent=group.number;heading.append(number);}
+    const name=document.createElement('span');name.className='lesson-name';name.textContent=group.label;heading.append(name);
     section.appendChild(heading);
+    if(group.rules){
+      const badge=document.createElement('span');badge.className='lesson-badge';badge.textContent='Checking';heading.append(badge);
+      const principle=document.createElement('p');principle.className='lesson-principle';principle.textContent=group.principle;section.append(principle);
+      const reference=document.createElement('p');reference.className='lesson-reference';section.append(reference);
+      const hint=document.createElement('p');hint.className='lesson-try';hint.textContent=group.try;section.append(hint);
+      const reading=document.createElement('p');reading.className='lesson-reading';reading.hidden=!['type-size','figure-size'].includes(group.id);section.append(reading);
+      const feedback=document.createElement('p');feedback.className='lesson-feedback';feedback.textContent='Checking this rule…';section.append(feedback);
+      if(group.experiment){
+        const actions=document.createElement('div');actions.className='lesson-actions';
+        for(const [action,text] of [[group.experiment,group.experimentLabel],[group.restore,'Restore reference']]){
+          const button=document.createElement('button');button.type='button';button.dataset.experiment=action;button.textContent=text;button.onclick=()=>onExperiment?.(action);actions.append(button);
+        }section.append(actions);
+      }
+    }
 
     for (const raw of group.controls) {
       // The group's `kinds` restriction belongs to each of its controls from
@@ -190,7 +227,22 @@ export function buildPanel(root, { onChange, onReset }) {
 
       let slider = null;
       let box;
-      if (control.kind === 'choice') {
+      if(control.kind==='radio'){
+        box=document.createElement('div');box.id=id;box.className='radio-options';box.setAttribute('role','radiogroup');box.setAttribute('aria-label',control.label);
+        for(const [i,choice] of control.choices.entries()){
+          const option=document.createElement('label'),radio=document.createElement('input'),caption=document.createElement('span');
+          radio.type='radio';radio.name=control.path;radio.value=choice;radio.id=`${id}-${choice}`;
+          caption.textContent=control.choiceLabels?.[i]??choice;option.append(radio,caption);box.append(option);
+          radio.addEventListener('change',()=>{if(radio.checked){box.value=radio.value;onChange(control,radio.value);}});
+        }
+        label.htmlFor=`${id}-${control.choices[0]}`;
+      } else if(control.kind==='select'){
+        box=document.createElement('select');box.id=id;
+        for(const [i,choice] of control.choices.entries()){
+          const option=document.createElement('option');option.value=choice;option.textContent=control.choiceLabels?.[i]??choice;box.append(option);
+        }
+        box.addEventListener('change',()=>onChange(control,box.value));
+      } else if (control.kind === 'choice') {
         box = document.createElement('select');
         box.hidden = true;
         slider = document.createElement('input');slider.type='range';slider.id=id;slider.min=0;slider.max=control.choices.length-1;slider.step=1;slider.className='weight-slider';slider.setAttribute('aria-label',control.label+' weight');
@@ -234,7 +286,7 @@ export function buildPanel(root, { onChange, onReset }) {
       }
       inputs.appendChild(box);
 
-      if (control.kind !== 'choice') {
+      if (!['choice','select','radio'].includes(control.kind)) {
         const unit = document.createElement('span');
         unit.className = 'control-unit';
         unit.textContent = control.unit || '';
@@ -250,7 +302,7 @@ export function buildPanel(root, { onChange, onReset }) {
       inputs.appendChild(reset);
 
       row.insertBefore(inputs,row.querySelector('.weight-legend'));
-      if(control.kind !== 'choice'){const ticks=document.createElement('div');ticks.className='range-legend';ticks.innerHTML=`<span>${control.min}</span><span>${control.max}${control.unit?' '+control.unit:''}</span>`;row.append(ticks);}
+      if(!['choice','select','radio'].includes(control.kind)){const ticks=document.createElement('div');ticks.className='range-legend';ticks.innerHTML=`<span>${control.min}</span><span>${control.max}${control.unit?' '+control.unit:''}</span>`;row.append(ticks);}
 
       const reason = document.createElement('p');
       reason.className = 'control-reason';
@@ -260,7 +312,12 @@ export function buildPanel(root, { onChange, onReset }) {
       section.appendChild(row);
       registry.set(control.path, { control, row, slider, box, flag, reason });
     }
-    root.appendChild(section);
+    if(group.id==='figure-size'&&dimensions)section.append(dimensions);
+    // Keep the first sliders close to the recommendation. Longer exploration
+    // hints and the detailed check result follow the controls.
+    if(group.rules)section.append(section.querySelector('.lesson-feedback'),section.querySelector('.lesson-try'));
+    if(group.parent)sections.get(group.parent).append(section);else root.appendChild(section);
+    sections.set(group.id,section);
   }
 
   return {
@@ -274,12 +331,13 @@ export function buildPanel(root, { onChange, onReset }) {
     sync(profile, baseProfile, spec) {
       const kind = (spec && spec.kind) || 'line';
       const hasTitle = spec?.kind === 'grid' ? spec.panels.some(p => Boolean(p.title?.trim())) : Boolean(spec && typeof spec.title === 'string' && spec.title.trim());
-      for(const section of root.querySelectorAll('[data-kinds]'))section.hidden=!section.dataset.kinds.split(',').some(k=>spec?.kind==='grid'?spec.panels.some(p=>p.kind===k):kind===k);
+      for(const section of root.querySelectorAll('[data-kinds]'))section.hidden=!section.dataset.kinds.split(/[\s,]+/).some(k=>spec?.kind==='grid'?spec.panels.some(p=>p.kind===k):kind===k);
       for (const { control, row, slider, box, flag, reason } of registry.values()) {
         const value = effectiveValue(profile, control);
         if (value !== undefined) {
           if (slider) {slider.value = control.kind==='choice'?String(control.choices.indexOf(value)):String(value);slider.setAttribute('aria-valuetext',String(value));slider.style.setProperty('--fill',`${(Number(slider.value)-Number(slider.min))/(Number(slider.max)-Number(slider.min))*100}%`);}
           box.value = String(value);
+          if(control.kind==='radio')for(const radio of box.querySelectorAll('input'))radio.checked=radio.value===String(value);
         }
         const changed = isOverridden(profile, baseProfile, control);
         row.classList.toggle('is-overridden', changed);
@@ -290,14 +348,35 @@ export function buildPanel(root, { onChange, onReset }) {
           why = `only applies to ${(control.kinds || control.groupKinds).join(' and ')} charts`;
         } else if (control.requiresTitle && !hasTitle) {
           why = 'this spec has no title, so this would change nothing';
+        } else if(control.requiresLegend&&!controlApplies(control,spec,profile)){
+          why='this spec has no visible legend';
         }
         const applies = why === '';
         row.classList.toggle('is-inapplicable', !applies);
-        row.hidden=!applies;
+        const inactive=control.requiresOutside&&profile.legend.placement!=='outside';
+        row.hidden=!applies||Boolean(inactive);
         reason.textContent = why;
         reason.hidden = applies;
         if (slider) slider.disabled = !applies;
         box.disabled = !applies;
+        if(control.kind==='radio')for(const radio of box.querySelectorAll('input'))radio.disabled=!applies||Boolean(inactive);
+      }
+      const marks=spec?.kind==='grid'?spec.panels.some(p=>p.kind!=='bar'):spec?.kind!=='bar';
+      for(const button of root.querySelectorAll('[data-experiment="large-marks"],[data-experiment="restore-space"]'))button.hidden=!marks;
+    },
+    updateLessons(page,profile,report,{error=false}={}){
+      if(!page)return;
+      for(const lesson of RULE_LESSONS){
+        const section=sections.get(lesson.id);
+        section.querySelector('.lesson-reference').textContent=lessonReference(lesson.id,page,profile);
+        section.querySelector('.lesson-reading').textContent=lessonReading(lesson.id,page,profile);
+        const problems=lessonChecks(lesson.id,report).filter(c=>c.status==='warn'||c.status==='fail');
+        const status=error?'error':!report?'checking':problems.length?'warn':'clear';
+        section.dataset.checkState=status;
+        section.querySelector('.lesson-badge').textContent={error:'Unverified',checking:'Checking',warn:'Review',clear:'No flags'}[status];
+        const feedback=section.querySelector('.lesson-feedback');
+        feedback.textContent=error?'This configuration could not be checked. Fix the figure settings.':!report?'Checking this rule…':problems.length?(problems[0].title||'Review this rule'):'No flags from this check. Inspect the figure at print size.';
+        feedback.title=problems[0]?.message||'';
       }
     },
     registry,

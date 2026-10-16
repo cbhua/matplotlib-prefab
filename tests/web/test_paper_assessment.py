@@ -71,3 +71,37 @@ def test_style_undo_and_copy_feedback():
         p.click('#copy-handoff')
         assert p.locator('#copy-handoff').inner_text()=='Copied!'
         assert p.evaluate('window.copiedHandoff')==lab.export_text()
+
+
+def test_wrapped_width_boundaries_and_caption_warning():
+    with open_lab() as lab:
+        lab.wait_ready(); lab.select('iclr2026','narrow'); lab.wait_for_render(); p=lab.page
+        results=p.evaluate('''async()=>{
+          const {evaluatePaper}=await import('./src/paper-checks.js');
+          const page=window.__labApi.currentPage(),profile=window.__labApi.currentProfile(),spec=window.__labApi.currentSpec();
+          return [.249,.25,1/3,2/3,.67].map(ratio=>{
+            const source=structuredClone(page);source.figure.width_mm=source.text_block.width_mm*ratio;
+            const warnings=evaluatePaper(source,profile,spec,document.querySelector('.reflow-paper')).filter(c=>c.rule_id==='wrapped-figure-width');
+            source.layout.text_wrap=false;
+            const exempt=evaluatePaper(source,profile,spec,document.querySelector('.reflow-paper')).filter(c=>c.rule_id==='wrapped-figure-width');
+            return {ratio,warnings,exempt};
+          });
+        }''')
+        assert [len(r['warnings']) for r in results]==[1,1,0,0,1]
+        assert all(not r['exempt'] for r in results)
+        assert results[0]['warnings'][0]['measurements']['caption_cramped']
+        assert not results[1]['warnings'][0]['measurements']['caption_cramped']
+        assert results[-1]['warnings'][0]['id']=='paper.wrap_width'
+        p.locator('#figure-width').fill('32');lab.wait_for_render()
+        card=p.locator('.warning-card').filter(has_text='Wrapped figure is too narrow')
+        assert 'Below one quarter' in card.inner_text()
+        card.get_by_role('button',name='Adjust setting').click()
+        assert p.locator('#figure-width').evaluate('(n)=>n===document.activeElement')
+        check=next(c for c in warnings(lab).values() if c['id']=='paper.wrap_figure_narrow')
+        assert check['measurements']['body_width_ratio']==pytest.approx(32/139.7)
+        p.locator('#figure-width').fill('100');lab.wait_for_render()
+        assert 'paper.wrap_width' in warnings(lab)
+        p.click('#ui-language')
+        assert '2/3' in p.locator('.warning-card').filter(has_text='正文宽度').inner_text()
+        p.click('#reset-size');lab.wait_for_render()
+        assert not any(c['rule_id']=='wrapped-figure-width' for c in warnings(lab).values() if 'rule_id' in c)

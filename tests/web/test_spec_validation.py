@@ -27,11 +27,15 @@ def test_browser_contract_matches_python():
 def test_rejected_import_preserves_current_figure():
     with open_lab() as lab:
         lab.wait_ready();lab.wait_for_render();p=lab.page
+        lab.set_control('fonts.size_xtick_pt',4);lab.wait_for_render()
         before=lab.spec()
         p.set_input_files('#spec-file',{'name':'invalid.json','mimeType':'application/json','buffer':b'{"kind":"line"}'})
         p.wait_for_function("document.querySelector('#status').dataset.kind==='error'")
         assert lab.spec()==before
         assert 'schema_version' in p.locator('#status').inner_text()
+        assert p.locator('#warning-rail #status').is_visible()
+        assert p.locator('#warning-rail .warning-card').count()>0
+        assert p.locator('#figure-assessment').get_attribute('data-state')=='error'
         assert p.locator('#copy-handoff').is_enabled()
         assert not lab.page_errors
 
@@ -53,3 +57,40 @@ def test_import_stays_with_the_panel_selected_when_it_started():
         assert bundle['spec']['panels'][1]['kind']=='line'
         assert p.locator('#data-origin').inner_text()=='Example data'
         assert p.locator('#example').input_value()=='line-multi'
+
+
+@pytest.mark.parametrize('viewport',[(1500,1000),(390,844)])
+def test_render_error_uses_shared_rail_and_clears_after_recovery(viewport):
+    with open_lab(viewport=viewport) as lab:
+        lab.wait_ready();lab.wait_for_render();p=lab.page
+        imported=lab.spec();imported['x_label']='Unsupported \U0001f52c'
+        p.set_input_files('#spec-file',{'name':'unsupported.json','mimeType':'application/json','buffer':json.dumps(imported).encode()})
+        p.wait_for_function("document.querySelector('#status').dataset.kind==='error'")
+        assert p.locator('#warning-rail #status').is_visible()
+        assert 'This configuration could not be drawn.' in p.locator('#status').inner_text()
+        assert p.locator('#status .status-detail').inner_text()
+        assert p.locator('#status').evaluate('(n)=>getComputedStyle(n).backgroundColor')=='rgb(255, 240, 238)'
+        assert p.locator('#copy-handoff').is_disabled()
+        assert p.locator('#preview #status').count()==0
+        assert p.locator('#figure-assessment').get_attribute('data-state')=='error'
+        if viewport[0]>900:
+            rail=p.locator('#warning-rail').bounding_box();layout=p.locator('#editor .layout').bounding_box()
+            assert rail['x']+rail['width']<layout['x']
+        p.click('#ui-language')
+        assert '无法绘制当前配置' in p.locator('#status').inner_text()
+        p.select_option('#example','line-multi');lab.wait_for_render()
+        assert p.locator('#status').is_hidden()
+        assert p.locator('#warning-rail').is_hidden()
+        assert p.locator('#copy-handoff').is_enabled()
+        assert not lab.page_errors
+
+
+def test_renderer_start_error_retains_retry_in_shared_rail():
+    with open_lab() as lab:
+        p=lab.page
+        p.route('**/chart-demo/text-outlines.json',lambda route:route.abort())
+        p.wait_for_selector('#setup-next');p.click('#setup-next')
+        p.wait_for_function("document.querySelector('#status').dataset.kind==='error'")
+        assert p.locator('#warning-rail #status').is_visible()
+        assert p.locator('#status #boot-retry').is_visible()
+        assert 'failed to start' in p.locator('#status').inner_text()

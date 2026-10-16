@@ -3,20 +3,38 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Figure studio</title>
+<title>Scientific Figure Skills</title>
 <link rel="stylesheet" href="./src/styles.css">
 <link rel="stylesheet" href="./src/paper-page.css">
 <link rel="stylesheet" href="./src/fixed-paper.css">
 <link rel="stylesheet" href="./src/reflow-paper.css">
 <link rel="stylesheet" href="./src/css-paper.css">
+<link rel="stylesheet" href="./src/prompt-container.css">
 <link rel="stylesheet" href="./src/design-overrides.css">
+<link rel="stylesheet" href="./src/rule-lessons.css">
+<link rel="stylesheet" href="./src/prompt-button.css">
 </head>
 <body>
-<div class="language-toolbar"><button type="button" id="ui-language" aria-label="切换为中文" title="切换为中文"><span aria-hidden="true">🌐 <span data-language="en">EN</span>/<span data-language="zh">中</span></span></button></div>
+<header class="site-header">
+  <div class="site-header-inner prompt-container">
+    <h1 class="site-title">Scientific Figure Skills</h1>
+    <nav class="site-nav" aria-label="Main navigation">
+      <button type="button" id="home-open">HOME</button>
+      <button type="button" id="about-open" aria-haspopup="dialog">ABOUT</button>
+      <button type="button" id="ui-language" aria-label="切换为中文" title="切换为中文"><span aria-hidden="true"><span data-language="en">EN</span> / <span data-language="zh">中</span></span></button>
+    </nav>
+  </div>
+</header>
+<dialog id="about-dialog" aria-labelledby="about-title">
+  <div class="about-heading"><h2 id="about-title">Scientific Figure Skills</h2><button type="button" id="about-close" aria-label="Close">×</button></div>
+  <p>The skill gives agents rules for scientific figures. This playground lets you explore what those rules protect.</p>
+  <p>Copy for Agents hands off your data, dimensions, and style settings for reproduction.</p>
+  <p class="about-note">The paper preview is illustrative. Figure checks are suggestions, not venue requirements.</p>
+</dialog>
 
 <div hidden><span id="runtime"></span><span id="configuration-summary"></span><dl id="readout"></dl></div>
 
-<main id="setup" class="setup" aria-label="Figure setup">
+<main id="setup" class="setup prompt-container" aria-label="Figure setup">
   <p id="setup-loading" role="status">Loading templates…</p>
 </main>
 
@@ -30,68 +48,73 @@
     <label class="toolbar-label" for="zoom">Zoom</label>
     <input type="range" id="zoom" min="0.1" max="1.6" step="0.01" value="0.75">
     <output id="zoom-value">75%</output>
+    <button type="button" id="reset-zoom" class="control-reset" aria-label="Reset zoom to fit page width" title="Fit page width">Reset</button>
   </div>
 </div>
-    <div class="preview-status" id="status" data-kind="working">
-      <strong class="status-message">Starting…</strong>
-      <span class="status-detail" hidden></span>
-      <button type="button" id="boot-retry" hidden>Retry</button>
-    </div>
+    <div class="paper-viewport" id="paper-viewport">
     <div class="paper-frame" id="paper-frame">
       <div class="paper-scale" id="paper-scale"></div>
     </div>
     <p id="wrap-note" class="preview-caveat" hidden>Half the text width, with text wrapping around the figure.</p>
-    <p id="paper-overflow" class="preview-caveat" hidden>The figure and caption exceed this page’s text area. Choose a smaller figure layout.</p>
+    </div>
+
   </section>
 
-  <aside id="warning-rail" aria-label="Figure warnings" hidden><ul class="checks" id="checks"></ul></aside>
-  <aside class="side" aria-label="Style controls">
+  <aside id="analysis-column" aria-label="Figure analysis">
+  <div id="warning-rail" aria-label="Figure warnings and errors" hidden>
+    <div class="preview-status error-card" id="status" data-kind="working" role="alert" tabindex="-1">
+      <strong class="status-message">Starting…</strong>
+      <span class="status-detail" hidden></span>
+      <button type="button" id="boot-retry" hidden>Retry</button>
+    </div>
+    <p id="paper-overflow" class="error-card" role="alert" tabindex="-1" hidden>The figure and caption exceed this page’s text area. Choose a smaller figure layout.</p>
+    <ul class="checks" id="checks"></ul>
+  </div>
+  <section id="analysis-panel" aria-label="Figure status and analysis">
     <button type="button" id="figure-assessment" class="figure-assessment" aria-expanded="false" aria-controls="warning-rail" disabled>Checking figure…</button>
-    <section class="card">
-      <h2>Hand off</h2>
+    <section class="density-card" aria-labelledby="density-title">
+      <h2 id="density-title">Space &amp; density</h2>
+      <p class="panel-note">Ink relative to body text is context, not a target.</p>
+      <div id="density-readout" aria-live="polite"><p>Analysis will appear after the figure is checked.</p></div>
+    </section>
+  </section>
+  </aside>
+  <aside class="side" aria-label="Skill rule playground">
+    <section class="card lesson-intro">
+      <div class="card-head"><h2>Explore the skill</h2><a href="https://github.com/cbhua/matplotlib-prefab/tree/main/skills/scientific-figures" target="_blank" rel="noopener">Read the skill ↗</a></div>
+      <p class="panel-note">Change a setting. See the consequence. Learn the rule.</p>
+      <p class="lesson-context" id="lesson-context"></p>
+      <div class="toolbar-group" id="panel-picker-group" hidden><label class="toolbar-label" for="active-panel">Panel</label><select id="active-panel"></select></div>
+      <div class="toolbar-group"><label class="toolbar-label" for="example">Example</label>
+        <select id="example">
+          <option value="" disabled selected>Choose example…</option>
+          <option value="line-multi">line — three series</option><option value="line-single">line — one series</option>
+          <option value="line-many">line — many series</option><option value="bar-signed">bar — crossing zero</option>
+          <option value="bar-positive">bar — positive</option><option value="scatter">scatter — two groups</option>
+        </select>
+      </div>
+    </section>
+    <div class="lesson-toolbar"><span>Shared across panels</span><div class="style-actions"><button type="button" id="undo-style" disabled>Undo</button><button type="button" id="reset-all">Reset all</button></div></div>
+    <div id="panel" class="rule-stack">
+      <div class="figure-dimensions" id="figure-dimensions">
+        <div class="card-head"><span>Physical canvas</span><button id="reset-size" type="button" class="control-reset">Reset size</button></div>
+        <label class="paper-setting">Figure width<span><input id="figure-width" type="number" min="30" max="180" step="any"> mm</span></label><input id="figure-width-slider" type="range" min="30" max="180" step="0.5" aria-label="Figure width">
+        <label class="paper-setting">Figure height<span><input id="figure-height" type="number" min="10" max="180" step="any"> mm</span></label><input id="figure-height-slider" type="range" min="10" max="180" step="0.5" aria-label="Figure height">
+      </div>
+    </div>
+    <section class="card figure-content integrity-card" data-skill-rules="data-integrity visual-review">
+      <div class="card-head"><h2>07 · Preserve the evidence</h2><span id="data-origin" class="data-origin">Example data</span></div>
+      <p class="panel-note">Experiments change styles, never source values. Keep zero bars and category order. Review the final figure before using it in a paper.</p>
+      <p class="lesson-context" id="integrity-readout"></p>
+      <div class="toolbar-group"><label class="toolbar-label" for="spec-file">Import spec</label><label class="file-picker"><span>Choose file…</span><input type="file" id="spec-file" class="sr-only" accept="application/json,.json"></label></div>
+    </section>
+    <section class="card handoff-card">
+      <h2>Take the rules to your agent</h2>
+      <p class="panel-note">Copy the data, physical dimensions, chosen styles and check evidence. The agent can reproduce this configuration.</p>
       <p class="export-state" id="export-state" data-ready="false">Not ready.</p>
       <div class="buttons"><button type="button" id="copy-handoff" disabled>🤖 Copy for Agents</button></div><span id="copy-feedback" class="sr-only" role="status" aria-live="polite"></span>
-      <div class="copy-fallback" id="copy-fallback" hidden>
-        <p class="copy-fallback-reason"></p>
-        <textarea rows="8" readonly aria-label="Hand-off text"></textarea>
-      </div>
+      <div class="copy-fallback" id="copy-fallback" hidden><p class="copy-fallback-reason"></p><textarea rows="8" readonly aria-label="Hand-off text"></textarea></div>
     </section>
-<section class="card figure-content"><div class="card-head"><h2>Figure content</h2><span id="data-origin" class="data-origin">Example data</span></div>  <div class="toolbar-group" id="panel-picker-group" hidden>
-    <label class="toolbar-label" for="active-panel">Panel</label>
-    <select id="active-panel"></select>
-  </div>
-  <div class="toolbar-group">
-    <label class="toolbar-label" for="example">Example</label>
-    <select id="example">
-      <option value="" disabled selected>Choose example…</option>
-      <option value="line-multi">line — three series</option>
-      <option value="line-single">line — one series</option>
-      <option value="line-many">line — many series</option>
-      <option value="bar-signed">bar — crossing zero</option>
-      <option value="bar-positive">bar — positive</option>
-      <option value="scatter">scatter — two groups</option>
-    </select>
-  </div>
-  <div class="toolbar-group">
-    <label class="toolbar-label" for="spec-file">Import spec</label>
-    <label class="file-picker"><span>Choose file…</span><input type="file" id="spec-file" class="sr-only" accept="application/json,.json"></label>
-  </div>
-</section>
-<section class="card figure-dimensions"><div class="card-head"><h2>Figure size</h2><button id="reset-size" type="button" class="control-reset">Reset size</button></div>
-<label class="paper-setting">Figure width<span><input id="figure-width" type="number" min="30" max="180" step="any"> mm</span></label><input id="figure-width-slider" type="range" min="30" max="180" step="0.5" aria-label="Figure width">
-<label class="paper-setting">Figure height<span><input id="figure-height" type="number" min="10" max="180" step="any"> mm</span></label><input id="figure-height-slider" type="range" min="10" max="180" step="0.5" aria-label="Figure height">
-</section>
-    <section class="card">
-      <div class="card-head">
-      <h2>Shared style</h2>
-        <div class="style-actions"><button type="button" id="undo-style" disabled>Undo</button><button type="button" id="reset-all">Reset all</button></div>
-      </div>
-      <p class="panel-note">
-        Applies to every panel. A dot marks a setting you have changed.
-      </p>
-      <div id="panel"></div>
-    </section>
-
 
   </aside>
 </main>

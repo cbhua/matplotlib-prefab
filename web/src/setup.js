@@ -1,12 +1,11 @@
 /** Single-page setup. All styling hooks live under #setup in design-overrides.css. */
 export function createSetup(root,index,onGenerate,onCancel) {
   const venues=[...new Map(index.pages.map(p=>[p.venue,{id:p.venue,name:p.name.replace(/\s*20\d\d/g,'')}])).values()];
-  let draft={venue:null,rows:1,columns:1,layout:'narrow',kinds:['line']},busy=false,error='';
+  let draft={venue:venues.find(v=>v.id==='iclr2026')?.id || venues[0]?.id,rows:1,columns:1,layout:'narrow',kinds:['line']},busy=false,error='';
   const node=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls;if(text)n.textContent=text;return n;};
   function render(){
     const focused=document.activeElement?.dataset;const focusKey=focused&&['venue','grid','layout'].find(k=>focused[k]);const focusValue=focused?.[focusKey];
     root.replaceChildren();const card=node('section','setup-card');
-    card.append(node('h1','','Set up your figure'));
     const section=(title,cls)=>{const s=node('section','setup-section');s.append(node('h2','',title));const choices=node('div',`setup-choices ${cls}`);s.append(choices);card.append(s);return choices;};
     const choice=(host,label,detail,key,value,selected,action)=>{const b=node('button','setup-choice');b.type='button';b.dataset[key]=value;b.setAttribute('aria-pressed',String(selected));b.disabled=busy;b.append(node('strong','',label));if(detail)b.append(node('span','',detail));b.onclick=()=>{action();render();};host.append(b);return b;};
     const templates=section('Paper template','template-choices');
@@ -21,7 +20,7 @@ export function createSetup(root,index,onGenerate,onCancel) {
       choice(widths,layout==='narrow'?'Single Column':'Double Column','','layout',layout,draft.layout===layout,()=>draft.layout=layout);
     }
     const message=node('p','setup-error',error);message.setAttribute('role','alert');card.append(message);
-    const actions=node('div','setup-actions');const generate=node('button','primary-button',busy?'Preparing…':'Create figure');generate.id='setup-next';generate.disabled=busy||!draft.venue;
+    const actions=node('div','setup-actions copy-actions');const generate=node('button','btn btn-success btn-sm',busy?'Preparing…':'Create figure');generate.id='setup-next';generate.disabled=busy||!draft.venue;
     generate.onclick=async()=>{busy=true;error='';render();try{await onGenerate(structuredClone(draft));}catch(e){error=e.message;}finally{busy=false;render();}};
     actions.append(generate);card.append(actions);root.append(card);
     if(focusKey)root.querySelector(`[data-${focusKey}="${focusValue}"]`)?.focus();

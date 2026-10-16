@@ -106,6 +106,10 @@ function checkLines(report) {
   const lines = [`Checks at this size: ${report.counts.pass} pass, ${report.counts.warn} warn, `
                  + `${report.counts.fail} fail, ${report.counts.not_checked} not checked.`];
   for (const check of problems) lines.push(`  - ${check.status} ${check.id}: ${check.message}`);
+  if(report.visual_density){
+    lines.push('Density diagnostics use physical print size at 144 dpi. Ink/body ratios describe visual weight, not information or a target density.');
+    lines.push('Inspect mark_overdraw and space_utilization evidence and references/visual-density.md. Preserve every data value; do not thin scatter points or add decoration to match prose density.');
+  }
   lines.push('  - visual_review is open. Rendering successfully is not looking at it.');
   lines.push('These were already visible to the person who chose these settings. Report them; '
              + 'do not silently change values to make them go away.');
@@ -129,6 +133,7 @@ export function handoffText(state) {
       + `${target.figure_height_mm.toFixed(3)} mm high and insert it at that size, with `
       + `${target.insert_at}.`,
     target.keep_size,
+    ...(profile.legend.placement==='outside'?[`Legend: one shared framed area outside the panels, ${profile.legend.side&&profile.legend.side!=='auto'?'on the '+profile.legend.side+' side':'automatically on the right or below'}. Preserve this position within the selected canvas dimensions.`]:[]),
     '',
     'Resolved type (size in points, at the printed size):',
     ...Object.entries(resolvedType).map(([role, entry]) =>
@@ -144,7 +149,7 @@ export function handoffText(state) {
     stableStringify(spec),
     '```',
     ...['', 'Handoff context — save as handoff.meta.json; keep separate from the style profile:',
-      '```json', stableStringify({kind:'figure-handoff-context',data_usage:bundle.data_usage,target:bundle.target,paper_preview:bundle.paper_preview,environment:bundle.environment,checks:bundle.render?.checks}), '```'],
+      '```json', JSON.stringify({kind:'figure-handoff-context',data_usage:bundle.data_usage,target:bundle.target,paper_preview:bundle.paper_preview,environment:bundle.environment,checks:bundle.render?.checks}), '```'],
     '',
     'Render at the selected canvas size; do not crop with bbox_inches="tight" or resize the exported figure:',
     '```',
