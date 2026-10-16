@@ -1,9 +1,8 @@
 # Checking a figure in a real article page
 
-A `figure.pdf` proves the canvas is 85 mm wide. It proves nothing about whether
-the figure is readable, because a reader never sees it at 85 mm on a white
-background — they see it at whatever width the template gives a figure, wrapped
-in 10 pt body text, under a caption set in the venue's own style.
+A generic `figure.pdf` can prove its canvas is 85 mm wide. It does not prove
+readability after insertion: the reader sees the figure at the template's slot
+width, beside body text and a caption in the venue's style.
 
 Those are different sizes. ICLR 2026 and NeurIPS 2026 set a 5.5 in text block, so
 half of it is 69.85 mm. ICML 2026 is two-column: 6.75 in of text minus 0.25 in of
@@ -104,10 +103,11 @@ Checks worth knowing:
 | `latex_references_resolve` | No undefined citation or cross-reference |
 | `visual_review` | Always `not_checked`. No script closes it |
 
-`effective_type_size` deliberately sets **no threshold**. It reports that a 9 pt
-label prints at 7.4 pt next to 10 pt body text, and leaves the judgement to you.
-"Figure text must match body text" is not a rule this project has established,
-and inventing one here would dress a guess up as a check.
+`effective_type_size` deliberately sets **no threshold**. It reports the actual
+insertion scale and effective type size. Apply the selected conference reference
+to these effective sizes separately; the project now recommends body-relative
+typography in [experience-rules.md](experience-rules.md). Those recommendations
+are owner preferences, not a standard established by the context evaluator.
 
 ## Then look at the page
 
@@ -124,9 +124,9 @@ the prose beside it for scale:
 size is the one in `geometry`, measured from the PDF. To see the real thing, open
 `page.pdf` at 100 %.
 
-If the figure needs fixing, fix it the usual way — a profile copy, at most two
-rounds — and re-run the context evaluation, because changing the figure changes
-the page.
+If the figure needs fixing, edit a profile copy and re-run the context evaluation,
+because changing the figure changes the page. Stop once the relevant checks and
+review are complete; report constraints that remain unresolved.
 
 ## Requirements, and what to say when they are missing
 
@@ -201,7 +201,7 @@ baselines live with the browser tool, under `tests/web/calibration/baselines/`.
 
 | | What it is | What it proves |
 | --- | --- | --- |
-| The browser style lab (`web/`) | A calibrated fixture page in the browser, redrawn live | The figure at its printed size next to real body type, without needing LaTeX. Its pages match the compiled ones to better than 0.03 mm per text run — see `tests/web/calibration/`. |
+| The browser style lab (`web/`) | A proportional HTML/CSS article preview, redrawn live | Illustrative physical type/spacing and browser placement checks, without LaTeX. Line breaks and placement are approximate. Historical compiled-page calibration does not certify this preview. |
 | This evaluation | A real LaTeX compile of a real template | That the venue's own style, at the width its own arithmetic gives, produces this page. The one to run when a template or the tool changes, and when a figure must be integrated for real. |
 | Your own paper | Your document | Only this proves your paper compiles, your float lands where you want it and your macros behave. Neither of the other two says anything about it. |
 
@@ -210,11 +210,11 @@ makes the browser preview worth trusting. Neither closes `visual_review`.
 
 ## Scope and honesty
 
-* One figure per page, single-panel. `narrow` and ICML's `wide` place it in an
-  ordinary centred `figure`; ICML's `wide` uses the template's own `figure*`.
-  There are still no side-by-side pairs, no `wrapfigure` and no multi-panel
-  figures — that matches what this skill can draw. A cross-column *width* is a
-  width, not a new kind of figure.
+* One figure per page. `narrow` uses an ordinary centred `figure`; ICML's `wide`
+  uses the template's `figure*`. These wrappers do not test `wrapfigure` or
+  side-by-side floats. Spec-based evaluation is single-panel; a rendered grid
+  can be supplied with `--figure-dir`. A compiled centred float does not verify
+  the wrapped placement shown by the browser or assumed by the first preset.
 * The compiled documents are **typesetting fixtures**. Their titles, authors and
   abstracts say so on the page. Camera-ready mode is used because that is the
   layout a figure is finally judged in — not as a claim that anything was

@@ -1,8 +1,10 @@
 # Matplotlib Prefab
 
-An agent-facing skill for producing publication-style matplotlib figures: give it
-data and it renders a line/bar figure or a rectangular grid at a fixed physical size,
-then checks the result and tells you what it could not check.
+An agent-facing skill for scientific paper figures: general descriptive rules
+for faithful data, readable type, legend clearance and spatial layout, with
+separate conference reference values. A bundled Matplotlib renderer produces
+line/bar/scatter figures and rectangular grids at the final physical size,
+checks the result and reports what it could not verify.
 
 The previous version of this repository — a static gallery of notebook templates —
 has been removed. It remains in the git history at commit `a3f6dfb` if you need it.
@@ -18,27 +20,41 @@ tests/                       prefab data, the proof sheets, the conference fixtu
 
 ## The skill
 
-[`skills/scientific-figures/`](skills/scientific-figures/SKILL.md) covers two chart
-types:
+The portable [`scientific-figures` skill](skills/scientific-figures/SKILL.md)
+separates two parts:
+
+* **General rules:** the entrypoint and [rule catalog](skills/scientific-figures/references/experience-rules.md) describe typography relative to body text, data integrity, legends, article fit and space diagnostics.
+* **Reference values:** [ICLR 2026's first/default template](skills/scientific-figures/references/conference-presets/iclr2026-first.json) contains measured paper geometry and the owner's calibrated recommendations, with provenance. It is not an official ICLR figure specification.
+
+The first preset uses one wrapped panel at half the 139.7 mm body width:
+69.85 × 43.1673 mm, beside 10 pt prose. Axis labels default to 9 pt
+(8.5–9.5 pt), ticks to 8 pt (7.5–8 pt, also checked against the axis label), and
+legend text to 8 pt. The JSON file is the maintained source for these values.
+No serif/sans-serif policy is imposed.
+
+The bundled renderer supports:
 
 * **line** — one shared numeric x, one or more named y series;
-* **bar** — one value per named category, vertical, negatives allowed.
+* **bar** — one value per named category, vertical, negatives allowed;
+* **scatter** — numeric x/y observations in named series;
+* rectangular grids of these panels with shared physical styles.
 
 Each render produces a PDF at the exact physical size the profile asks for, a PNG
 preview, a snapshot of the validated input, the resolved style profile, and a
 report of deterministic checks — five files, and nothing else in the directory is
 touched.
 
-Scatter, histogram, heatmap and 3D remain out of scope. The browser workflow also
-supports rectangular grids of line/bar panels and narrow/wide paper slots; its
+Histogram, heatmap and 3D remain outside the bundled renderer. The browser workflow
+supports line/bar/scatter grids and narrow/wide paper slots; its
 exported grid specs can be reproduced with the same `render.py` command.
 
 ```sh
 python -m venv .venv && .venv/bin/pip install matplotlib numpy
 
 .venv/bin/python skills/scientific-figures/scripts/render.py \
-    --spec tests/data/line-multi.json \
-    --output-dir .tmp/figure-preview/line-multi
+    --preset iclr2026-first \
+    --spec skills/scientific-figures/assets/examples/line.json \
+    --output-dir .tmp/figure-preview/iclr2026-first
 ```
 
 Input is a small JSON file — see [`tests/data/`](tests/data/) and the
@@ -55,12 +71,21 @@ Input is a small JSON file — see [`tests/data/`](tests/data/) and the
 }
 ```
 
-## Style is one file — and you can see it
+Selecting a preset also checks body-relative typography, X/Y label consistency,
+wrapped width and print strokes. Reports explicitly leave browser-only legend
+occlusion/density measurements and actual article placement unverified.
+`--profile` can preserve an edited full profile while `--preset` supplies its
+reference context; use `--text-wrap off` for non-wrapped placement. Copying just
+the skill directory is sufficient for the example above (with dependencies
+installed); repository tests and conference fixtures are optional.
 
-Every size, colour, line width, tick count and export setting lives in
+## Rendering defaults and reference presets
+
+Common fallback sizes, colours, line widths, tick counts and export settings live in
 [`skills/scientific-figures/references/profiles/single-column.json`](skills/scientific-figures/references/profiles/single-column.json).
-Templates draw artists and hold no defaults of their own, so editing that file
-changes both chart types.
+Conference `profile_overrides` merge over that fallback; `--profile` supplies a
+full replacement. The saved `profile.resolved.json` records the result.
+Templates draw artists from this resolved profile and hold no competing defaults.
 
 > **The values in it are provisional.** They are this project's initial choices —
 > 85 mm wide, 0.618 aspect ratio, 9 pt axis labels, 8 pt ticks, 1.2 pt data lines,
@@ -73,12 +98,12 @@ To tune them, edit the profile and regenerate the proof sheet:
 .venv/bin/python tests/render_gallery.py
 ```
 
-That renders every prefab spec in `tests/data/` with the current profile into
+That renders every prefab spec in `tests/data/` with the generic profile into
 `tests/output/`, and writes [`tests/output/index.md`](tests/output/index.md) — the
-pictures, with the values that produced them printed above. Six cases, chosen so
+pictures, with the values that produced them printed above. Seven cases, chosen so
 that each knob shows up somewhere: single and multi series, eight series (where
 colours run out and the dash pattern takes over), mathtext labels, all-positive
-bars and bars crossing zero.
+bars, bars crossing zero and scatter observations.
 
 The rendered sheet is committed, and the test suite checks it against the profile
 and the data, so it can never quietly disagree with the settings in the repository.

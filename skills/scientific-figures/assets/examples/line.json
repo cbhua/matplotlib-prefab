@@ -1,0 +1,12 @@
+{
+  "schema_version": "1",
+  "kind": "line",
+  "title": null,
+  "x_label": "Training epoch",
+  "y_label": "Validation loss",
+  "x": [0, 10, 20, 30, 40, 50],
+  "series": [
+    {"name": "Baseline", "y": [1.6, 1.2, 0.95, 0.8, 0.72, 0.68]},
+    {"name": "Method", "y": [1.5, 0.95, 0.7, 0.56, 0.48, 0.44]}
+  ]
+}

@@ -2,9 +2,10 @@
 
 Usage::
 
-    python skills/scientific-figures/scripts/render.py \
-        --spec tests/data/line-multi.json \
-        --output-dir .tmp/figure-preview/line-multi
+    python <skill-directory>/scripts/render.py \
+        --preset iclr2026-first \
+        --spec <skill-directory>/assets/examples/line.json \
+        --output-dir <output-directory>
 
 The command writes five files into the output directory and nothing else:
 
@@ -23,6 +24,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import sys
 from typing import Any, Dict, Optional, Sequence
 
@@ -52,10 +54,22 @@ def render(
     spec_path: str,
     output_dir: str,
     profile_path: Optional[str] = None,
+    preset: Optional[str] = None,
+    text_wrap: Optional[bool] = None,
 ) -> Dict[str, Any]:
     """Validate, draw, export and check. Returns the report payload."""
-    resolved_profile_path = profile_path or figure_core.default_profile_path(SKILL_ROOT)
-    profile = figure_core.load_profile(resolved_profile_path)
+    if text_wrap is not None and preset is None:
+        raise figure_core.ProfileError("text_wrap requires a conference preset.")
+    reference = None
+    if preset is not None:
+        import conference_presets
+        reference, profile, preset_path = conference_presets.load_preset(preset, SKILL_ROOT)
+        resolved_profile_path = profile_path or preset_path
+        if profile_path:
+            profile = figure_core.load_profile(profile_path)
+    else:
+        resolved_profile_path = profile_path or figure_core.default_profile_path(SKILL_ROOT)
+        profile = figure_core.load_profile(resolved_profile_path)
     raw_spec = figure_core.load_json(spec_path, "spec")
     is_grid = raw_spec.get("kind") == "grid"
     if is_grid:
@@ -80,6 +94,18 @@ def render(
         "spec_source": os.path.abspath(spec_path),
         "profile_source": os.path.abspath(resolved_profile_path),
     }
+    if reference is not None:
+        context_report = conference_presets.evaluate_preset(spec, profile, reference, text_wrap)
+        combined = inspect_figure.Report()
+        combined.checks = report["checks"] + context_report.checks
+        report["checks"] = combined.checks
+        report.update(combined.summary())
+        report["inputs"]["preset_source"] = os.path.abspath(preset_path)
+        report["conference_reference"] = {
+            "preset": reference,
+            "text_wrap": reference["placement"]["text_wrap"] if text_wrap is None else text_wrap,
+            "article_placement_verified": False,
+        }
     report["outputs"] = {
         name: os.path.abspath(path)
         for name, path in list(written.items())
@@ -89,15 +115,14 @@ def render(
             ("report", os.path.join(output_dir, "report.json")),
         ]
     }
-    report["reproduce"] = (
-        "python %s --spec %s --profile %s --output-dir %s"
-        % (
-            os.path.relpath(os.path.join(SCRIPT_DIR, "render.py")),
-            os.path.relpath(os.path.join(output_dir, "spec.json")),
-            os.path.relpath(os.path.join(output_dir, "profile.resolved.json")),
-            os.path.relpath(output_dir),
-        )
-    )
+    command = ["python", os.path.relpath(os.path.join(SCRIPT_DIR, "render.py")),
+               "--spec", os.path.relpath(os.path.join(output_dir, "spec.json")),
+               "--profile", os.path.relpath(os.path.join(output_dir, "profile.resolved.json")),
+               "--output-dir", os.path.relpath(output_dir)]
+    if preset is not None:
+        command += ["--preset", preset, "--text-wrap",
+                    "on" if report["conference_reference"]["text_wrap"] else "off"]
+    report["reproduce"] = shlex.join(command)
     report["drawn"] = drawn
 
     figure_core.write_json(os.path.join(output_dir, "report.json"), report)
@@ -133,8 +158,11 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     parser.add_argument(
         "--profile",
         default=None,
-        help="Full style profile to use. Defaults to references/profiles/single-column.json.",
+        help="Full style profile; overrides preset drawing defaults but retains its reference checks.",
     )
+    parser.add_argument("--preset", help="Packaged conference reference, e.g. iclr2026-first. Without this flag the generic profile is unchanged.")
+    parser.add_argument("--text-wrap", choices=("on", "off"), default=None,
+                        help="Override the preset placement assumption; requires --preset. Use off for non-wrapped/full-width placement.")
     parser.add_argument(
         "--json",
         action="store_true",
@@ -143,7 +171,8 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        report = render(args.spec, args.output_dir, args.profile)
+        report = render(args.spec, args.output_dir, args.profile, args.preset,
+                        None if args.text_wrap is None else args.text_wrap == "on")
     except (figure_core.SpecError, figure_core.ProfileError) as exc:
         print("error: %s" % exc, file=sys.stderr)
         return 2

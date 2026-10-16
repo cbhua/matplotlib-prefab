@@ -8,7 +8,7 @@ Neither a successful browser check nor its paper preview proves LaTeX placement.
 ## What to preserve
 
 - The profile's physical `canvas.width_mm` and `canvas.aspect_ratio` describe the
-  entire figure, not each panel. Height is width divided by aspect ratio. Set
+  entire figure, not each panel. Height is width multiplied by aspect ratio. Set
   figsize to width/25.4 and height/25.4 inches.
 - Font sizes, strokes and marker diameters are physical points. DPI changes
   raster resolution, not print size. Do not resize the finished image to fit a
@@ -17,6 +17,13 @@ Neither a successful browser check nor its paper preview proves LaTeX placement.
   composition. Do not multiply whole-canvas dimensions by the panel count.
 - Profile overrides (`size_xtick_pt`, `weight_x_label`, etc.) take priority over
   their shared defaults. Keep `paper_preview` metadata out of the style profile.
+- `legend.placement: "outside"` reserves one shared framed legend within the
+  existing canvas. Preserve `legend.side` (top/bottom/left/right); do not move an
+  explicitly positioned legend to another side when space is insufficient. Older
+  profiles without a side retain automatic right/bottom fitting. Preserve names, handles, physical
+  type and canvas size. Combine entries only when names and styles agree;
+  ambiguous names keep panel qualifiers. Use the supplied Python renderer to
+  reproduce this mode rather than placing a separate legend over the plot.
 
 ## Understand data intent before drawing
 
@@ -49,7 +56,20 @@ draws every marker with no connecting line or thinning.
 
 Read both the handoff warnings and the new Python report. Browser checks include
 text overlap, clipping, minimum print size and surrounding-paper geometry.
-They are heuristics, not venue standards. Python report checks are independent:
+`checks.experience_rules` records paper-relative typography bounds, stroke
+defaults and rule provenance; read [experience-rules.md](experience-rules.md).
+Shared typography warnings list affected `panel_indices`. Bar panels additionally
+provide `bar_distribution` under their visual-density measurements: use physical
+category spacing, gaps and band loads to review allocation, never to infer
+scientific information from bar count or ink alone.
+`panel_N.legend_data_overlap` identifies data entering the legend
+reading area. Inspect the highlighted panel and physical overlap measurements;
+propose more panel space or smaller legend text without changing data.
+They are heuristics, not venue standards. `checks.visual_density` adds physical
+ink coverage, a representative template-prose reference, per-panel marker
+overdraw and spatial occupancy. Read [visual-density.md](visual-density.md) before
+acting on these numbers. In particular, an ink/body ratio is descriptive and
+must not become a target for adding decoration or removing observations. Python report checks are independent:
 never relabel browser checks as a Python validation result.
 
 For new data, repeat the checks at the target dimensions and inspect the output.

@@ -1,7 +1,10 @@
-# Design rules and where the numbers come from
+# Bundled rendering defaults and mechanics
 
-Read this when you need to change a style value, explain one, or judge whether a
-rendered figure is acceptable.
+Read this when changing the bundled renderer or its generic fallback profile.
+The skill's descriptive constraints are in [experience-rules.md](experience-rules.md);
+conference reference values are separate in
+[conference-presets/iclr2026-first.json](conference-presets/iclr2026-first.json).
+The defaults below describe the implementation, not additional universal rules.
 
 ## The values are provisional
 
@@ -13,7 +16,9 @@ to review and finalise them by hand.
 
 ## One source of truth
 
-The profile is the only place style numbers live. Templates
+The resolved profile is the only source of drawing settings. `--preset` merges
+the conference's `profile_overrides` over the generic profile; an explicit
+`--profile` supplies a full replacement. Templates
 (`assets/templates/*.py`) decide *which artists* to draw; every size, colour, dash
 pattern, tick count and export setting is read from the profile at draw time. There
 are no fallback defaults hidden in the templates and no `rcParams` edits outside
@@ -49,6 +54,10 @@ cropping, you must prove the final size still matches the profile.
 
 ## Type
 
+Browser paper-relative checks and researched stroke references live in
+[experience-rules.md](experience-rules.md). They are separate from the provisional
+style defaults below and travel with agent handoffs as versioned experience rules.
+
 | Role | Provisional value |
 | --- | --- |
 | Axis labels | 9 pt |
@@ -56,7 +65,8 @@ cropping, you must prove the final size still matches the profile.
 | Title (optional) | 10 pt |
 
 Each of those has an optional per-axis override, so the two axes need not share a
-size or a weight:
+size or a weight. Support for overrides does not remove the recommendation to
+keep X/Y axis-label sizes equal:
 
 | Shared field | Overrides that refine it |
 | --- | --- |
@@ -80,9 +90,9 @@ artists after the template has drawn and re-applied on every draw. The
 `font_sizes` check verifies the weight as well as the size on every text artist,
 which is what turns "the field is in the profile" into "the drawing took it".
 
-Family is DejaVu Sans at normal weight — chosen because it ships with matplotlib,
-so a fresh checkout renders identically without font installation. Ordinary text is
-upright; italics are reserved for maths variables, which mathtext handles.
+The generic fallback family is DejaVu Sans at normal weight — chosen because it ships with matplotlib,
+so a fresh checkout can render without font installation. This is not a general
+serif/sans-serif policy. Ordinary default text is upright; mathtext handles maths variables.
 `mathtext.fontset` is `dejavusans` so maths matches the body text.
 
 No LaTeX installation is required. `pdf.fonttype` is 42, so text in the PDF stays
@@ -137,22 +147,61 @@ last bars are not glued to the spines, and a y range that always contains zero:
 padding is added only on the non-zero side, so all-positive bars sit exactly on the
 baseline.
 
+Category ticks default to a 30-degree rotation from the profile. Overlap checks
+respect the text rotation. After layout, a fitting rotated-bar Y title is shifted
+within its allocated panel's vertical bounds; font sizes and data limits stay
+fixed. Impossible fits remain visible to the clipping check.
+
 ## Legends
 
-`legend.show_for_single_series` is `false`: a one-series line chart names its data
+`legend.placement` selects `inside` (default) or `outside`; an older profile
+without this field retains `inside`. Inside mode uses the per-panel legend
+settings below. Outside mode reserves one framed area for the entire figure,
+using `legend.side` (`top`, `bottom`, `left`, or `right`). The browser offers
+native radios for inside/outside mode, then exactly four side radios in outside
+mode. New configurations default to bottom. Honor an explicitly chosen side;
+report insufficient space instead of silently moving it. Older outside profiles
+without `side` retain their previous automatic right-then-bottom behavior (`auto`).
+The figure's existing canvas width and height include this area. Text, markers
+and strokes retain physical sizes; neither data nor the whole exported figure
+is rescaled. If the selected placement does not fit, report a recoverable size error.
+
+The outside legend covers line/scatter series, including single-series panels
+because the user explicitly requested a separate legend. Repeated entries merge
+only if both their names and drawn styles agree. Equal names with different
+styles retain separate entries labelled by source-panel position. Bars use named
+categories on their axis and add no series legend. In mixed grids, line/scatter
+entries still share the one outside area. Legend font size/weight, handle length,
+spacing and columns come from the profile; outside mode always draws a frame.
+
+The browser composes a separate SVG legend using the same glyphs/series styles
+as the charts. Python uses a figure-level legend and constrained layout's
+`outside` placement ([Matplotlib documentation](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.legend.html)).
+Their layout solvers can differ in spacing, but must preserve an explicit side.
+Legacy automatic mode can choose different sides in borderline cases. The shared
+semantics and physical size are the contract, not pixel equivalence.
+
+In inside mode, `legend.show_for_single_series` is `false`: a one-series line chart names its data
 in the y label and the caption, so a legend would only take space. Two or more
 series always get a legend — the `legend_present` check fails otherwise.
 
-Placement is `"best"`, which minimises overlap with the data but does not
-guarantee it. No automatic check can prove a legend is clear of the data, which is
-one of the reasons the visual review is a required, human/agent step.
+Inside placement is `"best"`, which minimises overlap with the data but does not
+guarantee it. The browser adds `panel_N.legend_data_overlap`: it
+checks actual data strokes and marker shapes against the legend's layout
+rectangle, at 288 dpi in physical units, before the legend covers them. Stroke
+width, dash gaps and plot clipping are respected; the legend's own handles and
+chart gridlines are excluded. The rectangle remains a protected reading area
+with or without an opaque frame. A warning locates the affected panel/legend and
+suggests more figure space or smaller legend text. It does not move the legend
+or alter data automatically. Finite raster sampling is not a proof of clearance;
+visual review remains necessary. Python's report does not run this browser check.
 
 ## What the checks can and cannot tell you
 
 Exact and trustworthy:
 
 * canvas size, PDF page size, PNG pixel size;
-* exactly one axes panel;
+* expected axes count (one for a single panel, or the declared rectangular grid);
 * font size per text role, resolved font family, glyph coverage;
 * line point counts and series order; bar count, category order, zero in range.
 
@@ -171,7 +220,8 @@ Not attempted at all:
   was the correct choice;
 * whether colours survive printing, projection or a particular kind of colour
   blindness;
-* whether the legend covers data.
+* whether the Python-rendered legend covers data (the browser performs its own
+  geometric check described above).
 
 `visual_review` is therefore always `not_checked`. Nothing in the pipeline fills it
 in. Only a person or an agent that actually opens `figure.png` can close it, and if
@@ -184,10 +234,11 @@ check overlaps between panel decorations. Wide profiles can span columns.
 
 ## Deliberately out of scope in this version
 
-Nonrectangular panel layouts, scatter, histogram, heatmap and 3D charts,
-stacked or grouped bars, twin axes, error bars, log axes, venue-specific profiles,
-CSV input inference, interactive output. Each of those arrives as a new profile or
-a new template, not as options bolted onto these two.
+The bundled renderer does not implement nonrectangular panel layouts,
+histograms, heatmaps, 3D charts, stacked/grouped bars, twin axes, error bars or log
+axes. It supports line/bar/scatter, rectangular grids and conference reference
+profiles. The descriptive skill constraints can guide other renderers without
+implying that these bundled checks verified their outputs.
 
 ## Background reading
 
