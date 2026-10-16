@@ -2,7 +2,7 @@
   "profile_version": "0.1.0",
   "name": "single-column",
   "status": "provisional",
-  "note": "PROVISIONAL. Every number below is an initial project choice, not a venue or journal requirement. The repository owner is expected to finalise these values by hand. This file is the single source of truth for style: templates must not carry their own defaults. Run tests/render_gallery.py after editing to regenerate the proof sheet in tests/output/.",
+  "note": "PROVISIONAL common rendering defaults, not venue or journal requirements. A conference preset can override these values; an explicit full profile replaces them. Templates consume only the resolved profile and must not carry competing defaults. Run tests/render_gallery.py after editing to regenerate the generic proof sheet in tests/output/.",
   "canvas": {
     "width_mm": 85.0,
     "aspect_ratio": 0.618,
@@ -72,9 +72,11 @@
     "width_fraction": 0.7,
     "edge_linewidth_pt": 0.0,
     "zero_line_linewidth_pt": 0.6,
-    "category_label_rotation_deg": 0.0
+    "category_label_rotation_deg": 30.0
   },
   "legend": {
+    "placement": "inside",
+    "side": "bottom",
     "show_for_single_series": false,
     "location": "best",
     "frame": false,

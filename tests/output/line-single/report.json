@@ -7,11 +7,11 @@
     "status": "provisional"
   },
   "environment": {
-    "python": "3.12.13",
-    "matplotlib": "3.11.1",
+    "python": "3.12.15",
+    "matplotlib": "3.11.2",
     "matplotlib_backend": "Agg",
     "resolved_fonts": {
-      "DejaVu Sans": "/home/cbhua/github/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+      "DejaVu Sans": "/Users/cbhua/GitHub/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
     }
   },
   "checks": [
@@ -52,10 +52,36 @@
     {
       "id": "font_sizes",
       "status": "pass",
-      "message": "Checked 12 text element(s) against the profile; 0 mismatch(es).",
+      "message": "Checked 12 text element(s) against the resolved profile (size and weight); 0 mismatch(es).",
       "details": {
         "n_checked": 12,
-        "mismatches": []
+        "mismatches": [],
+        "resolved_type": {
+          "x_label": {
+            "size_pt": 9.0,
+            "weight": "normal"
+          },
+          "y_label": {
+            "size_pt": 9.0,
+            "weight": "normal"
+          },
+          "xtick": {
+            "size_pt": 8.0,
+            "weight": "normal"
+          },
+          "ytick": {
+            "size_pt": 8.0,
+            "weight": "normal"
+          },
+          "legend": {
+            "size_pt": 8.0,
+            "weight": "normal"
+          },
+          "title": {
+            "size_pt": 10.0,
+            "weight": "normal"
+          }
+        }
       }
     },
     {
@@ -67,7 +93,7 @@
           "DejaVu Sans"
         ],
         "resolved": {
-          "DejaVu Sans": "/home/cbhua/github/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
+          "DejaVu Sans": "/Users/cbhua/GitHub/matplotlib-prefab/.venv/lib/python3.12/site-packages/matplotlib/mpl-data/fonts/ttf/DejaVuSans.ttf"
         }
       }
     },
@@ -171,15 +197,15 @@
     "not_checked": 1
   },
   "inputs": {
-    "spec_source": "/home/cbhua/github/matplotlib-prefab/tests/data/line-single.json",
-    "profile_source": "/home/cbhua/github/matplotlib-prefab/skills/scientific-figures/references/profiles/single-column.json"
+    "spec_source": "/Users/cbhua/GitHub/matplotlib-prefab/tests/data/line-single.json",
+    "profile_source": "/Users/cbhua/GitHub/matplotlib-prefab/skills/scientific-figures/references/profiles/single-column.json"
   },
   "outputs": {
-    "pdf": "/home/cbhua/github/matplotlib-prefab/tests/output/line-single/figure.pdf",
-    "png": "/home/cbhua/github/matplotlib-prefab/tests/output/line-single/figure.png",
-    "spec": "/home/cbhua/github/matplotlib-prefab/tests/output/line-single/spec.json",
-    "profile": "/home/cbhua/github/matplotlib-prefab/tests/output/line-single/profile.resolved.json",
-    "report": "/home/cbhua/github/matplotlib-prefab/tests/output/line-single/report.json"
+    "pdf": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/line-single/figure.pdf",
+    "png": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/line-single/figure.png",
+    "spec": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/line-single/spec.json",
+    "profile": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/line-single/profile.resolved.json",
+    "report": "/Users/cbhua/GitHub/matplotlib-prefab/tests/output/line-single/report.json"
   },
   "reproduce": "python skills/scientific-figures/scripts/render.py --spec tests/output/line-single/spec.json --profile tests/output/line-single/profile.resolved.json --output-dir tests/output/line-single",
   "drawn": {

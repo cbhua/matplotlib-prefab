@@ -6,20 +6,20 @@
     {
       "source": "skills/scientific-figures/scripts/grid_core.py",
       "target": "python/skill/scripts/grid_core.py",
-      "sha256": "531af218077a4c0f17d50b916431a1cf213568f85aa9a27f908cd5b59ddbbf6e",
-      "bytes": 5433
+      "sha256": "959d74153100b5fb54dcf873533c53b46fe33266cd7a0451cf186f9afe702201",
+      "bytes": 5730
     },
     {
       "source": "skills/scientific-figures/scripts/figure_core.py",
       "target": "python/skill/scripts/figure_core.py",
-      "sha256": "b73651300051fe8c5822e437271a10898eb5af522b8b5e0de4a124368a1bb99c",
-      "bytes": 36198
+      "sha256": "88a7ecb83ec6dc053a6882296c1304167e5b47da0b7e6ff1c156d870ab55beb2",
+      "bytes": 44010
     },
     {
       "source": "skills/scientific-figures/scripts/inspect_figure.py",
       "target": "python/skill/scripts/inspect_figure.py",
-      "sha256": "69ab340023c9ae3624e703721a7d1680f84ab0e991078c6ef6fd319a1937e7b9",
-      "bytes": 31997
+      "sha256": "1c711f2c7ffd1d7e552fb20b54c3340d0b7d5ddfade1fc5446cd4423b692f61c",
+      "bytes": 33527
     },
     {
       "source": "skills/scientific-figures/assets/templates/line.py",
@@ -48,8 +48,8 @@
     {
       "source": "skills/scientific-figures/references/profiles/single-column.json",
       "target": "profiles/single-column.json",
-      "sha256": "f620de66b19f0ea6db00b82c177363bb5d24298877b5dbcae2d585982ce7fee6",
-      "bytes": 2137
+      "sha256": "ae1f16e8ea3bcc9fe2f35df851e6358043533edfc1afc1289325f98596f9216d",
+      "bytes": 2178
     },
     {
       "source": "tests/data/line-multi.json",

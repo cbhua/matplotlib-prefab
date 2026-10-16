@@ -358,8 +358,9 @@ def _role_texts(fig, ax) -> List[Tuple[str, Any, str]]:
         for label in labels:
             if label.get_text().strip() and label.get_visible() and id(label) not in hidden:
                 roles.append((axis_role, label, axis_role))
-    legend = ax.get_legend()
-    if legend is not None:
+    for legend in [ax.get_legend(), *fig.legends]:
+        if legend is None:
+            continue
         for text in legend.get_texts():
             roles.append(("legend", text, "legend"))
     return roles
@@ -553,6 +554,39 @@ def check_text_within_canvas(report: Report, fig) -> None:
         report.add("text_within_canvas", PASS, "All text fits inside the canvas.")
 
 
+def _tick_label_quad(label, renderer, box):
+    """Oriented text box, preserving all artist properties after measurement."""
+    import math
+    angle = float(label.get_rotation())
+    try:
+        label.set_rotation(0)
+        unrotated = label.get_window_extent(renderer=renderer)
+    finally:
+        label.set_rotation(angle)
+    cx, cy = (box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2
+    sine, cosine = math.sin(math.radians(angle)), math.cos(math.radians(angle))
+    return [(cx + x * cosine - y * sine, cy + x * sine + y * cosine)
+            for x, y in [(-unrotated.width / 2, -unrotated.height / 2),
+                         (unrotated.width / 2, -unrotated.height / 2),
+                         (unrotated.width / 2, unrotated.height / 2),
+                         (-unrotated.width / 2, unrotated.height / 2)]]
+
+
+def _text_quads_overlap(a, b):
+    import math
+    for polygon in (a, b):
+        for p, q in zip(polygon, polygon[1:] + polygon[:1]):
+            length = math.hypot(q[0] - p[0], q[1] - p[1])
+            if not length:
+                return False
+            dx, dy = (p[1] - q[1]) / length, (q[0] - p[0]) / length
+            pa = [x * dx + y * dy for x, y in a]
+            pb = [x * dx + y * dy for x, y in b]
+            if min(max(pa), max(pb)) - max(min(pa), min(pb)) <= 0.5:
+                return False
+    return True
+
+
 def check_tick_label_overlap(report: Report, fig, ax) -> None:
     fig.draw_without_rendering()
     renderer = figure_renderer(fig)
@@ -569,17 +603,18 @@ def check_tick_label_overlap(report: Report, fig, ax) -> None:
             if id(label) in hidden:
                 continue
             try:
-                boxes.append((label.get_text(), label.get_window_extent(renderer=renderer)))
+                box = label.get_window_extent(renderer=renderer)
+                boxes.append((label.get_text(), box, _tick_label_quad(label, renderer, box)))
             except Exception:  # pragma: no cover
                 continue
-        for (text_a, box_a), (text_b, box_b) in zip(boxes, boxes[1:]):
-            if box_a.overlaps(box_b):
+        for (text_a, box_a, quad_a), (text_b, box_b, quad_b) in zip(boxes, boxes[1:]):
+            if box_a.overlaps(box_b) and _text_quads_overlap(quad_a, quad_b):
                 collisions.append({"axis": axis_name, "labels": [text_a, text_b]})
     if collisions:
         report.add(
             "tick_label_overlap",
             WARN,
-            "%d neighbouring tick-label pair(s) overlap. This is a bounding-box "
+            "%d neighbouring tick-label pair(s) overlap. This is an oriented bounding-box "
             "heuristic: rotate the labels (profile.bar.category_label_rotation_deg), "
             "lower profile.axes.max_xticks, shorten the labels, or widen the canvas."
             % len(collisions),

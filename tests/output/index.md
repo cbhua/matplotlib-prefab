@@ -23,7 +23,7 @@ Profile: [`skills/scientific-figures/references/profiles/single-column.json`](..
 | `bar.width_fraction` | 0.7 |
 | `output.png_dpi` | 300 |
 
-Environment: matplotlib 3.11.1, Python 3.12.13.
+Environment: matplotlib 3.11.2, Python 3.12.15.
 
 The PNGs below are 300 DPI previews, so on screen they are roughly four times
 the printed size. Judge legibility accordingly, or open the PDF at 100%.

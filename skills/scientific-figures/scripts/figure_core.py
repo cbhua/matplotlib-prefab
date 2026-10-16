@@ -406,6 +406,11 @@ def validate_profile(profile: Dict[str, Any]) -> Dict[str, Any]:
     if not isinstance(profile.get("canvas", {}).get("background"), str):
         raise ProfileError("profile.canvas.background must be a colour string.")
 
+    if profile["legend"].get("placement", "inside") not in ("inside", "outside"):
+        raise ProfileError("profile.legend.placement must be 'inside' or 'outside'.")
+    if profile["legend"].get("side", "auto") not in ("auto", "top", "bottom", "left", "right"):
+        raise ProfileError("profile.legend.side must be 'top', 'bottom', 'left', 'right' or 'auto'.")
+
     return profile
 
 
@@ -722,6 +727,44 @@ def apply_tick_type(ax, profile: Dict[str, Any]) -> None:
     ax.figure.canvas.mpl_connect("draw_event", apply)
 
 
+def fit_rotated_bar_labels(fig, axes, profile):
+    """Keep a rotated bar chart's long Y label inside its allocated canvas cell.
+
+    Rotation consumes plot height. A label can still fit the physical cell even
+    when centering it on the smaller axes would clip it. Move only that label;
+    leave font sizes, data limits and the physical canvas unchanged. Impossible
+    cases stay visible to the ordinary clipping check.
+    """
+    if not float(profile["bar"]["category_label_rotation_deg"]):
+        return
+    for _ in range(3):
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        moved = False
+        pad = float(profile["layout"]["pad_pt"]) * fig.dpi / PT_PER_INCH
+        for ax in axes:
+            label = ax.yaxis.label
+            if not label.get_text():
+                continue
+            cell = ax.get_subplotspec()
+            rows = cell.get_gridspec().nrows
+            low = fig.bbox.y0 + fig.bbox.height * (1 - cell.rowspan.stop / rows) + pad
+            high = fig.bbox.y0 + fig.bbox.height * (1 - cell.rowspan.start / rows) - pad
+            box = label.get_window_extent(renderer)
+            if box.height > high - low:
+                continue
+            delta = max(0.0, low - box.y0) - max(0.0, box.y1 - high)
+            if abs(delta) < 0.1:
+                continue
+            x, y = label.get_position()
+            point = label.get_transform().transform((x, y))
+            new_y = label.get_transform().inverted().transform((point[0], point[1] + delta))[1]
+            label.set_y(new_y)
+            moved = True
+        if not moved:
+            break
+
+
 def apply_legend_type(ax, profile: Dict[str, Any]) -> None:
     """The legend's own weight; its size is already an rcParam."""
     legend = ax.get_legend()
@@ -737,6 +780,8 @@ def apply_legend_type(ax, profile: Dict[str, Any]) -> None:
 def apply_legend(ax, profile: Dict[str, Any], n_series: int) -> bool:
     """Add a legend when it carries information. Returns whether one was drawn."""
     legend_cfg = profile["legend"]
+    if legend_cfg.get("placement", "inside") == "outside":
+        return False  # Added once for the whole figure after every panel is drawn.
     if n_series <= 1 and not legend_cfg.get("show_for_single_series", False):
         return False
     ax.legend(
@@ -746,6 +791,108 @@ def apply_legend(ax, profile: Dict[str, Any], n_series: int) -> bool:
         frameon=bool(legend_cfg.get("frame", False)),
     )
     return True
+
+
+def outside_legend_entries(spec, profile):
+    """Deduplicate equal names AND drawn styles; retain ambiguous names per panel."""
+    panels = spec["panels"] if spec["kind"] == "grid" else [spec]
+    entries = {}
+    for panel_index, panel in enumerate(panels):
+        if panel["kind"] == "bar":
+            continue
+        for index, (series, style) in enumerate(zip(panel["series"], series_styles(len(panel["series"]), profile))):
+            has_marker = panel["kind"] == "scatter" or profile["lines"].get("markers_enabled", True)
+            key = (series["name"], panel["kind"], style["color"],
+                   style["linestyle"] if panel["kind"] == "line" else None,
+                   style["marker"] if has_marker else None)
+            if key in entries:
+                entries[key]["panel_indices"].append(panel_index)
+            else:
+                entries[key] = {"name": series["name"], "source_name": series["name"],
+                                "kind": panel["kind"], "series_index": index,
+                                "panel_indices": [panel_index]}
+    result = list(entries.values())
+    columns = spec["columns"] if spec["kind"] == "grid" else 1
+    for entry in result:
+        if any(other is not entry and other["source_name"] == entry["source_name"] for other in result):
+            positions = ", ".join("%d:%d" % (i // columns + 1, i % columns + 1)
+                                  for i in entry["panel_indices"])
+            entry["name"] = "Panel %s - %s" % (positions, entry["source_name"])
+    return result
+
+
+def apply_outside_legend(fig, axes, spec, profile, drawn_panels):
+    """Reserve a chosen-side legend with constrained layout inside the fixed canvas."""
+    if profile["legend"].get("placement", "inside") != "outside":
+        return
+    entries = outside_legend_entries(spec, profile)
+    if not entries:
+        return
+    handles = [axes[e["panel_indices"][0]].lines[e["series_index"]] for e in entries]
+    from inspect_figure import figure_renderer
+    side = None
+    locations = {"right": "outside right center", "left": "outside left center",
+                 "top": "outside upper center", "bottom": "outside lower center"}
+    requested = profile["legend"].get("side", "auto")
+    candidates = ("right", "bottom") if requested == "auto" else (requested,)
+    for candidate in candidates:
+        location = locations[candidate]
+        legend = fig.legend(handles, [e["name"] for e in entries], loc=location,
+                            ncol=int(profile["legend"]["columns"]), frameon=True, fancybox=True,
+                            prop={"size": font_size(profile, "legend"), "weight": font_weight(profile, "legend")},
+                            facecolor=profile["canvas"]["background"], edgecolor=profile["colors"]["axes"],
+                            framealpha=1)
+        legend.get_frame().set_linewidth(profile["lines"]["axes_linewidth_pt"])
+        # Avoid a GUI backend rounding the physical canvas to screen pixels.
+        fig.draw_without_rendering()
+        renderer = figure_renderer(fig)
+        box = legend.get_window_extent(renderer)
+        if (box.x0 >= 0 and box.y0 >= 0 and box.x1 <= fig.bbox.x1 and box.y1 <= fig.bbox.y1 and
+                all(not ax.get_tightbbox(renderer).overlaps(box) and
+                    ax.bbox.width * PT_PER_INCH / fig.dpi >= 30 and
+                    ax.bbox.height * PT_PER_INCH / fig.dpi >= 20 for ax in axes)):
+            side = candidate
+            break
+        legend.remove()
+    if side is None:
+        raise ProfileError("Not enough room for a separate legend. Increase the figure width or height, or reduce the legend size.")
+    # A short plotting area can put a centered Y title past the paper edge even
+    # though it fits the allocated panel. Keep fitting labels within the panel
+    # band, excluding a bottom legend, without changing fonts or data limits.
+    for _ in range(3):
+        fig.draw_without_rendering()
+        renderer = figure_renderer(fig)
+        legend_box = legend.get_window_extent(renderer)
+        pad = float(profile["layout"]["pad_pt"]) * fig.dpi / PT_PER_INCH
+        usable_low = legend_box.y1 + pad if side == "bottom" else fig.bbox.y0 + pad
+        usable_high = legend_box.y0 - pad if side == "top" else fig.bbox.y1 - pad
+        moved = False
+        for ax in axes:
+            label = ax.yaxis.label
+            cell = ax.get_subplotspec()
+            rows = cell.get_gridspec().nrows
+            low = usable_low + (usable_high - usable_low) * (1 - cell.rowspan.stop / rows)
+            high = usable_low + (usable_high - usable_low) * (1 - cell.rowspan.start / rows)
+            box = label.get_window_extent(renderer)
+            if not label.get_text() or box.height > high - low:
+                continue
+            delta = max(0.0, low - box.y0) - max(0.0, box.y1 - high)
+            if abs(delta) < 0.1:
+                continue
+            point = label.get_transform().transform(label.get_position())
+            label.set_y(label.get_transform().inverted().transform((point[0], point[1] + delta))[1])
+            moved = True
+        if not moved:
+            break
+    for entry in entries:
+        for i in entry["panel_indices"]:
+            drawn_panels[i]["legend_drawn"] = True
+    # Keep the selected placement inspectable in the Python report.
+    for panel in drawn_panels:
+        if panel["kind"] != "bar":
+            panel["legend_placement"] = "outside"
+            panel["legend_side"] = side
+    return entries
 
 
 # --------------------------------------------------------------------------
@@ -812,6 +959,9 @@ def drawn_figure(
             # cannot drift apart on it.
             apply_tick_type(ax, profile)
             apply_legend_type(ax, profile)
+            apply_outside_legend(fig, [ax], spec, profile, [drawn])
+            if spec["kind"] == "bar":
+                fit_rotated_bar_labels(fig, [ax], profile)
             yield fig, ax, drawn
         finally:
             plt.close(fig)

@@ -210,7 +210,11 @@ def test_long_labels_are_not_reported_as_all_clear(tmp_path):
         "a very long category name two",
         "a very long category name three",
     ]
-    _, report = render(tmp_path, spec)
+    # Rotation can legitimately separate these labels. Exercise the genuinely
+    # overlapping horizontal configuration rather than an obsolete default.
+    profile = load_default_profile()
+    profile["bar"]["category_label_rotation_deg"] = 0
+    _, report = render(tmp_path, spec, profile=profile)
     assert report["status"] in (inspect_figure.WARN, inspect_figure.FAIL)
     flagged = {
         entry["id"]
@@ -227,3 +231,15 @@ def test_requesting_an_unavailable_font_warns_rather_than_pretending(tmp_path):
     entry = check(report, "font_resolution")
     assert entry["status"] == inspect_figure.WARN
     assert "Definitely Not An Installed Font" in entry["message"]
+
+
+@pytest.mark.parametrize('name',['bar-signed','bar-positive'])
+@pytest.mark.parametrize('width',[69.85,85,171.45])
+def test_default_rotated_bar_labels_fit_without_changing_data(tmp_path,name,width):
+    profile=load_default_profile()
+    profile['canvas']['width_mm']=width
+    assert profile['bar']['category_label_rotation_deg']==30
+    _,report=render(tmp_path,case(name),profile=profile)
+    assert check(report,'text_within_canvas')['status']==inspect_figure.PASS
+    assert check(report,'tick_label_overlap')['status']==inspect_figure.PASS
+    assert report['drawn']['n_categories'] in (4,5)

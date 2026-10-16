@@ -49,6 +49,10 @@ def drawn_figure(spec, profile, skill_root=None):
                 drawn.append(core.load_template(panel["kind"], skill_root).draw(ax, panel, profile))
                 core.apply_tick_type(ax, profile)
                 core.apply_legend_type(ax, profile)
+            core.apply_outside_legend(fig, list(axes.flat), spec, profile, drawn)
+            bar_axes = [ax for ax, panel in zip(axes.flat, spec["panels"]) if panel["kind"] == "bar"]
+            if bar_axes and not fig.legends:
+                core.fit_rotated_bar_labels(fig, bar_axes, profile)
             yield fig, list(axes.flat), {"kind": "grid", "rows": spec["rows"],
                                          "columns": spec["columns"], "panels": drawn}
         finally:
